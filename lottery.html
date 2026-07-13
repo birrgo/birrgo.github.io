@@ -724,7 +724,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
-                window.location.href = "login.html";
+                window.location.href = "new2.html";
                 return;
             }
             
@@ -806,7 +806,7 @@
                 
                 displayAppModal('lock', 'Logout', 'Are you sure you want to end your session?', () => {
                     localStorage.removeItem('auth_session_phone');
-                    window.location.href = "login.html";
+                    window.location.href = "new2.html";
                 });
             });
         }
