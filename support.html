@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Contact Support | BirrGo - Empowering Digital Africa</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #8b0015;
+            --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
+            --text-dark: #111827; 
+            --text-muted: #4b5563; 
+            --bg-light: #f8f9fa;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            --btn-shadow: 0 10px 20px rgba(139, 0, 21, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html, body {
+            background-color: var(--bg-light); 
+            width: 100%;
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Responsive Background Waves */
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .bg-wave-top {
+            top: 0;
+            height: 160px;
+        }
+
+        /* Main Viewport Wrapper - Adjusted top padding to match other pages */
+        .app-view {
+            width: 100%;
+            padding: calc(12px + env(safe-area-inset-top)) 24px 60px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Top Header Navigation Area */
+        .header-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .header-back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            text-decoration: none;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: transform 0.1s ease, background 0.2s ease;
+        }
+
+        .header-back-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Top Header Area */
+        .header-top-area {
+            text-align: center;
+            margin-bottom: 32px;
+            color: #ffffff;
+        }
+
+        .header-top-area h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        .header-top-area p {
+            font-size: 15px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* Two Column Layout for Large Screens, shifts to Single Column for Mobile */
+        .support-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto 28px auto;
+            width: 100%;
+        }
+
+        @media (max-width: 850px) {
+            .support-layout {
+                grid-template-columns: 1fr;
+            }
+            .header-top-area h1 {
+                font-size: 26px;
+            }
+        }
+
+        /* Content Blocks */
+        .content-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0,0,0,0.01);
+            height: fit-content;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        h2 span {
+            color: var(--primary-burgundy);
+        }
+
+        .subtitle-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        /* Channel Contact Links Row */
+        .contact-channels {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .channel-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #fdfafb;
+            border: 1px solid rgba(139, 0, 21, 0.05);
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .channel-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 0, 21, 0.05);
+        }
+
+        .channel-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--primary-burgundy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            flex-shrink: 0;
+        }
+
+        .channel-info h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .channel-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Interactive FAQ Accordion Styles */
+        .faq-wrapper {
+            margin-top: 16px;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 14.5px;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            margin-top: 10px;
+            transition: max-height 0.3s cubic-bezier(1, 0, 1, 0);
+        }
+
+        .faq-toggle-icon {
+            transition: transform 0.2s ease;
+        }
+
+        .faq-item.active .faq-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Professional Contact Ticket Form Controls */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-burgundy);
+            background: #ffffff;
+        }
+
+        textarea.form-control {
+            resize: none;
+            height: 110px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            height: 48px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--btn-shadow);
+            transition: transform 0.1s ease;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Back Button Alignment Component */
+        .action-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .back-btn {
+            width: 100%;
+            max-width: 320px;
+            height: 54px; 
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            background: #ffffff;
+            color: var(--text-dark);
+            border: 1px solid #e5e7eb; 
+            box-shadow: var(--card-shadow);
+        }
+
+        .back-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Flat Top Responsive Background Wave -->
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V75C250 95 125 95 0 75V0Z" fill="url(#paint0_linear)"/>
+        <defs>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="100" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9A0019"/>
+                <stop offset="1" stop-color="#700010"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div class="app-view">
+        
+        <!-- Top Header Navigation -->
+        <div class="header-navigation">
+            <a href="index.html" class="header-back-btn" aria-label="Go back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="header-top-area">
+            <h1>Contact Support</h1>
+            <p>We're here to help you secure and manage your digital experience</p>
+        </div>
+
+        <!-- Support Dynamic Multi-Card Panel Grid -->
+        <div class="support-layout">
+            
+            <!-- Left Grid Pane: Direct Contract Links and Help Guides -->
+            <div>
+                <div class="content-card" style="margin-bottom: 24px; width: 100%;">
+                    <h2>Official <span>Channels</span></h2>
+                    <p class="subtitle-desc">Reach out directly to our verification and operations management specialists across our verified social dashboards.</p>
+                    
+                    <div class="contact-channels">
+                        <!-- Email Link Frame -->
+                        <a href="mailto:birrgo@gmail.com" class="channel-item">
+                            <div class="channel-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </div>
+                            <div class="channel-info">
+                                <h4>Email Support</h4>
+                                <p>birrgo@gmail.com</p>
+                            </div>
+                        </a>
+
+                        <!-- Telegram Channel Frame -->
+                        <a href="https://t.me/birrgo_online" target="_blank" class="channel-item">
+                            <div class="channel-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </div>
+                            <div class="channel-info">
+                                <h4>Telegram Portal</h4>
+                                <p>@birrgo.online</p>
+                            </div>
+                        </a>
+
+                        <!-- Instagram Profile Frame -->
+                        <a href="https://instagram.com/birrgo.oline" target="_blank" class="channel-item">
+                            <div class="channel-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                </svg>
+                            </div>
+                            <div class="channel-info">
+                                <h4>Instagram Feed</h4>
+                                <p>@birrgo.oline</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Self Service FAQ Section -->
+                <div class="content-card" style="width: 100%;">
+                    <h2>Frequently Asked <span>Questions</span></h2>
+                    <div class="faq-wrapper">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>How do I install the BirrGo App?</span>
+                                <svg class="faq-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+                            <div class="faq-answer"> Tap the "Download" button on our home page banner to install the standalone application configuration smoothly onto your home screen display framework natively.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Are transaction configurations secure?</span>
+                                <svg class="faq-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+                            <div class="faq-answer">Yes, we process all interactions with bank-level encryptions to protect your wallet keys and assets against malicious vulnerabilities.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Grid Pane: Support Assistance Ticket Form Content Box -->
+            <div class="content-card">
+                <h2>Open a <span>Support Ticket</span></h2>
+                <p class="subtitle-desc">Can't log into your dashboard? Drop your specific issue detail profile below, and a specialist will respond via email shortly.</p>
+                
+                <form id="supportTicketForm" onsubmit="event.preventDefault(); alert('Thank you! Your ticket context has been received.');">
+                    <div class="form-group">
+                        <label for="userName">Full Name</label>
+                        <input type="text" id="userName" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userEmail">Email Address</label>
+                        <input type="email" id="userEmail" class="form-control" placeholder="name@domain.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ticketSubject">What can we help you with?</label>
+                        <input type="text" id="ticketSubject" class="form-control" placeholder="e.g., Application access issue, verification help" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userMessage">Message Body</label>
+                        <textarea id="userMessage" class="form-control" placeholder="Provide detailed insight regarding your profile issue request context..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Ticket Request</button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Footer Back Navigation Component -->
+        <div class="action-container">
+            <a href="index.html" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Return to Homepage</span>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Script to handle interactive FAQ open/close animations seamlessly -->
+    <script>
+        document.querySelectorAll('.faq-question').forEach(item => {
+            item.addEventListener('click', () => {
+                const parent = item.parentElement;
+                parent.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>

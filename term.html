@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Terms of Service | BirrGo - Empowering Digital Africa</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #8b0015;
+            --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
+            --text-dark: #111827; 
+            --text-muted: #4b5563; 
+            --bg-light: #f8f9fa;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html, body {
+            background-color: var(--bg-light); 
+            width: 100%;
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Decorative Responsive Background Waves */
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .bg-wave-top {
+            top: 0;
+            height: 160px;
+        }
+
+        /* Main Viewport Wrapper - Adjusted top padding to pull elements upward */
+        .app-view {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: calc(12px + env(safe-area-inset-top)) 24px 60px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Top Header Navigation Area - Reduced margin to shift title up */
+        .header-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .header-back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            text-decoration: none;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: transform 0.1s ease, background 0.2s ease;
+        }
+
+        .header-back-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Top Header Area */
+        .header-top-area {
+            text-align: center;
+            margin-bottom: 32px;
+            color: #ffffff;
+        }
+
+        .header-top-area h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .header-top-area p {
+            font-size: 15px;
+            opacity: 0.95;
+            font-weight: 400;
+            color: #ffffff;
+        }
+
+        /* Terms Layout Box */
+        .content-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0,0,0,0.01);
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 640px) {
+            .content-card {
+                padding: 24px;
+            }
+            .header-top-area h1 {
+                font-size: 26px;
+            }
+        }
+
+        .meta-date {
+            font-size: 13px;
+            color: var(--primary-burgundy);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 28px;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h2 span {
+            color: var(--primary-burgundy);
+        }
+
+        p {
+            font-size: 14.5px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+            font-size: 14.5px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        /* Back Action Button Placement Framework */
+        .action-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .back-btn {
+            width: 100%;
+            max-width: 320px;
+            height: 54px; 
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            background: #ffffff;
+            color: var(--text-dark);
+            border: 1px solid #e5e7eb; 
+            box-shadow: var(--card-shadow);
+        }
+
+        .back-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Flat Top Responsive Background Wave -->
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V75C250 95 125 95 0 75V0Z" fill="url(#paint0_linear)"/>
+        <defs>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="100" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9A0019"/>
+                <stop offset="1" stop-color="#700010"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div class="app-view">
+        
+        <!-- Header Navigation -->
+        <div class="header-navigation">
+            <a href="index.html" class="header-back-btn" aria-label="Go back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="header-top-area">
+            <h1>Terms of Service</h1>
+            <p>Please review our operating agreements and guidelines</p>
+        </div>
+
+        <!-- Main Agreements Content Card -->
+        <div class="content-card">
+            <span class="meta-date">Last Updated: July 2026</span>
+            
+            <p>Welcome to <strong>BirrGo</strong>. By accessing our platform, website hosting frameworks, or using our digital verification services, you agree to comply with and be bound cleanly by the following legal terms of service. Please review them carefully.</p>
+
+            <h2>1. <span>Acceptance of Terms</span></h2>
+            <p>By interacting with the digital services provided on our interface ecosystems, you affirm that you possess the local legal capacity to enter into binding contract frameworks. If you do not agree to any portion of these updates, please discontinue utilization immediately.</p>
+
+            <h2>2. <span>Permitted Use & Conduct</span></h2>
+            <p>Users are expected to leverage our educational platforms and tools responsibly. You strictly agree not to:</p>
+            <ul>
+                <li>Engage in malicious automated scraping or target vulnerabilities within the UI network layout.</li>
+                <li>Impersonate BirrGo operational support agents on official social pipelines.</li>
+                <li>Deploy malicious scripts that compromise system processing speeds or server health profiles.</li>
+            </ul>
+
+            <h2>3. <span>Intellectual Property</span></h2>
+            <p>All brand content, structural SVG source vector code, modern layout implementations, configurations, assets, and copywriting on this platform remain the exclusive digital property of <strong>BirrGo</strong>. Unauthorized distribution or commercial copy re-hosting is strictly prohibited.</p>
+
+            <h2>4. <span>Limitation of Liability</span></h2>
+            <p>Our tools and content focus heavily on local digital transformation and open technical inclusion. BirrGo provides services on an "as-is" blueprint without implicit guarantees. We hold zero liability for unexpected data profile synchronization errors or edge-case software outages.</p>
+
+            <h2>5. <span>Modifications to Layout and Rules</span></h2>
+            <p>We reserve full administrative rights to adjust interface design configurations, text rules, or verification pathways organically to fit ongoing continental compliance updates. Continued interaction post-update implies explicit acceptance.</p>
+        </div>
+
+        <!-- Back Button Alignment -->
+        <div class="action-container">
+            <a href="index.html" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Return to Homepage</span>
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>

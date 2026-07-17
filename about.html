@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>About Us | BirrGo - Empowering Digital Africa</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #8b0015;
+            --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
+            --text-dark: #111827; 
+            --text-muted: #4b5563; 
+            --bg-light: #f8f9fa;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html, body {
+            background-color: var(--bg-light); 
+            width: 100%;
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Decorative Background Waves - Scales organically horizontally */
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .bg-wave-top {
+            top: 0;
+            height: 160px;
+        }
+
+        /* Main Viewport Wrapper - Adjusted top padding to pull title upwards */
+        .app-view {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: calc(12px + env(safe-area-inset-top)) 24px 60px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Top Header Navigation Area - Tightened margin to shift title up */
+        .header-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .header-back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            text-decoration: none;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: transform 0.1s ease, background 0.2s ease;
+        }
+
+        .header-back-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Top Header Title Area */
+        .header-top-area {
+            text-align: center;
+            margin-bottom: 32px;
+            color: #ffffff;
+        }
+
+        .header-top-area h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .header-top-area p {
+            font-size: 15px;
+            opacity: 0.95;
+            font-weight: 400;
+            color: #ffffff;
+        }
+
+        /* Content Area Container */
+        .content-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0,0,0,0.01);
+            margin-bottom: 28px;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 32px;
+            margin-bottom: 14px;
+            letter-spacing: -0.02em;
+        }
+        
+        h2:first-of-type {
+            margin-top: 0;
+        }
+
+        h2 span {
+            color: var(--primary-burgundy);
+        }
+
+        p {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        p strong {
+            color: var(--primary-burgundy);
+            font-weight: 600;
+        }
+
+        /* Fluid Grid Layout for Focus Areas */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+            margin-bottom: 24px;
+        }
+
+        /* Dynamic break to single column for tight viewport layouts */
+        @media (max-width: 640px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .content-card {
+                padding: 24px;
+            }
+            .header-top-area h1 {
+                font-size: 26px;
+            }
+        }
+
+        .focus-card {
+            background: #fdfafb; 
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 4px solid var(--primary-burgundy);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
+        }
+
+        .focus-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .focus-card p {
+            font-size: 13.5px;
+            margin-bottom: 0;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        /* Back Action Button Layout Wrapper */
+        .action-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .back-btn {
+            width: 100%;
+            max-width: 320px;
+            height: 54px; 
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            background: #ffffff;
+            color: var(--text-dark);
+            border: 1px solid #e5e7eb; 
+            box-shadow: var(--card-shadow);
+        }
+
+        .back-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Flat Top Responsive Background Wave -->
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V75C250 95 125 95 0 75V0Z" fill="url(#paint0_linear)"/>
+        <defs>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="100" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9A0019"/>
+                <stop offset="1" stop-color="#700010"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div class="app-view">
+        
+        <!-- Header Navigation -->
+        <div class="header-navigation">
+            <a href="index.html" class="header-back-btn" aria-label="Go back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Header Section -->
+        <div class="header-top-area">
+            <h1>About BirrGo</h1>
+            <p>Bridging the Digital Divide across Africa</p>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-card">
+            <h2>Our <span>Vision</span></h2>
+            <p>At <strong>BirrGo</strong>, we believe that the future of Africa is completely digital. Our mission is to accelerate growth in Ethiopia and the wider African continent by introducing, educating, and interacting with people to welcome them into the new digital world. We are dedicated to building local digital capacity, expanding knowledge, and unlocking economic potential through technology.</p>
+
+            <h2>What We <span>Focus On</span></h2>
+            <div class="grid">
+                <div class="focus-card">
+                    <h3>Digital Education</h3>
+                    <p>Teaching community members, students, and businesses how to effectively navigate digital tools, platforms, and online opportunities.</p>
+                </div>
+                <div class="focus-card">
+                    <h3>Local Innovation</h3>
+                    <p>Building tailored, scalable solutions that solve real-world problems facing Ethiopia and African societies today.</p>
+                </div>
+                <div class="focus-card">
+                    <h3>Global Connection</h3>
+                    <p>Helping African talent and local businesses interface seamlessly with the international digital economy.</p>
+                </div>
+                <div class="focus-card">
+                    <h3>Tech Inclusion</h3>
+                    <p>Ensuring that technology is accessible, understandable, and useful to everyone, regardless of their background.</p>
+                </div>
+            </div>
+
+            <h2>Why This <span>Matters</span></h2>
+            <p>As the digital landscape evolves globally, Africa stands at a powerful turning point. By empowering individuals with tech literacy and modern digital skills, we aren't just teaching code or tools—we are building the infrastructure for a stronger, self-sustaining economic future.</p>
+        </div>
+
+        <!-- Call to Action Back Button Alignment -->
+        <div class="action-container">
+            <a href="index.html" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>Return to Homepage</span>
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>
