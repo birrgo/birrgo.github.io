@@ -111,7 +111,7 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             padding: 6px 12px;
-            display: flex;
+            display: flex; /* Always display flex to show the banner */
             align-items: center;
             justify-content: space-between;
             backdrop-filter: blur(5px);
@@ -426,124 +426,6 @@
             font-weight: 700;
         }
 
-        /* Installation Guide Modal Overlay */
-        .modal-overlay {
-            position: fixed; 
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-card {
-            background: #ffffff;
-            width: 100%;
-            max-width: 380px;
-            border-radius: 24px;
-            padding: 24px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            transform: scale(0.9);
-            transition: transform 0.25s ease;
-        }
-
-        .modal-overlay.active .modal-card {
-            transform: scale(1);
-        }
-
-        .modal-icon {
-            width: 56px;
-            height: 56px;
-            background: #e8f0fe;
-            color: #1976d2;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px auto;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
-
-        .modal-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-
-        .step-list {
-            text-align: left;
-            background: var(--bg-light);
-            padding: 14px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .step-item {
-            font-size: 12px;
-            color: var(--text-dark);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .step-item:last-child { margin-bottom: 0; }
-
-        .step-num {
-            background: var(--primary-burgundy);
-            color: #ffffff;
-            font-size: 10px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        .modal-close-btn {
-            width: 100%;
-            height: 48px;
-            background: var(--primary-gradient);
-            color: #ffffff;
-            border: none;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: var(--btn-shadow);
-            transition: all 0.2s ease;
-        }
-
-        .modal-close-btn:active {
-            transform: scale(0.98);
-        }
-
         /* Smart Responsiveness for Short Mobile Viewports */
         @media (max-height: 660px) {
             .logo-image { width: 110px; } 
@@ -583,7 +465,8 @@
         
         <!-- Header -->
         <div class="header-top-area">
-            <div class="download-banner" id="apkDownloadBanner">
+            <!-- Custom PWA Download Banner (Visible by default) -->
+            <div class="download-banner" id="pwaInstallBanner">
                 <div class="download-info">
                     <div class="apk-icon-box">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -593,11 +476,11 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="download-text-main">Get the BirrGo App</div>
-                        <div class="download-text-sub">Fast, secure Android APK</div>
+                        <div class="download-text-main">Install the BirrGo App</div>
+                        <div class="download-text-sub">Fast, secure Web App</div>
                     </div>
                 </div>
-                <button id="dlBtnAction" class="download-action-btn">Download</button>
+                <button id="pwaInstallBtn" class="download-action-btn">Download</button>
             </div>
 
             <div class="brand-section">
@@ -661,7 +544,7 @@
                 </div>
             </div>
 
-            <!-- Call To Actions (Interchanged: Log In first/primary, Create Account second/secondary) -->
+            <!-- Call To Actions -->
             <div class="action-area">
                 <a href="new2.html" class="btn btn-primary">
                     <div class="btn-left">
@@ -693,7 +576,7 @@
             </div>
         </div>
 
-        <!-- Footer Area (Resting securely on the bottom red curve) -->
+        <!-- Footer Area -->
         <div class="footer-area">
             <div class="footer-links">
                 <div class="footer-icon">
@@ -713,37 +596,6 @@
 
     </div>
 
-    <!-- Modal Popup Box -->
-    <div class="modal-overlay" id="installGuideModal">
-        <div class="modal-card">
-            <div class="modal-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                    <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                </svg>
-            </div>
-            <div class="modal-title">Install BirrGo Wallet</div>
-            <div class="modal-desc">Follow these final steps to complete the installation setup on your device:</div>
-            
-            <div class="step-list">
-                <div class="step-item">
-                    <div class="step-num">1</div>
-                    <span>Your download window will activate immediately after clicking below.</span>
-                </div>
-                <div class="step-item">
-                    <div class="step-num">2</div>
-                    <span>Tap on the downloaded <b>birrgo.apk</b> file inside your browser framework.</span>
-                </div>
-                <div class="step-item">
-                    <div class="step-num">3</div>
-                    <span>Click <b>Install</b> (Allow file from this source if requested).</span>
-                </div>
-            </div>
-            
-            <button class="modal-close-btn" id="closeModalBtn">Got it</button>
-        </div>
-    </div>
-
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem('birrgo_last_page', 'index.html');
@@ -758,21 +610,39 @@
                 }
             }
 
-            const dlBtn = document.getElementById('dlBtnAction');
-            const modal = document.getElementById('installGuideModal');
-            const closeBtn = document.getElementById('closeModalBtn');
+            // PWA Custom Banner Script Logic
+            let deferredPrompt;
+            const pwaBanner = document.getElementById('pwaInstallBanner');
+            const pwaBtn = document.getElementById('pwaInstallBtn');
 
-            if (dlBtn && modal && closeBtn) {
-                dlBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    modal.classList.add('active');
-                });
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Prevent standard automated mini-infobar dialog popups
+                e.preventDefault();
+                // Store event to fire later
+                deferredPrompt = e;
+            });
 
-                closeBtn.addEventListener('click', () => {
-                    modal.classList.remove('active');
-                    window.location.href = "https://github.com/birrgo/birrgo1.github.io/releases/latest/download/birrgo.apk";
+            if (pwaBtn) {
+                pwaBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        // Launch native browser prompt selection
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log(`PWA User Choice Response: ${outcome}`);
+                        // Clear parameters
+                        deferredPrompt = null;
+                        pwaBanner.style.display = 'none';
+                    } else {
+                        // Fallback help instructions if prompt event is not fired yet or app is already setup
+                        alert("To download this Web App, click your mobile browser settings menu (the three vertical dots ⋮ next to URL bar) and select 'Add to Home screen' or 'Install app'.");
+                    }
                 });
             }
+
+            window.addEventListener('appinstalled', () => {
+                console.log('BirrGo App successfully mounted via custom prompt.');
+                pwaBanner.style.display = 'none';
+            });
         });
 
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
