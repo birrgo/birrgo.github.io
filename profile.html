@@ -95,7 +95,7 @@
             margin-bottom: 24px;
         }
 
-        .back-btn {
+        .back-btn, .notification-ring-btn {
             background: #ffffff;
             border: 1px solid var(--border-light);
             border-radius: 50%;
@@ -107,9 +107,23 @@
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             transition: transform 0.2s;
+            position: relative;
         }
-        .back-btn:active {
+        .back-btn:active, .notification-ring-btn:active {
             transform: scale(0.9);
+        }
+
+        /* Badge dot over the ring bell icon if disabled */
+        .notification-ring-btn.disabled-badge::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 11px;
+            width: 7px;
+            height: 7px;
+            background-color: var(--error-red);
+            border-radius: 50%;
+            border: 1px solid #ffffff;
         }
 
         .profile-title {
@@ -427,7 +441,7 @@
 </head>
 <body>
 
-    <!-- Toast Notification Overlay Component -->
+    <!-- Original Toast Notification Overlay Component Kept Unchanged -->
     <div class="toast-container" id="toastBox">
         <div class="toast-icon" id="toastIconBlock"></div>
         <div class="toast-content">
@@ -460,7 +474,14 @@
                     </svg>
                 </div>
                 <h2 class="profile-title">Profile Hub</h2>
-                <div style="width: 40px;"></div>
+                
+                <!-- Added Dynamic Notification Ring Button -->
+                <div class="notification-ring-btn" id="notificationRingBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                </div>
             </div>
 
             <div class="profile-avatar-section">
@@ -534,6 +555,16 @@
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" id="biometricsToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="profile-info-row">
+                    <div class="info-col">
+                        <span class="profile-info-label">App Notifications</span>
+                        <span class="profile-info-val" id="notificationsStatusText">Enable PWA push alerts</span>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notificationsToggle">
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -627,6 +658,10 @@
         const biometricsToggle = document.getElementById('biometricsToggle');
         const biometricsStatusText = document.getElementById('biometricsStatusText');
         
+        const notificationsToggle = document.getElementById('notificationsToggle');
+        const notificationsStatusText = document.getElementById('notificationsStatusText');
+        const notificationRingBtn = document.getElementById('notificationRingBtn');
+
         const verifyPopup = document.getElementById('verifyPopup');
         const verifyCloseBtn = document.getElementById('verifyCloseBtn');
         const verifyPasswordInput = document.getElementById('verifyPasswordInput');
@@ -676,6 +711,29 @@
             return `+251 ${clean}`; 
         }
 
+        // Shared function to run notification request permission
+        async function triggerNotificationPrompt() {
+            if (!('Notification' in window)) {
+                showToast("Not Supported", "This browser environment doesn't support notifications.", "error");
+                return;
+            }
+
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                localStorage.setItem('pwa_notifications_enabled', 'true');
+                notificationsToggle.checked = true;
+                notificationsStatusText.innerText = "Notifications Enabled";
+                notificationRingBtn.classList.remove('disabled-badge');
+                showToast("Permission Granted", "Push notifications are now active.", "success");
+            } else {
+                localStorage.setItem('pwa_notifications_enabled', 'false');
+                notificationsToggle.checked = false;
+                notificationsStatusText.innerText = "Notifications Disabled";
+                notificationRingBtn.classList.add('disabled-badge');
+                showToast("Permission Denied", "Notification permission was blocked.", "error");
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
@@ -685,20 +743,50 @@
 
             profilePhoneText.innerText = formatEthiopianPhone(activeUserPhone);
 
+            // Load Biometrics State
             const bioSettings = localStorage.getItem('biometrics_enabled');
-            const isEnabled = bioSettings === 'true';
-            biometricsToggle.checked = isEnabled;
-            originalToggleState = isEnabled;
-            biometricsStatusText.innerText = isEnabled ? "Biometrics Active" : "Use fingerprint scanner";
+            const isBioEnabled = bioSettings === 'true';
+            biometricsToggle.checked = isBioEnabled;
+            originalToggleState = isBioEnabled;
+            biometricsStatusText.innerText = isBioEnabled ? "Biometrics Active" : "Use fingerprint scanner";
+
+            // Load Notifications State
+            const pushSettings = localStorage.getItem('pwa_notifications_enabled');
+            if (pushSettings === 'true' && Notification.permission === 'granted') {
+                notificationsToggle.checked = true;
+                notificationsStatusText.innerText = "Notifications Enabled";
+                notificationRingBtn.classList.remove('disabled-badge');
+            } else {
+                notificationsToggle.checked = false;
+                notificationsStatusText.innerText = "Notifications Disabled";
+                notificationRingBtn.classList.add('disabled-badge');
+                localStorage.setItem('pwa_notifications_enabled', 'false');
+            }
 
             streamAccountData();
         });
 
-        // Fixed Toggle Interception
+        // Trigger permission setup via clicking the Top Header Ring button icon
+        notificationRingBtn.addEventListener('click', () => {
+            triggerNotificationPrompt();
+        });
+
+        // Trigger permission setup via clicking the settings list toggle switch row
+        notificationsToggle.addEventListener('change', () => {
+            if (notificationsToggle.checked) {
+                triggerNotificationPrompt();
+            } else {
+                localStorage.setItem('pwa_notifications_enabled', 'false');
+                notificationsStatusText.innerText = "Notifications Disabled";
+                notificationRingBtn.classList.add('disabled-badge');
+                showToast("Alerts Silenced", "Push alerts have been disabled.", "success");
+            }
+        });
+
+        // Fixed Toggle Interception for Biometrics
         biometricsToggle.addEventListener('click', (e) => {
             e.preventDefault(); 
             
-            // Read what the state *was* before the user tapped it
             originalToggleState = localStorage.getItem('biometrics_enabled') === 'true';
             intendedToggleState = !originalToggleState; 
             
@@ -731,7 +819,6 @@
                         biometricPopup.style.display = 'flex';
                         biometricPopup.classList.add('show-modal');
 
-                        // Wait for iframe window parsing context to securely lock in sync channel data
                         biometricIframe.onload = () => {
                             if (biometricIframe.contentWindow) {
                                 biometricIframe.contentWindow.postMessage({
