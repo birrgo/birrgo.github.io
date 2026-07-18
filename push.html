@@ -82,7 +82,8 @@
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
   
-  const configRef = ref(database, 'onesignal');
+  // FIX: Configured path to match backend's lookup path perfectly
+  const configRef = ref(database, 'config/onesignal');
 
   let secureAppId = "";
   let secureRestKey = "";
@@ -182,15 +183,13 @@
       statusDiv.innerText = 'Broadcasting message via backend server...';
 
       try {
-          // FIX 1: Corrected the endpoint route to match what you stated earlier (/api/broadcast)
-          const response = await fetch("https://birrgo-otp-backend.onrender.com/api/broadcast", {
+          // FIX: Targeting the deployed Render URL and correct endpoint
+          const response = await fetch("https://birrgo-otp-backend.onrender.com/send-push", {
               method: "POST",
               headers: {
                   "Content-Type": "application/json; charset=utf-8"
               },
               body: JSON.stringify({
-                  appId: secureAppId,
-                  restKey: secureRestKey,
                   title: title,
                   message: message
               })
@@ -202,7 +201,6 @@
               document.getElementById('title').value = '';
               document.getElementById('message').value = '';
           } else {
-              // FIX 2: Prevent a crash if the backend returns an HTML error page (like a 404)
               let errorMsg = 'Failed to dispatch notification.';
               try {
                   const errData = await response.json();
@@ -214,7 +212,6 @@
               statusDiv.innerText = 'Backend Error: ' + errorMsg;
           }
       } catch (error) {
-          // FIX 3: Log the actual error to the console and display it
           console.error("🔥 THE TRUE ERROR IS:", error);
           statusDiv.style.color = 'red';
           statusDiv.innerText = 'Network error: ' + error.message + '. (Check browser console)';
