@@ -59,8 +59,12 @@
         .apk-icon-box svg { width: 14px; height: 14px; }
         .download-text-main { font-size: 11.5px; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; }
         .download-text-sub { font-size: 9px; color: rgba(255, 255, 255, 0.85); margin-top: 1px; }
-        .download-action-btn { background: #ffffff; color: var(--primary-burgundy); text-decoration: none; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 6px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); cursor: pointer; border: none; }
+        
+        .download-action-btn { background: #ffffff; color: var(--primary-burgundy); text-decoration: none; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 6px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); cursor: pointer; border: none; transition: all 0.2s ease; }
         .download-action-btn:active { transform: scale(0.95); }
+        
+        /* Disabled Installed Button Style */
+        .download-action-btn:disabled { background: rgba(255, 255, 255, 0.35) !important; color: rgba(255, 255, 255, 0.85) !important; cursor: default !important; transform: none !important; box-shadow: none !important; }
         
         .brand-section { display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 20px; gap: 16px; }
         .logo-image { width: 140px; height: auto; object-fit: contain; }
@@ -126,7 +130,7 @@
         <path d="M0 40C125 28 250 28 375 40V100H0V40Z" fill="#9A0019"/>
     </svg>
 
-    <!-- Custom Popup Modal (Maintained strictly for uninstalled dynamic guidance contexts) -->
+    <!-- Custom Popup Modal -->
     <div id="alreadyInstalledModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: flex-end; justify-content: center;">
         <div style="background: #ffffff; width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 28px 24px 24px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); animation: slideUp 0.3s cubic-bezier(0.1, 0.8, 0.3, 1); box-sizing: border-box; text-align: center;">
             <div id="modalIconWrapper" style="width: 64px; height: 64px; background: #e8f5e9; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
@@ -236,59 +240,72 @@
             const modalIconSvg = document.getElementById('modalIconSvg');
             const modalIconWrapper = document.getElementById('modalIconWrapper');
 
-            // Check if the app is currently running as an installed standalone PWA
+            // Helper function to safely change button status to Installed & Disabled
+            const setBtnAsInstalled = () => {
+                if (pwaBtn) {
+                    pwaBtn.innerText = "Installed";
+                    pwaBtn.disabled = true;
+                }
+            };
+
+            // 1. Check if the app is currently running as an installed standalone PWA
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             if (isStandalone) {
                 localStorage.setItem('birrgo_app_installed', 'true');
+                setBtnAsInstalled();
             }
 
-            // Android fires this when the app is ready to install but NOT installed yet
+            // Also check if local storage remembers it as installed to switch button text early on browser visits
+            if (localStorage.getItem('birrgo_app_installed') === 'true') {
+                setBtnAsInstalled();
+            }
+
+            // 2. Android specifically fires this when the app is ready to install but NOT installed yet
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
-                localStorage.removeItem('birrgo_app_installed'); 
+                localStorage.removeItem('birrgo_app_installed'); // Ensure it resets if prompt is available
+                if (pwaBtn) {
+                    pwaBtn.innerText = "Download";
+                    pwaBtn.disabled = false;
+                }
             });
 
             if (pwaBtn) {
                 pwaBtn.addEventListener('click', async () => {
-                    const isAlreadyInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || localStorage.getItem('birrgo_app_installed') === 'true';
+                    // Safety check, although disabled property handles this
+                    if (pwaBtn.disabled) return;
+
+                    // Check if user is on iOS (iPhone/iPad)
                     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-                    // SCENARIO 1: Truly Already Installed -> Redirect to the app experience immediately
-                    if (isAlreadyInstalled) {
-                        window.location.href = "new2.html"; 
-                        return;
-                    }
-                    
-                    // SCENARIO 2: Android Ready to Install -> Trigger Native Install Prompt
                     if (deferredPrompt) {
+                        // SCENARIO 1: Android Ready to Install -> Trigger Native Google Prompt
                         deferredPrompt.prompt();
                         const { outcome } = await deferredPrompt.userChoice;
                         if (outcome === 'accepted') {
                             localStorage.setItem('birrgo_app_installed', 'true');
-                            // Instantly forward them once installation is approved
-                            window.location.href = "new2.html";
+                            setBtnAsInstalled();
                         }
                         deferredPrompt = null;
-                        return;
-                    }
-
-                    // SCENARIO 3: iOS User -> Show manual installation guide modal
-                    if (isIOS) {
+                    
+                    } else if (isIOS) {
+                        // SCENARIO 2: iOS User -> Show specific Apple instructions
                         modalIconWrapper.style.background = "#e3f2fd";
                         modalIconSvg.setAttribute('stroke', '#1976d2');
                         modalIconSvg.innerHTML = `<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line>`;
                         modalTitleText.innerText = "Install on iOS";
                         modalDescText.innerText = "To install BirrGo on your iPhone or iPad, tap the 'Share' icon at the bottom of Safari, then scroll down and select 'Add to Home Screen'.";
-                        if (installedModal) installedModal.style.display = 'flex';
+                        installedModal.style.display = 'flex';
+                    
                     } else {
-                        // SCENARIO 4: Fallback instructions for unsupported/unprompted devices
+                        // SCENARIO 3: Fallback for uninstalled Android without prompt
                         modalIconWrapper.style.background = "#fff3e0";
                         modalIconSvg.setAttribute('stroke', '#f57c00');
                         modalIconSvg.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>`;
                         modalTitleText.innerText = "Install App";
                         modalDescText.innerText = "To install BirrGo, tap your browser's menu icon (⋮) and select 'Add to Home screen' or 'Install App'.";
-                        if (installedModal) installedModal.style.display = 'flex';
+                        installedModal.style.display = 'flex';
                     }
                 });
             }
@@ -300,11 +317,11 @@
                 });
             }
 
+            // Fires automatically in background when installation completes
             window.addEventListener('appinstalled', () => {
                 localStorage.setItem('birrgo_app_installed', 'true');
+                setBtnAsInstalled();
                 deferredPrompt = null;
-                // Immediate redirect if the installation finishes seamlessly
-                window.location.href = "new2.html";
             });
         });
 
