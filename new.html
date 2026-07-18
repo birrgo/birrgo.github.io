@@ -15,20 +15,23 @@
     </style>
 
     <script>
-        // --- SECURE AUTHENTICATION GUARD ---
-        // Instantly check if the secure token exists in localStorage or sessionStorage
+        // --- SECURE AUTHENTICATION GUARD (TEMPORARILY BYPASSED) ---
         const sessionToken = localStorage.getItem('birrgo_admin_session') || sessionStorage.getItem('birrgo_admin_session');
         
+        // I have commented out the redirect logic so the page will load regardless of your login status
+        /*
         if (sessionToken !== "active_secure_admin") {
-            // Kick them out immediately to the login screen
             window.location.replace("new1.html");
         } else {
-            // Authorized! Allow the body elements to render once DOM is ready
-            document.documentElement.style.visibility = "visible";
-            document.addEventListener("DOMContentLoaded", () => {
-                document.body.style.display = "block";
-            });
-        }
+        */
+            
+        // Authorized! Allow the body elements to render once DOM is ready
+        document.documentElement.style.visibility = "visible";
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.style.display = "block";
+        });
+            
+        /* } */ // End of commented-out security block
     </script>
 </head>
 <body>
@@ -40,16 +43,16 @@
         </div>
 
         <div class="role-control-grid">
-            <!-- PAYMENT ADMIN ACTION LINK -->
+            <!-- PAYMENT ADMIN ACTION LINK (Updated to Brand Green) -->
             <a href="deposits.html" style="text-decoration: none;">
-                <button class="role-nav-btn" style="background: linear-gradient(135deg, #8b0015 0%, #3a0006 100%); color: white; width: 100%;">
+                <button class="role-nav-btn" style="background: linear-gradient(135deg, #059669 0%, #064e3b 100%); color: white; width: 100%;">
                     <span class="icon">💳</span> Payment Admin
                 </button>
             </a>
 
-            <!-- NEW PUSH NOTIFICATIONS GATEWAY -->
+            <!-- NEW PUSH NOTIFICATIONS GATEWAY (Updated to Dark Green) -->
             <a href="push.html" style="text-decoration: none;">
-                <button class="role-nav-btn" style="background: linear-gradient(135deg, #70000a 0%, #240003 100%); color: white; width: 100%;">
+                <button class="role-nav-btn" style="background: linear-gradient(135deg, #047857 0%, #022c22 100%); color: white; width: 100%;">
                     <span class="icon">🔔</span> Push Notification
                 </button>
             </a>
@@ -142,8 +145,9 @@
                 const balance = parseFloat(profile.walletBalance) || 0;
                 const displayCard = profile.cardNumber || phoneKey;
 
-                if (phoneKey.includes("000000") || displayCard.includes("000000")) {
-                    foundAdminBalance = balance;
+                // Simple check based on phone or card containing 000000
+                if (phoneKey.includes("000000") || (displayCard && displayCard.includes("000000"))) {
+                    foundAdminBalance += balance; // Changed to += to aggregate correctly if multiple exist
                 } else {
                     totalVaultLiabilities += balance;
                 }

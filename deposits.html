@@ -91,6 +91,7 @@
             <button class="tab-btn" onclick="switchTab('pane-deposits', this)">
                 Pending Reviews <span id="tab-badge-pending" class="nav-badge zero">0</span>
             </button>
+            <button class="tab-btn" onclick="switchTab('pane-history', this)">History</button>
             <button class="tab-btn" onclick="switchTab('pane-chats', this)">
                 Chat Services <span id="tab-badge-chats" class="nav-badge zero">0</span>
             </button>
@@ -242,7 +243,13 @@
             </div>
         </div>
 
-        <!-- Tab Panel 4: Chat Services -->
+        <!-- Tab Panel 4: History (Approved, Rejected, Cancelled) -->
+        <div id="pane-history" class="tab-panel">
+            <div class="scrollable-content" id="history-cards-container">
+            </div>
+        </div>
+
+        <!-- Tab Panel 5: Chat Services -->
         <div id="pane-chats" class="tab-panel">
             <div class="chat-mobile-wrapper">
                 <div class="chat-user-selector" id="chat-list-view"></div>
@@ -450,10 +457,11 @@
                 });
         };
 
-        // --- REAL-TIME TRANSACTION ENGINE (SPLIT INTO PENDING AND UNPAID) ---
+        // --- REAL-TIME TRANSACTION ENGINE (SPLIT INTO PENDING, UNPAID AND HISTORY) ---
         function listenToDeposits() {
-            const container = document.getElementById('tx-cards-container');
-            const unpaidContainer = document.getElementById('unpaid-cards-container');
+            const container = document.getElementById('tx-cards-container'); // Pending
+            const unpaidContainer = document.getElementById('unpaid-cards-container'); // Unpaid
+            const historyContainer = document.getElementById('history-cards-container'); // History
             
             const pendingMetric = document.getElementById('metric-pending');
             const approvedMetric = document.getElementById('metric-approved');
@@ -474,16 +482,13 @@
                 
                 container.innerHTML = '';
                 unpaidContainer.innerHTML = '';
+                historyContainer.innerHTML = '';
 
                 const keys = Object.keys(data).reverse();
 
-                if (keys.length === 0) {
-                    container.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No reviews found.</p>`;
-                    unpaidContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No open unpaid orders found.</p>`;
-                }
-
                 let totalUnpaidRendered = 0;
                 let totalPendingRendered = 0;
+                let totalHistoryRendered = 0;
 
                 keys.forEach((dbKey) => {
                     const dep = data[dbKey];
@@ -491,7 +496,7 @@
 
                     if (rawStatus === 'pending') pendingCount++;
                     if (rawStatus === 'unpaid') unpaidCount++;
-                    if (dep.status === 'Approved') approvedTotal += parseFloat(dep.amount || 0);
+                    if (rawStatus === 'approved') approvedTotal += parseFloat(dep.amount || 0);
 
                     // Auto-notification for freshly incoming pending review deposits
                     if (initialLoadComplete && !knownTxKeys.has(dbKey) && rawStatus === 'pending') {
@@ -522,36 +527,50 @@
                     card.className = 'mobile-tx-card';
                     card.id = `card-${dbKey}`;
                     
+                    // Categorize the order type
+                    const isUnpaidCard = rawStatus === 'unpaid';
+                    const isPendingCard = rawStatus === 'pending';
+                    const isHistoryCard = ['approved', 'rejected', 'cancelled'].includes(rawStatus);
+                    
                     let badgeStyle = '';
-                    if (rawStatus === 'pending') {
+                    if (isPendingCard) {
                         badgeStyle = 'background:#fef3c7; color:#d97706;';
-                    } else if (rawStatus === 'unpaid') {
+                    } else if (isUnpaidCard) {
                         badgeStyle = 'background:rgba(245, 158, 11, 0.15); color:#f59e0b;';
-                    } else if (dep.status === 'Approved') {
+                    } else if (rawStatus === 'approved') {
                         badgeStyle = 'background:#d1fae5; color:#059669;';
-                    } else {
+                    } else if (rawStatus === 'rejected') {
                         badgeStyle = 'background:#fee2e2; color:#dc2626;';
+                    } else if (rawStatus === 'cancelled') {
+                        badgeStyle = 'background:#f3f4f6; color:#4b5563;';
                     }
 
                     let reasonDisplay = dep.reject_reason ? `<div class="tx-row" style="color:#ef4444;"><span style="font-weight:600;">Reason:</span> <span>${dep.reject_reason}</span></div>` : '';
 
-                    // Layout changes for unpaid orders vs reviews with slips
-                    const isUnpaidCard = rawStatus === 'unpaid';
-                    const slipActionHtml = isUnpaidCard 
+                    // Layout changes for unpaid orders vs reviews with slips vs cancelled
+                    const slipActionHtml = (isUnpaidCard || rawStatus === 'cancelled')
                         ? `<button class="btn-action-mobile" style="background:#f3f4f6; color:#9ca3af; cursor: not-allowed;" disabled>No Receipt</button>`
                         : `<button class="btn-action-mobile" style="background:#f3f4f6; color:#111;" id="view-slip-${dbKey}">View Receipt</button>`;
 
-                    const actionPanelHtml = (rawStatus === 'pending' || rawStatus === 'unpaid') ? `
-                        <div class="tx-actions">
-                            ${slipActionHtml}
-                            <button class="btn-action-mobile" style="background:var(--success-color); color:white;" id="approve-${dbKey}">Approve</button>
-                            <button class="btn-action-mobile" style="background:var(--danger-color); color:white;" id="reject-${dbKey}">Reject</button>
-                        </div>
-                    ` : `
-                        <div class="tx-actions">
-                            ${slipActionHtml}
-                        </div>
-                    `;
+                    let actionPanelHtml = '';
+                    
+                    if (isPendingCard) {
+                        // Pending orders get Approve and Reject buttons
+                        actionPanelHtml = `
+                            <div class="tx-actions">
+                                ${slipActionHtml}
+                                <button class="btn-action-mobile" style="background:var(--success-color); color:white;" id="approve-${dbKey}">Approve</button>
+                                <button class="btn-action-mobile" style="background:var(--danger-color); color:white;" id="reject-${dbKey}">Reject</button>
+                            </div>
+                        `;
+                    } else {
+                        // Unpaid and History cards only show the view slip button (if it exists)
+                        actionPanelHtml = `
+                            <div class="tx-actions">
+                                ${slipActionHtml}
+                            </div>
+                        `;
+                    }
 
                     card.innerHTML = `
                         <div class="tx-header">
@@ -578,9 +597,12 @@
                     if (isUnpaidCard) {
                         unpaidContainer.appendChild(card);
                         totalUnpaidRendered++;
-                    } else {
+                    } else if (isPendingCard) {
                         container.appendChild(card);
                         totalPendingRendered++;
+                    } else {
+                        historyContainer.appendChild(card);
+                        totalHistoryRendered++;
                     }
 
                     if (dep.userId) {
@@ -593,11 +615,16 @@
                         }).catch(() => {});
                     }
 
-                    if (!isUnpaidCard) {
-                        document.getElementById(`view-slip-${dbKey}`).onclick = () => window.viewSlip(dep.receiptUrl, dep.ref);
+                    // Only bind view slip if the button isn't disabled
+                    if (!isUnpaidCard && rawStatus !== 'cancelled') {
+                        const viewBtn = document.getElementById(`view-slip-${dbKey}`);
+                        if (viewBtn) {
+                            viewBtn.onclick = () => window.viewSlip(dep.receiptUrl, dep.ref);
+                        }
                     }
                     
-                    if (rawStatus === 'pending' || rawStatus === 'unpaid') {
+                    // Bind actions for Pending only
+                    if (isPendingCard) {
                         document.getElementById(`approve-${dbKey}`).onclick = () => {
                             updateTransactionStatus(dbKey, 'Approved', '');
                             window.showToast("Transaction Approved Successfully!");
@@ -617,6 +644,9 @@
                 }
                 if (totalPendingRendered === 0) {
                     container.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No pending reviews active.</p>`;
+                }
+                if (totalHistoryRendered === 0) {
+                    historyContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No transaction history found.</p>`;
                 }
 
                 pendingMetric.innerText = pendingCount;
