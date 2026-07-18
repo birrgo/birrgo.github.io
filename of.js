@@ -5,28 +5,32 @@ const OFFLINE_URL = 'offline.html';
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            return cache.add(new Request(OFFLINE_URL, { cache: 'reload' }));
+            // Safely request and cache the offline file
+            return cache.add(new Request(OFFLINE_URL, { cache: 'reload' }))
+                .catch((err) => console.log("Offline asset caching failed: ", err));
         })
     );
+    // Force the waiting service worker to become the active service worker immediately
     self.skipWaiting();
 });
 
-// Force active service worker activation immediately
+// Force active service worker activation immediately across all open tabs
 self.addEventListener('activate', (event) => {
     event.waitUntil(self.clients.claim());
 });
 
 // Intercept network failures for ALL navigation requests
 self.addEventListener('fetch', (event) => {
+    // We only want to intercept main page transitions (html pages)
     if (event.request.mode === 'navigate') {
         event.respondWith(
             fetch(event.request).catch(() => {
-                // Serve the cached offline page layout directly when network is down
+                // If network fails, serve your beautiful custom layout directly from cache
                 return caches.match(OFFLINE_URL).then((cachedResponse) => {
                     if (cachedResponse) {
                         return cachedResponse;
                     }
-                    // Emergency plain-text fallback if cache fails
+                    // Emergency plain-text fallback if the cache somehow misses
                     return new Response('Connection lost. Please reconnect to continue.', {
                         headers: { 'Content-Type': 'text/html' }
                     });
