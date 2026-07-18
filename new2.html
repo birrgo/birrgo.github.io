@@ -61,6 +61,8 @@
             background-color: #f8f9fa;
             position: relative;
             overflow-x: hidden; 
+            margin: 0;
+            padding: 0;
         }
 
         .bg-wave {
@@ -73,8 +75,8 @@
         
         .bg-wave-top {
             top: 0;
-            height: 12vh;
-            min-height: 80px;
+            height: 8vh; /* Reduced size */
+            min-height: 55px; /* Reduced minimum size */
         }
         
         .bg-wave-bottom {
@@ -85,7 +87,7 @@
 
         .back-btn {
             position: absolute;
-            top: calc(20px + env(safe-area-inset-top));
+            top: calc(15px + env(safe-area-inset-top));
             left: 20px;
             color: #ffffff;
             z-index: 15;
@@ -111,9 +113,18 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            padding: calc(15vh + env(safe-area-inset-top)) 6% calc(12vh + env(safe-area-inset-bottom)) 6%;
+            align-items: center; 
+            /* Reduced top padding to match smaller curve */
+            padding: calc(11vh + env(safe-area-inset-top)) 6% calc(12vh + env(safe-area-inset-bottom)) 6%;
             position: relative;
             z-index: 1;
+        }
+
+        .app-content-wrapper {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
         }
 
         .header-content {
@@ -310,8 +321,8 @@
         }
 
         .biometric-btn-icon {
-            width: 55px;
-            height: 55px;
+            width: 72px; 
+            height: 72px; 
             object-fit: contain;
             mix-blend-mode: multiply;
             animation: fingerprint-float 2.5s infinite ease-in-out;
@@ -473,16 +484,18 @@
         </div>
     </div>
 
-    <svg aria-hidden="true" class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+    <!-- Modified: Restored viewBox and updated path for a smoother, tighter top curve -->
+    <svg aria-hidden="true" class="bg-wave bg-wave-top" viewBox="0 0 375 120" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V60C250 120 125 120 0 60V0Z" fill="url(#paint0_linear)"/>
         <defs>
-            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="120" gradientUnits="userSpaceOnUse">
                 <stop stop-color="#9A0019"/>
                 <stop offset="1" stop-color="#700010"/>
             </linearGradient>
         </defs>
     </svg>
 
+    <!-- 100% Width SVG Wave Bottom -->
     <svg aria-hidden="true" class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
     </svg>
@@ -496,57 +509,61 @@
         </svg>
     </a>
 
+    <!-- Main Wrapper: Scales to 100% Width/Height -->
     <main class="app-view">
         
-        <header class="header-content">
-            <h1>Welcome Back!</h1>
-            <p>Log in to your account</p>
-        </header>
+        <!-- Internal Content Constrained Visually for Desktop -->
+        <div class="app-content-wrapper">
+            <header class="header-content">
+                <h1>Welcome Back to <span style="color: var(--primary-burgundy);">BirrGo</span></h1>
+                <p>Log in to your account</p>
+            </header>
 
-        <form class="login-form" id="loginForm">
-            
-            <div class="input-group phone-input-wrapper">
-                <label class="field-label" for="loginPhone">Phone Number <span class="label-highlight">*</span></label>
+            <form class="login-form" id="loginForm">
                 
-                <div class="country-trigger" id="countryTriggerBtn">
-                    <span class="trigger-flag" id="currentFlag">🇪🇹</span>
-                    <span class="trigger-code" id="currentCode">+251</span>
-                    <span class="trigger-arrow">▼</span>
-                </div>
-
-                <input type="tel" id="loginPhone" class="input-box phone-indent" autofocus placeholder="9xxxxxxxx" maxlength="9" required>
-                <div class="input-icon-right">
-                    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label class="field-label" for="loginPin">PIN (6-digits) <span class="label-highlight">*</span></label>
-                <input type="password" id="loginPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required>
-                <div class="input-icon-right">
-                    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="form-action-area">
-                
-                <div class="form-buttons-column">
-                    <button type="submit" id="submitBtn" class="btn-submit">Log In</button>
+                <div class="input-group phone-input-wrapper">
+                    <label class="field-label" for="loginPhone">Phone Number <span class="label-highlight">*</span></label>
                     
-                    <button type="button" id="biometricBtn" class="btn-biometric" aria-label="Use Fingerprint Login" title="Login with Fingerprint">
-                        <img src="fi.jpg" alt="Biometric Fingerprint Button" class="biometric-btn-icon">
-                    </button>
-                </div>
-                
-                <a href="#" class="reset-link" title="Reset your BirrGo secure PIN">Forgot Pin? <span>Reset</span></a>
-            </div>
+                    <div class="country-trigger" id="countryTriggerBtn">
+                        <span class="trigger-flag" id="currentFlag">🇪🇹</span>
+                        <span class="trigger-code" id="currentCode">+251</span>
+                        <span class="trigger-arrow">▼</span>
+                    </div>
 
-        </form>
+                    <input type="tel" id="loginPhone" class="input-box phone-indent" autofocus placeholder="9xxxxxxxx" maxlength="9" required>
+                    <div class="input-icon-right">
+                        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label" for="loginPin">PIN (6-digits) <span class="label-highlight">*</span></label>
+                    <input type="password" id="loginPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required>
+                    <div class="input-icon-right">
+                        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="form-action-area">
+                    
+                    <div class="form-buttons-column">
+                        <button type="submit" id="submitBtn" class="btn-submit">Log In</button>
+                        
+                        <button type="button" id="biometricBtn" class="btn-biometric" aria-label="Use Fingerprint Login" title="Login with Fingerprint">
+                            <img src="fi.jpg" alt="Biometric Fingerprint Button" class="biometric-btn-icon">
+                        </button>
+                    </div>
+                    
+                    <a href="#" class="reset-link" title="Reset your BirrGo secure PIN">Forgot Pin? <span>Reset</span></a>
+                </div>
+
+            </form>
+        </div>
 
         <div class="signup-redirect-footer">
             New to BirrGo? <a href="register.html" title="Register a new BirrGo account">Create Account</a>
@@ -661,7 +678,6 @@
                 return;
             }
             
-            // Redirect to the external fingerprint page
             window.location.href = "finger.html";
         });
 
