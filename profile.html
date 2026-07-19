@@ -8,6 +8,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- OneSignal Web SDK Integration -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "YOUR_ONESIGNAL_APP_ID", // <-- Replace with your OneSignal App ID
+          notifyButton: {
+            enable: false, // Hidden because we use your custom BirrGo toggle switch instead
+          },
+          allowLocalhostAsSecureOrigin: true
+        });
+      });
+    </script>
+
     <style>
         :root {
             --primary-burgundy: #800020;
@@ -113,7 +128,6 @@
             transform: scale(0.9);
         }
 
-        /* Badge dot over the ring bell icon if disabled */
         .notification-ring-btn.disabled-badge::after {
             content: '';
             position: absolute;
@@ -390,7 +404,6 @@
             overflow: hidden;
         }
 
-        /* Custom Dynamic Notification UI Center */
         .toast-container {
             position: fixed;
             top: calc(20px + env(safe-area-inset-top));
@@ -441,7 +454,6 @@
 </head>
 <body>
 
-    <!-- Original Toast Notification Overlay Component Kept Unchanged -->
     <div class="toast-container" id="toastBox">
         <div class="toast-icon" id="toastIconBlock"></div>
         <div class="toast-content">
@@ -475,8 +487,7 @@
                 </div>
                 <h2 class="profile-title">Profile Hub</h2>
                 
-                <!-- Added Dynamic Notification Ring Button -->
-                <div class="notification-ring-btn" id="notificationRingBtn">
+                <div class="notification-ring-btn disabled-badge" id="notificationRingBtn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
@@ -502,26 +513,6 @@
                     <div class="info-col">
                         <span class="profile-info-label">Fayda ID</span>
                         <span class="profile-info-val" style="font-size:13px; font-weight:500; color:var(--text-muted);">National Digital ID Card</span>
-                    </div>
-                    <span class="status-badge-inline locked">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        Locked
-                    </span>
-                </div>
-                <div class="profile-info-row" style="opacity: 0.7;">
-                    <div class="info-col">
-                        <span class="profile-info-label">Passport</span>
-                        <span class="profile-info-val" style="font-size:13px; font-weight:500; color:var(--text-muted);">International Travel Doc</span>
-                    </div>
-                    <span class="status-badge-inline locked">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        Locked
-                    </span>
-                </div>
-                <div class="profile-info-row" style="opacity: 0.7;">
-                    <div class="info-col">
-                        <span class="profile-info-label">Driver's License</span>
-                        <span class="profile-info-val" style="font-size:13px; font-weight:500; color:var(--text-muted);">Regional Transport Permit</span>
                     </div>
                     <span class="status-badge-inline locked">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -655,6 +646,7 @@
         const profileFullNameText = document.getElementById('profileFullNameText');
         const profilePhoneText = document.getElementById('profilePhoneText');
         const logoutConfirmBtn = document.getElementById('logoutConfirmBtn');
+        
         const biometricsToggle = document.getElementById('biometricsToggle');
         const biometricsStatusText = document.getElementById('biometricsStatusText');
         
@@ -711,28 +703,64 @@
             return `+251 ${clean}`; 
         }
 
-        // Shared function to run notification request permission
-        async function triggerNotificationPrompt() {
-            if (!('Notification' in window)) {
-                showToast("Not Supported", "This browser environment doesn't support notifications.", "error");
-                return;
-            }
+        // ==========================================
+        // ONE-SIGNAL DEVICE NOTIFICATION LOGIC
+        // ==========================================
 
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-                localStorage.setItem('pwa_notifications_enabled', 'true');
-                notificationsToggle.checked = true;
-                notificationsStatusText.innerText = "Notifications Enabled";
-                notificationRingBtn.classList.remove('disabled-badge');
-                showToast("Permission Granted", "Push notifications are now active.", "success");
+        function enableNotificationUI() {
+            notificationsToggle.checked = true;
+            notificationsStatusText.innerText = "Notifications Enabled";
+            notificationRingBtn.classList.remove('disabled-badge');
+        }
+
+        function disableNotificationUI() {
+            notificationsToggle.checked = false;
+            notificationsStatusText.innerText = "Notifications Disabled";
+            notificationRingBtn.classList.add('disabled-badge');
+        }
+
+        async function triggerNotificationPrompt() {
+            // Use OneSignal to subscribe the device so it links with your backend broadcast
+            if (window.OneSignalDeferred) {
+                window.OneSignalDeferred.push(async function(OneSignal) {
+                    try {
+                        await OneSignal.Slidedown.promptPush();
+                        
+                        // Verify if the user accepted the device prompt
+                        if (OneSignal.Notifications.permission === "granted") {
+                            enableNotificationUI();
+                            showToast("Permission Granted", "Your device is now connected to alerts.", "success");
+                        } else {
+                            disableNotificationUI();
+                            showToast("Permission Denied", "Notifications were blocked by the device.", "error");
+                        }
+                    } catch (error) {
+                        console.error("OneSignal Prompt Error:", error);
+                        disableNotificationUI();
+                    }
+                });
             } else {
-                localStorage.setItem('pwa_notifications_enabled', 'false');
-                notificationsToggle.checked = false;
-                notificationsStatusText.innerText = "Notifications Disabled";
-                notificationRingBtn.classList.add('disabled-badge');
-                showToast("Permission Denied", "Notification permission was blocked.", "error");
+                showToast("System Error", "Notification services are currently loading. Try again.", "error");
+                disableNotificationUI();
             }
         }
+
+        // Trigger permission setup via clicking the Top Header Ring button icon
+        notificationRingBtn.addEventListener('click', () => {
+            triggerNotificationPrompt();
+        });
+
+        // Trigger permission setup via clicking the settings list toggle switch row
+        notificationsToggle.addEventListener('change', () => {
+            if (notificationsToggle.checked) {
+                triggerNotificationPrompt();
+            } else {
+                // If user toggles off, they usually have to disable from browser settings. 
+                // We visually update the UI to reflect their intent.
+                disableNotificationUI();
+                showToast("Alerts Silenced", "Push alerts have been disabled locally.", "success");
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             activeUserPhone = localStorage.getItem('auth_session_phone');
@@ -750,40 +778,25 @@
             originalToggleState = isBioEnabled;
             biometricsStatusText.innerText = isBioEnabled ? "Biometrics Active" : "Use fingerprint scanner";
 
-            // Load Notifications State
-            const pushSettings = localStorage.getItem('pwa_notifications_enabled');
-            if (pushSettings === 'true' && Notification.permission === 'granted') {
-                notificationsToggle.checked = true;
-                notificationsStatusText.innerText = "Notifications Enabled";
-                notificationRingBtn.classList.remove('disabled-badge');
-            } else {
-                notificationsToggle.checked = false;
-                notificationsStatusText.innerText = "Notifications Disabled";
-                notificationRingBtn.classList.add('disabled-badge');
-                localStorage.setItem('pwa_notifications_enabled', 'false');
+            // Accurately Load Device Notification State from OneSignal
+            if (window.OneSignalDeferred) {
+                window.OneSignalDeferred.push(function(OneSignal) {
+                    const isPushEnabled = OneSignal.Notifications.permission === "granted";
+                    if (isPushEnabled) {
+                        enableNotificationUI();
+                    } else {
+                        disableNotificationUI();
+                    }
+                });
             }
 
             streamAccountData();
         });
 
-        // Trigger permission setup via clicking the Top Header Ring button icon
-        notificationRingBtn.addEventListener('click', () => {
-            triggerNotificationPrompt();
-        });
+        // ==========================================
+        // BIOMETRICS & PASSWORD LOGIC (UNCHANGED)
+        // ==========================================
 
-        // Trigger permission setup via clicking the settings list toggle switch row
-        notificationsToggle.addEventListener('change', () => {
-            if (notificationsToggle.checked) {
-                triggerNotificationPrompt();
-            } else {
-                localStorage.setItem('pwa_notifications_enabled', 'false');
-                notificationsStatusText.innerText = "Notifications Disabled";
-                notificationRingBtn.classList.add('disabled-badge');
-                showToast("Alerts Silenced", "Push alerts have been disabled.", "success");
-            }
-        });
-
-        // Fixed Toggle Interception for Biometrics
         biometricsToggle.addEventListener('click', (e) => {
             e.preventDefault(); 
             
