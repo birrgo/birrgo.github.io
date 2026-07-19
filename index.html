@@ -37,7 +37,7 @@
       window.OneSignal = window.OneSignal || [];
       OneSignal.push(function() {
         OneSignal.init({
-          appId: "2317445154", // Using your registered app identity mapping setup
+          appId: "afd5dff1-2571-4ac3-bbd9-14afe75c8474", // Corrected App ID from OneSignal Dashboard
           autoResubscribe: true,
           allowLocalhostAsSecureOrigin: true
         });
@@ -80,7 +80,27 @@
         .download-action-btn:disabled { background: rgba(255, 255, 255, 0.35) !important; color: rgba(255, 255, 255, 0.85) !important; cursor: default !important; transform: none !important; box-shadow: none !important; }
         
         .brand-section { display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 20px; gap: 16px; }
-        .logo-image { width: 140px; height: auto; object-fit: contain; }
+        
+        /* IMAGE LOADING/ERROR BLUR STYLES */
+        .logo-image { 
+            width: 140px; 
+            height: 140px; /* Fixed height prevents layout jumps while loading */
+            object-fit: contain; 
+            border-radius: 24px;
+            color: transparent; /* Hides the broken image default alt text */
+            transition: filter 0.4s ease, background-color 0.4s ease;
+        }
+        .img-loading {
+            filter: blur(10px);
+            background-color: rgba(139, 0, 21, 0.05); /* Light branding placeholder color */
+        }
+        .img-error {
+            filter: blur(15px);
+            background-color: #e5e7eb;
+            /* Replaces broken icon with a blank SVG */
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><rect width="140" height="140" fill="transparent"/></svg>');
+        }
+        
         .welcome-title { font-size: 32px; font-weight: 800; color: var(--text-dark); text-align: center; letter-spacing: -0.02em; margin: 0; }
         .welcome-title .brand-name { color: var(--primary-burgundy); }
         
@@ -180,7 +200,10 @@
             </div>
 
             <div class="brand-section">
-                <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Mobile Wallet App Logo - Fast Online Payments">
+                <!-- UPDATED LOGO TAG: Handles onload and onerror to swap blur classes -->
+                <img class="logo-image img-loading" src="birrgo-logo.png" alt="BirrGo Mobile Wallet App Logo - Fast Online Payments" 
+                     onload="this.classList.remove('img-loading')" 
+                     onerror="this.classList.remove('img-loading'); this.classList.add('img-error');">
                 <h1 class="welcome-title">Welcome to <span class="brand-name">BirrGo!</span></h1>
             </div>
         </header>
