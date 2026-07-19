@@ -17,42 +17,70 @@
             --card-border: rgba(128, 0, 32, 0.12);
         }
 
-        body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: rgba(15, 2, 5, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        /* Entire page background removed completely to make it an ultra-clean floating frame overlay */
+        html, body {
+            background: transparent !important;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            color: var(--text-main);
-            overflow-x: hidden;
         }
 
-        /* High-Fidelity Branded Digital Card Container with clean white center */
+        /* The Custom White and Blue Mixed High-Contrast Glass Backdrop Blur Mask Layer */
+        .popup-overlay-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            box-sizing: border-box;
+            z-index: 999999;
+            
+            /* Premium translucent white & soft royal azure blue mix */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(212, 228, 253, 0.35) 100%);
+            backdrop-filter: blur(14px) saturate(130%);
+            -webkit-backdrop-filter: blur(14px) saturate(130%);
+            
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+
+        .popup-overlay-container.active {
+            opacity: 1;
+        }
+
+        /* Perfectly Reduced Dimensions to Match Your Custom UI Without Overflowing */
         .digital-slip-card {
             background: #ffffff;
             width: 100%;
-            max-width: 375px;
+            max-width: 325px; /* Safely downsized */
             border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            padding: 24px;
+            box-shadow: 0 15px 40px rgba(15, 34, 64, 0.15);
+            padding: 20px;
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
-            animation: cardPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            
+            /* Clean structural popup zoom mechanism */
+            transform: scale(0.85) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2), opacity 0.3s ease;
+            opacity: 0;
         }
 
-        @keyframes cardPopIn {
-            from { transform: scale(0.9) translateY(20px); opacity: 0; }
-            to { transform: scale(1) translateY(0); opacity: 1; }
+        .popup-overlay-container.active .digital-slip-card {
+            transform: scale(1) translateY(0);
+            opacity: 1;
         }
 
-        /* Premium Integrated Branding Waves */
+        /* Curved Graphic Brand Assets Vectors Mapping */
         .bg-wave {
             position: absolute;
             left: 0;
@@ -61,46 +89,41 @@
             z-index: 1;
         }
 
-        /* Top Red Curve Vector */
         .bg-wave-top {
             top: 0;
-            height: 125px;
+            height: 110px;
         }
 
-        /* Bottom Red Curve Vector */
         .bg-wave-bottom {
             bottom: 0;
-            height: 75px;
+            height: 65px;
         }
 
-        /* Content wrapper lifted perfectly over background curves */
         .card-inner-payload {
             position: relative;
             z-index: 2;
         }
 
-        /* Header Elements adjusting for high-contrast visibility over the top curve */
         .card-meta-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .brand-logo-pack img {
-            height: 22px;
+            height: 18px;
             object-fit: contain;
-            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.4));
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));
         }
 
-        /* Gold SIM Chip Overlay Styling */
         .gold-emv-chip {
-            width: 40px;
-            height: 30px;
+            width: 36px;
+            height: 26px;
             background: linear-gradient(135deg, #ffd700 0%, #b8860b 50%, #f1c40f 100%);
-            border-radius: 6px;
+            border-radius: 5px;
             position: relative;
-            box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 2px 6px rgba(0,0,0,0.3);
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 2px 5px rgba(0,0,0,0.25);
         }
 
         .gold-emv-chip::after {
@@ -111,38 +134,36 @@
             border-radius: 2px;
         }
 
-        /* Verified Floating Pill badge */
         .status-pill-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             background: #2e7d32;
             color: #ffffff;
-            padding: 6px 14px;
+            padding: 4px 12px;
             border-radius: 50px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
         }
 
         .status-pill-badge svg {
             fill: #ffffff;
         }
 
-        /* Dynamic Visual Icon Slot */
         .slip-campaign-avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: 16px;
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
             background: #ffffff;
             border: 2px solid var(--card-border);
-            margin: 0 auto 16px auto;
+            margin: 0 auto 10px auto;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            box-shadow: 0 6px 16px rgba(128,0,32,0.15);
+            box-shadow: 0 4px 10px rgba(128,0,32,0.1);
         }
 
         .slip-campaign-avatar img {
@@ -151,50 +172,44 @@
             object-fit: cover;
         }
 
-        /* Ledger Amount Render Space */
         .ledger-amount-box {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .ledger-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 6px;
+            letter-spacing: 1.2px;
+            margin-bottom: 4px;
             font-weight: 600;
         }
 
         .ledger-val {
-            font-size: 34px;
+            font-size: 28px;
             font-weight: 800;
             letter-spacing: -0.5px;
         }
 
-        .ledger-val.positive {
-            color: var(--success-color);
-        }
-        .ledger-val.negative {
-            color: var(--danger-color);
-        }
+        .ledger-val.positive { color: var(--success-color); }
+        .ledger-val.negative { color: var(--danger-color); }
 
-        /* Secure Metadata Matrix Grid styled cleanly inside the white center */
         .glass-meta-grid {
             background: var(--card-inner-bg);
             border: 1px solid var(--card-border);
             border-radius: 16px;
-            padding: 16px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 10px;
         }
 
         .grid-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .grid-lbl {
@@ -206,39 +221,38 @@
             font-weight: 700;
             color: #1f0007;
             text-align: right;
+            max-width: 60%;
+            word-break: break-word;
         }
 
         #val-ref {
             font-family: monospace;
-            font-size: 13px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.3px;
         }
 
-        /* System Streaming Loading State */
         .slip-stream-loader {
             text-align: center;
             color: var(--text-muted);
-            font-size: 14px;
-            padding: 50px 0;
+            font-size: 13px;
+            padding: 40px 0;
             font-weight: 600;
         }
 
-        /* Inside White Box Buttons Container */
         .action-tray {
             display: flex;
-            gap: 12px;
-            margin-top: 16px;
+            gap: 10px;
+            margin-top: 10px;
             border-top: 1px dashed var(--card-border);
-            padding-top: 16px;
+            padding-top: 10px;
         }
 
         .tray-btn {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
-            border-radius: 12px;
-            font-size: 13px;
+            border-radius: 10px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -248,137 +262,117 @@
         .tray-btn-primary {
             background: #800020;
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.2);
+            box-shadow: 0 4px 10px rgba(128, 0, 32, 0.15);
         }
 
-        .tray-btn-primary:active {
-            transform: scale(0.97);
-            background: #5c0017;
-        }
+        .tray-btn-primary:active { transform: scale(0.97); background: #5c0017; }
 
-        /* UPDATED: White bold box button for Close */
         .tray-btn-secondary {
             background: #ffffff;
             color: #800020;
             border: 2px solid #800020;
             font-weight: 800;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
-        .tray-btn-secondary:active {
-            transform: scale(0.97);
-            background: #f5f5f5;
-        }
-        
-        .tray-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none !important;
-        }
+        .tray-btn-secondary:active { transform: scale(0.97); background: #f5f5f5; }
+        .tray-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
 
         @media print {
-            body {
-                background: #ffffff !important;
-                padding: 0 !important;
-                color: #000000 !important;
-            }
-            .digital-slip-card {
-                box-shadow: none !important;
-                max-width: 100% !important;
-                padding: 30px !important;
-            }
-            .action-tray {
-                display: none !important;
-            }
+            .popup-overlay-container { background: #ffffff !important; padding: 0 !important; }
+            .digital-slip-card { box-shadow: none !important; max-width: 100% !important; padding: 24px !important; }
+            .action-tray { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-    <div class="digital-slip-card" id="digitalSlipBox">
-        
-        <!-- Top Branded Curved Vectors Layout -->
-        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0H375V110C375 110 280 210 0 140V0Z" fill="url(#paint0_linear)"/>
-            <defs>
-                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#4a0012"/>
-                    <stop offset="1" stop-color="#800020"/>
-                </linearGradient>
-            </defs>
-        </svg>
-
-        <!-- Bottom Branded Curved Vectors Layout -->
-        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M375 150H0V70C0 70 120 -10 375 50V150Z" fill="#800020"/>
-        </svg>
-
-        <!-- Dynamic User Data Payload Content Layer -->
-        <div class="card-inner-payload">
+    <!-- Fullscreen Fluid Window Mask Overlay Container -->
+    <div class="popup-overlay-container" id="popupOverlay">
+        <div class="digital-slip-card" id="digitalSlipBox">
             
-            <div class="card-meta-row">
-                <div class="brand-logo-pack">
-                    <img src="birrgo-logo.png" alt="BirrGo">
-                </div>
-                <div class="gold-emv-chip"></div>
-            </div>
+            <!-- Top Branded Curved Vectors Layout -->
+            <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0H375V110C375 110 280 210 0 140V0Z" fill="url(#paint0_linear)"/>
+                <defs>
+                    <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#4a0012"/>
+                        <stop offset="1" stop-color="#800020"/>
+                    </linearGradient>
+                </defs>
+            </svg>
 
-            <div style="text-align: center; margin-bottom: 22px;">
-                <div class="status-pill-badge">
-                    <svg width="12" height="12" viewBox="0 0 24 24">
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                    </svg>
-                    Secure Verified Receipt
-                </div>
-            </div>
+            <!-- Bottom Branded Curved Vectors Layout -->
+            <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M375 150H0V70C0 70 120 -10 375 50V150Z" fill="#800020"/>
+            </svg>
 
-            <!-- Dynamic Network Streaming Node Box -->
-            <div id="slip-stream-loader" class="slip-stream-loader">
-                Decrypting secure transaction node layer...
-            </div>
-
-            <!-- UI Render Content Target inside white container box -->
-            <div id="slip-secure-content" style="display: none;">
+            <!-- Dynamic User Data Payload Content Layer -->
+            <div class="card-inner-payload">
                 
-                <div class="slip-campaign-avatar" id="avatar-container">
-                    <span>⚡</span>
+                <div class="card-meta-row">
+                    <div class="brand-logo-pack">
+                        <img src="birrgo-logo.png" alt="BirrGo">
+                    </div>
+                    <div class="gold-emv-chip"></div>
                 </div>
 
-                <div class="ledger-amount-box">
-                    <div class="ledger-label">Receipt Amount</div>
-                    <div id="val-amount" class="ledger-val">0.00 Br</div>
-                </div>
-
-                <div class="glass-meta-grid">
-                    <div class="grid-item">
-                        <span class="grid-lbl">Description</span>
-                        <span id="val-desc" class="grid-val">—</span>
-                    </div>
-                    <div class="grid-item">
-                        <span class="grid-lbl">Date</span>
-                        <span id="val-date" class="grid-val">—</span>
-                    </div>
-                    <div class="grid-item">
-                        <span class="grid-lbl">Time</span>
-                        <span id="val-time" class="grid-val">—</span>
-                    </div>
-                    <div class="grid-item">
-                        <span class="grid-lbl">Reference Code</span>
-                        <span id="val-ref" class="grid-val">—</span>
-                    </div>
-                    <div class="grid-item">
-                        <span class="grid-lbl">Status</span>
-                        <span style="color: var(--success-color); font-weight: 700;">Success</span>
-                    </div>
-
-                    <!-- Layout Control Buttons container included inside the white metadata grid -->
-                    <div class="action-tray">
-                        <button class="tray-btn tray-btn-secondary" id="dismissCardBtn">Close</button>
-                        <button class="tray-btn tray-btn-primary" id="triggerPrintBtn" disabled>Print PDF</button>
+                <div style="text-align: center; margin-bottom: 14px;">
+                    <div class="status-pill-badge">
+                        <svg width="11" height="11" viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        Secure Verified Receipt
                     </div>
                 </div>
+
+                <!-- Dynamic Network Streaming Node Box -->
+                <div id="slip-stream-loader" class="slip-stream-loader">
+                    Decrypting secure transaction layer...
+                </div>
+
+                <!-- UI Render Content Target inside white container box -->
+                <div id="slip-secure-content" style="display: none;">
+                    
+                    <div class="slip-campaign-avatar" id="avatar-container">
+                        <span>⚡</span>
+                    </div>
+
+                    <div class="ledger-amount-box">
+                        <div class="ledger-label">Receipt Amount</div>
+                        <div id="val-amount" class="ledger-val">0.00 Br</div>
+                    </div>
+
+                    <div class="glass-meta-grid">
+                        <div class="grid-item">
+                            <span class="grid-lbl">Description</span>
+                            <span id="val-desc" class="grid-val">—</span>
+                        </div>
+                        <div class="grid-item">
+                            <span class="grid-lbl">Date</span>
+                            <span id="val-date" class="grid-val">—</span>
+                        </div>
+                        <div class="grid-item">
+                            <span class="grid-lbl">Time</span>
+                            <span id="val-time" class="grid-val">—</span>
+                        </div>
+                        <div class="grid-item">
+                            <span class="grid-lbl">Reference Code</span>
+                            <span id="val-ref" class="grid-val">—</span>
+                        </div>
+                        <div class="grid-item">
+                            <span class="grid-lbl">Status</span>
+                            <span style="color: var(--success-color); font-weight: 700;">Success</span>
+                        </div>
+
+                        <!-- Layout Control Buttons -->
+                        <div class="action-tray">
+                            <button class="tray-btn tray-btn-secondary" id="dismissCardBtn">Close</button>
+                            <button class="tray-btn tray-btn-primary" id="triggerPrintBtn" disabled>Print PDF</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
         </div>
     </div>
 
@@ -401,8 +395,12 @@
         const db = getDatabase(app);
 
         document.addEventListener('DOMContentLoaded', async () => {
+            // Apply opening entry transitions cleanly
+            setTimeout(() => {
+                document.getElementById('popupOverlay').classList.add('active');
+            }, 30);
+
             const activeUserPhone = localStorage.getItem('auth_session_phone');
-            
             if (!activeUserPhone) {
                 window.location.replace("new2.html");
                 return;
@@ -412,7 +410,7 @@
             const targetTxnId = urlParams.get('txnId');
 
             if (!targetTxnId) {
-                document.getElementById('slip-stream-loader').innerText = "Error: Invalid transaction parameters.";
+                document.getElementById('slip-stream-loader').innerText = "Error: Invalid parameters.";
                 return;
             }
 
@@ -442,12 +440,12 @@
                             isPromo: true
                         });
                     } else {
-                        document.getElementById('slip-stream-loader').innerText = "Account receipt nodes could not be located.";
+                        document.getElementById('slip-stream-loader').innerText = "Receipt data missing.";
                     }
                 }
             } catch (err) {
                 console.error(err);
-                document.getElementById('slip-stream-loader').innerText = "Network pipeline connection failed.";
+                document.getElementById('slip-stream-loader').innerText = "Connection pipeline offline.";
             }
         });
 
@@ -557,11 +555,14 @@
         }
 
         document.getElementById('dismissCardBtn').onclick = () => {
-            if (document.referrer && document.referrer.includes('wallet.html')) {
-                window.history.back();
-            } else {
-                window.location.replace('wallet.html');
-            }
+            document.getElementById('popupOverlay').classList.remove('active');
+            setTimeout(() => {
+                if (document.referrer && document.referrer.includes('wallet.html')) {
+                    window.history.back();
+                } else {
+                    window.location.replace('wallet.html');
+                }
+            }, 250);
         };
     </script>
 </body>

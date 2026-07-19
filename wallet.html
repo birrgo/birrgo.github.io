@@ -14,7 +14,7 @@
 
     <div class="network-blur-overlay" id="networkBlurGate"></div>
 
-    <div class="app-view">
+    <div class="app-view" id="mainAppView">
         
         <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
@@ -167,6 +167,92 @@
         </div>
     </div>
 
+    <!-- THE FLOATING COMPACT POPUP RECIPIENT MODAL LAYER -->
+    <div class="slip-popup-overlay" id="digitalSlipPopup">
+        <div class="digital-slip-card" id="digitalSlipBox">
+            
+            <!-- Top Branded Curved Vectors Layout -->
+            <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0H375V110C375 110 280 210 0 140V0Z" fill="url(#popup_linear)"/>
+                <defs>
+                    <linearGradient id="popup_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#4a0012"/>
+                        <stop offset="1" stop-color="#800020"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+
+            <!-- Bottom Branded Curved Vectors Layout -->
+            <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M375 150H0V70C0 70 120 -10 375 50V150Z" fill="#800020"/>
+            </svg>
+
+            <!-- Dynamic User Data Payload Content Layer -->
+            <div class="card-inner-payload">
+                
+                <div class="card-meta-row">
+                    <div class="brand-logo-pack">
+                        <img src="birrgo-logo.png" alt="BirrGo">
+                    </div>
+                    <div class="gold-emv-chip"></div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 14px;">
+                    <div class="status-pill-badge">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="#ffffff">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        Secure Verified Receipt
+                    </div>
+                </div>
+
+                <!-- Dynamic Network Streaming Node Box -->
+                <div id="slip-stream-loader" class="slip-stream-loader">
+                    Decrypting secure transaction layer...
+                </div>
+
+                <!-- UI Render Content Target inside white container box -->
+                <div id="slip-secure-content" style="display: none;">
+                    
+                    <div class="slip-campaign-avatar" id="pop-avatar-container">
+                        <span>⚡</span>
+                    </div>
+
+                    <div class="ledger-amount-box">
+                        <div class="ledger-label">Receipt Amount</div>
+                        <div id="pop-val-amount" class="ledger-val">0.00 Br</div>
+                    </div>
+
+                    <div class="glass-meta-grid">
+                        <div class="grid-item">
+                            <span class="grid-lbl">Description</span>
+                            <span id="pop-val-desc" class="grid-val">—</span>
+                        </div>
+                        <div class="grid-item">
+                            <span class="grid-lbl">Date</span>
+                            <span id="pop-val-date" class="grid-val">—</span>
+                        </div>
+                        <div class="grid-item">
+                            <span class="grid-lbl">Reference Code</span>
+                            <span id="pop-val-ref" class="grid-val" style="font-family: monospace;">—</span>
+                        </div>
+                        <div class="grid-item">
+                            <span class="grid-lbl">Status</span>
+                            <span style="color: #2e7d32; font-weight: 700;">Success</span>
+                        </div>
+
+                        <!-- Layout Control Buttons container included inside the white metadata grid -->
+                        <div class="action-tray">
+                            <button class="tray-btn tray-btn-secondary" id="closeReceiptBtn">Close</button>
+                            <button class="tray-btn tray-btn-primary" id="popPrintBtn">Print PDF</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -235,6 +321,7 @@
             setupFeatureGateways();
             setupNavigationHandlers();
             setupNotificationBadgeHandler();
+            setupPopupCloseHandler();
         });
 
         function displayAppModal(type, title, message, onConfirm = null) {
@@ -444,6 +531,78 @@
             document.getElementById('withdrawBtn').addEventListener('click', () => launchLockedNotice());
         }
 
+        // POPUP LIFECYCLE MANAGEMENT IMPLEMENTATION
+        function launchReceiptPopup(txnId, tx) {
+            document.body.classList.add('popup-active');
+            const overlay = document.getElementById('digitalSlipPopup');
+            overlay.classList.add('active');
+            
+            const loader = document.getElementById('slip-stream-loader');
+            const content = document.getElementById('slip-secure-content');
+            
+            loader.style.display = 'block';
+            content.style.display = 'none';
+
+            // Populate data payload fields
+            const amountEl = document.getElementById('pop-val-amount');
+            const isIncome = tx.type === 'income' || tx.amount > 0;
+            
+            amountEl.innerText = `${isIncome ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)} Br`;
+            amountEl.className = `ledger-val ${isIncome ? 'positive' : 'negative'}`;
+            
+            document.getElementById('pop-val-desc').innerText = tx.title;
+            document.getElementById('pop-val-date').innerText = tx.timestamp;
+            document.getElementById('pop-val-ref').innerText = txnId;
+
+            // Resolve icon matrices
+            const avatarContainer = document.getElementById('pop-avatar-container');
+            let iconSrc = "";
+            let targetText = tx.title.toLowerCase();
+
+            if (targetText.includes('iphone')) iconSrc = "i2.jpg";
+            else if (targetText.includes('byd')) iconSrc = "by.jpg";
+            else if (targetText.includes('jetour')) iconSrc = "33111.jpg";
+            else if (targetText.includes('samsun')) iconSrc = "s2.jpg";
+            else if (targetText.includes('motorcycle')) iconSrc = "m2.jpg";
+            else if (targetText.includes('bajaj')) iconSrc = "b2.jpg";
+            else if (targetText.includes('video')) iconSrc = "33164.png";
+            else if (targetText.includes('commercial bank') || targetText.includes('cbe')) iconSrc = "c2.jpg";
+            else if (targetText.includes('cbe birr')) iconSrc = "c1.jpg";
+            else if (targetText.includes('tele bir') || targetText.includes('telebirr')) iconSrc = "t1.jpg";
+            else if (targetText.includes('boa')) iconSrc = "b1.jpg";
+            else if (targetText.includes('safari')) iconSrc = "s1.jpg";
+            else if (targetText.includes('telegram')) iconSrc = "te.jpg";
+            else if (targetText.includes('instagram')) iconSrc = "i.jpg";
+            else if (targetText.includes('facebook')) iconSrc = "f.jpg";
+            else if (targetText.includes('youtube')) iconSrc = "y.jpg";
+            else if (targetText.includes('tiktok')) iconSrc = "t.jpg";
+            else if (targetText.includes('bingo')) iconSrc = "6.jpg";
+            else if (targetText.includes('invitation') || targetText.includes('invited')) iconSrc = "6.jpg";
+
+            if (tx.isPromo && !iconSrc) iconSrc = "33440.png";
+
+            if (iconSrc) {
+                avatarContainer.innerHTML = `<img src="${iconSrc}" alt="icon" class="image-lazy-blur loaded">`;
+            } else {
+                avatarContainer.innerHTML = `<span>⚡</span>`;
+            }
+
+            // Simulate database layer decryption process hold
+            setTimeout(() => {
+                loader.style.display = 'none';
+                content.style.display = 'block';
+            }, 400);
+
+            document.getElementById('popPrintBtn').onclick = () => window.print();
+        }
+
+        function setupPopupCloseHandler() {
+            document.getElementById('closeReceiptBtn').onclick = () => {
+                document.getElementById('digitalSlipPopup').classList.remove('active');
+                document.body.classList.remove('popup-active');
+            };
+        }
+
         function startLiveWalletListeners() {
             const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
             
@@ -572,8 +731,9 @@
                     const cardRow = document.createElement('div');
                     cardRow.className = 'history-card';
 
+                    // CONNECTED INTERNALLY TO OPEN POPUP INSTEAD OF WINDOW PATHING
                     cardRow.onclick = () => {
-                        window.location.href = `recipient.html?txnId=${tx.id}`;
+                        launchReceiptPopup(tx.id, tx);
                     };
 
                     const isIncome = tx.type === 'income' || tx.amount > 0;

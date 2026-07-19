@@ -38,6 +38,7 @@ body {
     flex-direction: column;
 }
 
+/* --- DYNAMIC INTERFACE BACKGROUND BLUR LOGIC --- */
 .app-view {
     width: 100%;
     height: 100%;
@@ -48,6 +49,21 @@ body {
     flex-direction: column;
     position: relative;
     overflow-x: hidden;
+    transition: filter 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 
+   FIXED ISOLATION SYSTEM: 
+   Directly isolates the blur filter exclusively to the main background wave blocks, 
+   the app wrapper content box, and the static nav panel. 
+   This shields the floating receipt overlay container completely, making its borders 100% sharp.
+*/
+body.popup-active > .app-view > .bg-wave,
+body.popup-active .app-content,
+body.popup-active .bottom-nav-bar {
+    filter: blur(10px);
+    pointer-events: none;
+    transition: filter 0.4s ease;
 }
 
 .network-blur-overlay {
@@ -95,7 +111,6 @@ body {
     min-height: 70px;
 }
 
-/* bottom padding increased to 90px to prevent hidden elements under nav bar */
 .app-content {
     flex: 1;
     overflow-y: auto;
@@ -806,4 +821,242 @@ body {
 
 .btn-modal-submit:active, .btn-modal-cancel:active { 
     transform: scale(0.98); 
+}
+
+/* ==========================================================================
+   --- PREMIUM COMPACT RECEIPT POPUP OVERLAY CORE SYSTEM ---
+   ========================================================================== */
+
+.slip-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    box-sizing: border-box;
+    z-index: 999999;
+    
+    /* Elegant Custom Frosted White and Royal Azure Blue mix glass overlay wrapper */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(212, 228, 253, 0.35) 100%);
+    backdrop-filter: blur(14px) saturate(135%);
+    -webkit-backdrop-filter: blur(14px) saturate(135%);
+    
+    /* Structural visibility tracking configurations */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease-out;
+}
+
+.slip-popup-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* --- OPTIMIZED REDUCED COMPACT CARD BOUNDS --- */
+.digital-slip-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 325px; /* Downsized profile perfectly maps your interface architecture */
+    border-radius: 24px;
+    box-shadow: 0 20px 45px rgba(15, 34, 64, 0.16);
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    color: #2b000a;
+    
+    /* Spring pop zoom entry logic handlers */
+    transform: scale(0.85) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2), opacity 0.3s ease;
+    opacity: 0;
+}
+
+.slip-popup-overlay.active .digital-slip-card {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Clear vector boundaries within card frame layout */
+.digital-slip-card .bg-wave { 
+    position: absolute; 
+    left: 0; 
+    width: 100%; 
+    pointer-events: none; 
+    z-index: 1; 
+}
+
+.digital-slip-card .bg-wave-top { 
+    top: 0; 
+    height: 110px; 
+}
+
+.digital-slip-card .bg-wave-bottom { 
+    bottom: 0; 
+    height: 65px; 
+}
+
+.card-inner-payload { 
+    position: relative; 
+    z-index: 2; 
+}
+
+.digital-slip-card .card-meta-row { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 16px; 
+}
+
+.digital-slip-card .brand-logo-pack img { 
+    height: 18px; 
+    width: auto;
+    object-fit: contain; 
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3)); 
+}
+
+.digital-slip-card .gold-emv-chip { 
+    width: 36px; 
+    height: 26px; 
+    background: linear-gradient(135deg, #ffd700 0%, #b8860b 50%, #f1c40f 100%); 
+    border-radius: 5px; 
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 2px 5px rgba(0,0,0,0.25); 
+}
+
+.status-pill-badge { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 5px; 
+    background: #2e7d32; 
+    color: #ffffff; 
+    padding: 4px 12px; 
+    border-radius: 50px; 
+    font-size: 10px; 
+    font-weight: 700; 
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2); 
+}
+
+.slip-campaign-avatar { 
+    width: 52px; 
+    height: 52px; 
+    border-radius: 12px; 
+    background: #ffffff; 
+    border: 2px solid rgba(128, 0, 32, 0.12); 
+    margin: 0 auto 10px auto; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    overflow: hidden; 
+    box-shadow: 0 4px 10px rgba(128,0,32,0.1); 
+}
+
+.slip-campaign-avatar img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+}
+
+.ledger-amount-box { 
+    text-align: center; 
+    margin-bottom: 16px; 
+}
+
+.ledger-label { 
+    font-size: 10px; 
+    color: #6b5257; 
+    text-transform: uppercase; 
+    font-weight: 600; 
+    letter-spacing: 1.2px; 
+    margin-bottom: 4px; 
+}
+
+.ledger-val { 
+    font-size: 28px; 
+    font-weight: 800; 
+    letter-spacing: -0.5px; 
+}
+
+.ledger-val.positive { 
+    color: #2e7d32; 
+}
+
+.ledger-val.negative { 
+    color: #c62828; 
+}
+
+.glass-meta-grid { 
+    background: rgba(128, 0, 32, 0.04); 
+    border: 1px solid rgba(128, 0, 32, 0.12); 
+    border-radius: 16px; 
+    padding: 12px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+}
+
+.digital-slip-card .grid-item { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    font-size: 12px; 
+}
+
+.digital-slip-card .grid-lbl { 
+    color: #6b5257; 
+    font-weight: 500; 
+}
+
+.digital-slip-card .grid-val { 
+    font-weight: 700; 
+    color: #1f0007; 
+    text-align: right; 
+    max-width: 60%; 
+    word-break: break-word; 
+}
+
+.action-tray { 
+    display: flex; 
+    gap: 10px; 
+    margin-top: 10px; 
+    border-top: 1px dashed rgba(128, 0, 32, 0.12); 
+    padding-top: 10px; 
+}
+
+.tray-btn { 
+    flex: 1; 
+    padding: 10px; 
+    border: none; 
+    border-radius: 10px; 
+    font-size: 12px; 
+    font-weight: 700; 
+    cursor: pointer; 
+}
+
+.tray-btn-primary { 
+    background: #800020; 
+    color: #ffffff; 
+}
+
+.tray-btn-secondary { 
+    background: #ffffff; 
+    color: #800020; 
+    border: 2px solid #800020; 
+    font-weight: 800; 
+}
+
+.slip-stream-loader { 
+    text-align: center; 
+    color: #6b5257; 
+    font-size: 13px; 
+    padding: 40px 0; 
+    font-weight: 600; 
+}
+
+@media print {
+    .slip-popup-overlay { background: #ffffff !important; padding: 0 !important; position: absolute; }
+    .digital-slip-card { box-shadow: none !important; max-width: 100% !important; padding: 24px !important; }
+    .action-tray { display: none !important; }
 }
