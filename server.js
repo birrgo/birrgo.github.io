@@ -216,3 +216,4 @@ app.post('/send-push', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server is listening on port ${PORT}`);
 });
+Added push route
