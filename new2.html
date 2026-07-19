@@ -62,6 +62,14 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Stop image ghost dragging across the app */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+        }
+
         html, body {
             width: 100%;
             margin: 0;
@@ -98,7 +106,6 @@
         
         .bg-wave-bottom {
             bottom: 0;
-            /* Reduced height parameter by half to minimize the curve presence */
             height: 6vh;
             min-height: 42px;
         }
@@ -140,7 +147,6 @@
 
         .app-content-wrapper {
             width: 100%;
-            /* Reduced maximum width from 440px to 360px for a more compact PWA look */
             max-width: 360px;
             display: flex;
             flex-direction: column;
@@ -310,7 +316,6 @@
         }
 
         .btn-biometric {
-            /* Increased volumetric sizing footprint for enhanced UX tap recognition */
             width: 86px; 
             height: 86px;
             background: #ffffff; 
@@ -336,7 +341,6 @@
         }
 
         .biometric-btn-icon {
-            /* Proportionally matched internal scale adjustment */
             width: 66px; 
             height: 66px; 
             object-fit: contain;
@@ -458,6 +462,57 @@
             text-align: center;
             width: 85%;
             max-width: 340px;
+        }
+
+        .selectable-text {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+
+        /* ==========================================================================
+           PWA / STANDALONE APK ENGINE INJECTIONS
+           ========================================================================== */
+        @media (display-mode: standalone), (display-mode: fullscreen) {
+            html, body {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                height: 100dvh; 
+                overflow: hidden; 
+                overscroll-behavior-y: none;
+            }
+
+            * {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+
+            input, textarea {
+                -webkit-user-select: auto !important;
+                user-select: auto !important;
+            }
+
+            .app-view {
+                height: 100%;
+                height: 100dvh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch; 
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                padding-bottom: calc(45px + env(safe-area-inset-bottom, 24px)) !important;
+            }
+            
+            .app-view::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .signup-redirect-footer {
+                bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+                position: fixed !important;
+            }
         }
     </style>
 </head>
