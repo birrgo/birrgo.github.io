@@ -154,10 +154,13 @@ app.post('/verify-otp', async (req, res) => {
 });
 
 // ==========================================
-// 5. ONESIGNAL NOTIFICATION ENDPOINT (Fixes your 404 Error)
+// 5. ONESIGNAL NOTIFICATION ENDPOINT 
 // ==========================================
 
 app.post('/send-push', async (req, res) => {
+  // FIX 1: Log incoming request body to Render to confirm connection
+  console.log("Received push notification request:", req.body); 
+
   const { title, message } = req.body;
 
   if (!title || !message) {
@@ -197,6 +200,8 @@ app.post('/send-push', async (req, res) => {
     const responseData = await response.json();
 
     if (response.ok) {
+      // FIX 2: Log the successful OneSignal dispatch ID
+      console.log("OneSignal successfully accepted notification. ID:", responseData.id); 
       return res.status(200).json({ success: true, data: responseData });
     } else {
       console.error("OneSignal API Error:", responseData);
