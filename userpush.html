@@ -8,7 +8,7 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; 
-            background: transparent; /* Transparent to let the blurred profile show through */
+            background: transparent;
             padding: 20px; 
             margin: 0;
             display: flex; 
@@ -55,7 +55,7 @@
             font-weight: 700; 
             cursor: pointer; 
             transition: all 0.2s ease;
-            display: none; /* Hidden until loaded */
+            display: none; /* Shown once initialization finishes */
             box-shadow: 0 4px 12px rgba(128, 0, 32, 0.2);
         }
         button:hover { background: #66001a; }
@@ -81,7 +81,7 @@
     <p>Enable push notifications to receive instant alerts for deposits, cash received, and secure account updates.</p>
     
     <div id="status">Connecting to BirrGo servers...</div>
-    <button id="subscribe-btn" onclick="promptSubscription()">Enable Notifications</button>
+    <button id="subscribe-btn" onclick="window.promptSubscription()">Enable Notifications</button>
 </div>
 
 <!-- Firebase App SDKs -->
@@ -100,70 +100,119 @@
     measurementId: "G-24X13TZ43D"
   };
 
+  // Static fallback App ID in case database read fails or network disconnects
+  const HARDCODED_APP_ID = "afd5dff1-2571-4ac3-bbd9-14afe75c84c1";
+
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
-  const configRef = ref(database, 'config/onesignal');
   
   const statusDiv = document.getElementById('status');
   const subscribeBtn = document.getElementById('subscribe-btn');
 
-  function loadOneSignal() {
-      get(configRef).then((snapshot) => {
-          if (snapshot.exists()) {
-              const keys = snapshot.val();
-              const appId = keys.appId;
-              
-              if (appId) {
-                  statusDiv.innerText = "Ready to connect.";
-                  statusDiv.style.color = "#10b981";
-                  subscribeBtn.style.display = "block";
-                  
-                  const script = document.createElement('script');
-                  script.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
-                  script.defer = true;
-                  document.head.appendChild(script);
+  // Helper to extract string App ID regardless of database structure
+  function extractAppId(val) {
+      if (!val) return null;
+      if (typeof val === 'string') return val;
+      return val.appId || val.app_id || val.id || null;
+  }
 
-                  window.OneSignalDeferred = window.OneSignalDeferred || [];
-                  window.OneSignalDeferred.push(async function(OneSignal) {
-                      await OneSignal.init({
-                          appId: appId,
-                          notifyButton: { enable: false },
-                          allowLocalhostAsSecureOrigin: true
-                      });
-                      
-                      OneSignal.User.PushSubscription.addEventListener("change", function(subscription) {
-                          if (subscription.current.optedIn) {
-                              statusDiv.innerText = "✔️ You are subscribed to notifications!";
-                              statusDiv.style.color = "#10b981";
-                              subscribeBtn.style.display = "none";
-                          }
-                      });
-                  });
-              } else {
-                  statusDiv.innerText = "Error: Notification system not configured.";
-                  statusDiv.style.color = "#ef4444";
-              }
-          } else {
-              statusDiv.innerText = "Error: Notification keys missing from database.";
-              statusDiv.style.color = "#ef4444";
+  async function getAppIdFromFirebase() {
+      // Primary check at /onesignal
+      try {
+          const snapshot = await get(ref(database, 'onesignal'));
+          if (snapshot.exists()) {
+              const id = extractAppId(snapshot.val());
+              if (id) return id;
           }
-      }).catch((error) => {
-          statusDiv.innerText = 'Database Link Error: ' + error.message;
+      } catch (err) {
+          console.warn("Primary path read failed:", err.message);
+      }
+
+      // Secondary check at /config
+      try {
+          const snapshot = await get(ref(database, 'config'));
+          if (snapshot.exists()) {
+              const val = snapshot.val();
+              const id = extractAppId(val.onesignal) || extractAppId(val);
+              if (id) return id;
+          }
+      } catch (err) {
+          console.warn("Secondary path read failed:", err.message);
+      }
+
+      // Fallback ID
+      return HARDCODED_APP_ID;
+  }
+
+  async function initPushNotifications() {
+      const appId = await getAppIdFromFirebase();
+
+      if (!appId) {
+          statusDiv.innerText = "Error: Notification App ID missing.";
           statusDiv.style.color = "#ef4444";
+          return;
+      }
+
+      // Inject OneSignal v16 Script
+      const script = document.createElement('script');
+      script.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+      script.defer = true;
+      document.head.appendChild(script);
+
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(async function(OneSignal) {
+          await OneSignal.init({
+              appId: appId,
+              notifyButton: { enable: false },
+              allowLocalhostAsSecureOrigin: true
+          });
+
+          if (!OneSignal.Notifications.isPushSupported()) {
+              statusDiv.innerText = "Push notifications not supported on this browser.";
+              statusDiv.style.color = "#ef4444";
+              return;
+          }
+
+          // Check if permission is already granted
+          if (OneSignal.Notifications.permission) {
+              statusDiv.innerText = "✔️ You are subscribed to notifications!";
+              statusDiv.style.color = "#10b981";
+              subscribeBtn.style.display = "none";
+          } else {
+              statusDiv.innerText = "Ready to connect.";
+              statusDiv.style.color = "#10b981";
+              subscribeBtn.style.display = "block";
+          }
+
+          // Listen for user granting permission
+          OneSignal.Notifications.addEventListener("permissionChange", function(granted) {
+              if (granted) {
+                  statusDiv.innerText = "✔️ You are subscribed to notifications!";
+                  statusDiv.style.color = "#10b981";
+                  subscribeBtn.style.display = "none";
+              }
+          });
       });
   }
 
-  loadOneSignal();
+  initPushNotifications();
 
+  // Explicit window attachment ensures button click works across modular scope
   window.promptSubscription = function() {
       window.OneSignalDeferred.push(async function(OneSignal) {
           try {
-              await OneSignal.Slidedown.promptPush();
+              // Trigger Native Permission Prompt
+              await OneSignal.Notifications.requestPermission();
           } catch (error) {
-              console.error("Subscription prompt failed:", error);
+              console.error("Native request failed, trying slidedown prompt:", error);
+              try {
+                  await OneSignal.Slidedown.promptPush();
+              } catch (e) {
+                  console.error("Slidedown failed:", e);
+              }
           }
       });
-  }
+  };
 </script>
 
 </body>
