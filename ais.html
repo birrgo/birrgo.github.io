@@ -165,7 +165,7 @@
 <body>
 
     <div class="header-row">
-        <a href="index.html" class="btn-back">← Back</a>
+        <a href="Dashboard.html" class="btn-back">← Back</a>
     </div>
 
     <div class="admin-card">
@@ -173,63 +173,36 @@
         
         <!-- Global Verification Field -->
         <div class="form-group">
-            <label class="form-label">Current Admin Verification Token</label>
-            <input type="password" id="adminToken" class="form-input" autocomplete="current-password" placeholder="Enter current token (e.g., 808080)">
+            <label class="form-label">Admin Secret Token</label>
+            <input type="password" id="adminToken" class="form-input" autocomplete="current-password" placeholder="Enter YOUR_ADMIN_SECRET_TOKEN">
         </div>
 
         <hr>
 
-        <!-- Section 1: Update Gemini Key -->
+        <!-- Section 1: Update Groq Key -->
         <div class="form-group">
-            <label class="form-label">New Google Gemini API Key</label>
-            <input type="password" id="geminiKey" class="form-input" autocomplete="new-password" placeholder="AIzaSy...">
+            <label class="form-label">New Groq API Key</label>
+            <input type="password" id="groqKey" class="form-input" autocomplete="new-password" placeholder="gsk_...">
         </div>
-        <button class="btn-submit" id="saveKeyBtn">Update Gemini Key</button>
+        <button class="btn-submit" id="saveKeyBtn">Update Groq API Key</button>
         
         <div class="security-note">
-            💡 <strong>Note:</strong> Your database rules block reading the <code>secrets/</code> path. This panel saves your key under <code>config/gemini/api_key</code> so your support chat can read it safely!
+            💡 <strong>Security Note:</strong> This form sends your API key straight to your backend server, saving it into the locked <code>secrets/groq_api_key</code> path via Admin privileges!
         </div>
 
-        <hr>
-
-        <!-- Section 2: Update Admin Token -->
-        <div class="form-group">
-            <label class="form-label">New Admin Verification Token</label>
-            <input type="password" id="newAdminToken" class="form-input" autocomplete="new-password" placeholder="Enter new secret token">
-        </div>
-        <button class="btn-submit" id="saveTokenBtn">Change Admin Token</button>
-        
         <div class="status-message" id="statusMessage"></div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
-            authDomain: "birrgo-fdf7e.firebaseapp.com",
-            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
-            projectId: "birrgo-fdf7e",
-            storageBucket: "birrgo-fdf7e.firebasestorage.app",
-            messagingSenderId: "2317445154",
-            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
-            measurementId: "G-24X13TZ43D"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // Fallback token matching your database password node
-        const DEFAULT_MASTER_TOKEN = "808080"; 
-
+    <script>
         const tokenInput = document.getElementById('adminToken');
-        const keyInput = document.getElementById('geminiKey');
-        const newTokenInput = document.getElementById('newAdminToken');
-        
+        const keyInput = document.getElementById('groqKey');
         const saveKeyBtn = document.getElementById('saveKeyBtn');
-        const saveTokenBtn = document.getElementById('saveTokenBtn');
         const statusMessage = document.getElementById('statusMessage');
+
+        // Dynamic backend URL
+        const API_ENDPOINT = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3000/api/admin/apikey'
+            : '/api/admin/apikey';
 
         function showMessage(text, isError) {
             statusMessage.innerText = text;
@@ -237,83 +210,41 @@
             statusMessage.style.display = "block";
         }
 
-        // Dynamically verifies entered token against your active database password node
-        async function verifyCurrentToken(enteredToken) {
-            if (!enteredToken) return false;
-            try {
-                const snapshot = await get(ref(db, 'settings/premium_gate_password'));
-                const activeToken = snapshot.exists() ? snapshot.val() : DEFAULT_MASTER_TOKEN;
-                return enteredToken === String(activeToken);
-            } catch (e) {
-                return enteredToken === DEFAULT_MASTER_TOKEN;
-            }
-        }
-
-        // Action 1: Save Gemini Key (Writes to the publicly readable config node)
         saveKeyBtn.addEventListener('click', async () => {
-            const currentToken = tokenInput.value.trim();
-            const geminiKey = keyInput.value.trim();
+            const adminToken = tokenInput.value.trim();
+            const groqKey = keyInput.value.trim();
             statusMessage.style.display = "none";
 
-            if (!currentToken || !geminiKey) {
-                showMessage("Please fill out both the verification token and the new Gemini key.", true);
+            if (!adminToken || !groqKey) {
+                showMessage("Please enter both the secret token and the new Groq key.", true);
                 return;
             }
 
             saveKeyBtn.disabled = true;
-            
-            const isAuthorized = await verifyCurrentToken(currentToken);
-            if (!isAuthorized) {
-                showMessage("Invalid Admin Verification Token. Action rejected.", true);
-                saveKeyBtn.disabled = false;
-                return;
-            }
 
             try {
-                // Saves to readable config node to comply with your rules structure
-                await set(ref(db, 'config/gemini/api_key'), geminiKey);
-                
-                showMessage("Gemini API Key successfully updated under the readable 'config' node!", false);
-                keyInput.value = "";
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({ apiKey: groqKey })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(data.message || "Groq API Key updated successfully!", false);
+                    keyInput.value = "";
+                } else {
+                    showMessage(data.error || "Failed to save API Key.", true);
+                }
             } catch (error) {
-                console.error(error);
-                showMessage("Database rejected write. Verify your rules permit updating config paths.", true);
+                console.error("Admin update error:", error);
+                showMessage("Network error. Could not connect to backend server.", true);
             } finally {
                 saveKeyBtn.disabled = false;
-            }
-        });
-
-        // Action 2: Change/Update Admin Verification Token
-        saveTokenBtn.addEventListener('click', async () => {
-            const currentToken = tokenInput.value.trim();
-            const newToken = newTokenInput.value.trim();
-            statusMessage.style.display = "none";
-
-            if (!currentToken || !newToken) {
-                showMessage("Please fill out both the current token and the new token.", true);
-                return;
-            }
-
-            saveTokenBtn.disabled = true;
-
-            const isAuthorized = await verifyCurrentToken(currentToken);
-            if (!isAuthorized) {
-                showMessage("Invalid Current Admin Verification Token. Action rejected.", true);
-                saveTokenBtn.disabled = false;
-                return;
-            }
-
-            try {
-                // Direct updates to settings/premium_gate_password
-                await set(ref(db, 'settings/premium_gate_password'), newToken);
-                showMessage("Admin Verification Token updated successfully! Use the new token for future updates.", false);
-                tokenInput.value = "";
-                newTokenInput.value = "";
-            } catch (error) {
-                console.error(error);
-                showMessage("Database rejected token update. Verify your database configuration settings.", true);
-            } finally {
-                saveTokenBtn.disabled = false;
             }
         });
     </script>
