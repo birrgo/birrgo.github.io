@@ -9,7 +9,10 @@ const { getDatabase } = require('firebase-admin/database');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 1. Enable CORS securely for your frontend
+// Set Admin Authorization Secret Token (Default: '808080')
+const ADMIN_SECRET_TOKEN = process.env.ADMIN_SECRET_TOKEN || '808080';
+
+// 1. Enable CORS securely for birrgo.online and all origins
 app.use(cors({
   origin: '*', 
   methods: ['GET', 'POST', 'OPTIONS'],
@@ -155,13 +158,13 @@ app.post('/verify-otp', async (req, res) => {
 });
 
 // ==========================================
-// 5. ACTIVE ONESIGNAL NOTIFICATION ENDPOINT 
+// 5. FIXED ONESIGNAL PUSH NOTIFICATION ENDPOINT 
 // ==========================================
 
 app.post('/send-push', async (req, res) => {
-  console.log("Received push notification request:", req.body); 
+  console.log("Push dispatch triggered from domain request:", req.body); 
 
-  const { title, message, segments } = req.body;
+  const { title, message, segments, url } = req.body;
 
   if (!title || !message) {
     return res.status(400).json({ error: 'Notification title and message are required.' });
@@ -170,7 +173,7 @@ app.post('/send-push', async (req, res) => {
   try {
     const db = getDatabase();
     
-    // Check config/onesignal node first, fallback to process.env variables
+    // Read credentials from Firebase or process environment variables
     const configSnapshot = await db.ref('config/onesignal').once('value');
     const configData = configSnapshot.val();
 
@@ -178,19 +181,22 @@ app.post('/send-push', async (req, res) => {
     const restApiKey = (configData && configData.restApiKey) ? configData.restApiKey : process.env.ONESIGNAL_REST_API_KEY;
 
     if (!appId || !restApiKey) {
-      return res.status(500).json({ error: 'OneSignal credentials are not configured.' });
+      console.error("Missing OneSignal Credentials");
+      return res.status(500).json({ error: 'OneSignal credentials are missing on server.' });
     }
 
-    // Default target active users or custom segments provided by payload
-    const targetSegments = (segments && Array.isArray(segments)) 
+    // Target segments setup
+    const targetSegments = (segments && Array.isArray(segments) && segments.length > 0) 
       ? segments 
-      : ['Subscribed Users', 'Total Subscriptions', 'All'];
+      : ['All', 'Subscribed Users', 'Total Subscriptions'];
 
     const notificationPayload = {
       app_id: appId,
+      target_channel: "push",
       headings: { en: title },
       contents: { en: message },
-      included_segments: targetSegments
+      included_segments: targetSegments,
+      url: url || 'https://birrgo.online'
     };
 
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
@@ -204,27 +210,31 @@ app.post('/send-push', async (req, res) => {
 
     const responseData = await response.json();
 
-    if (response.ok) {
-      console.log("OneSignal successfully accepted notification. ID:", responseData.id); 
+    if (response.ok && responseData.id) {
+      console.log("OneSignal push accepted successfully. ID:", responseData.id); 
 
-      // Save record of active notification dispatch into Firebase
+      // Log dispatch history to Firebase
       await db.ref('logs/notifications').push({
-        id: responseData.id || 'N/A',
+        id: responseData.id,
         title: title,
         message: message,
         recipientsCount: responseData.recipients || 0,
+        domain: 'birrgo.online',
         sentAt: Date.now()
       });
 
       return res.status(200).json({ success: true, active: true, data: responseData });
     } else {
-      console.error("OneSignal API Error:", responseData);
-      return res.status(response.status).json({ error: 'Failed to dispatch via OneSignal', details: responseData });
+      console.error("OneSignal API rejected request:", responseData);
+      return res.status(400).json({ 
+        error: responseData.errors ? responseData.errors[0] : 'OneSignal push delivery failed.', 
+        details: responseData 
+      });
     }
 
   } catch (error) {
-    console.error("Broadcast Notification Error:", error);
-    return res.status(500).json({ error: 'Server error while sending notification.' });
+    console.error("Push Notification Delivery Error:", error);
+    return res.status(500).json({ error: 'Internal server error processing push request.' });
   }
 });
 
@@ -237,8 +247,8 @@ app.post('/api/admin/apikey', async (req, res) => {
   const { apiKey } = req.body;
   const authHeader = req.headers.authorization;
 
-  // Verify secret authorization token
-  if (authHeader !== 'Bearer YOUR_ADMIN_SECRET_TOKEN') {
+  // Verify authorization token dynamically
+  if (authHeader !== `Bearer ${ADMIN_SECRET_TOKEN}`) {
     return res.status(403).json({ error: 'Unauthorized access.' });
   }
 
