@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { BrevoClient } = require('@getbrevo/brevo');
+const { GoogleGenerativeAI } = require('@google/generative-ai'); // Added for Gemini
 const admin = require('firebase-admin');
 const { cert } = require('firebase-admin/app'); 
 const { getDatabase } = require('firebase-admin/database'); 
@@ -12,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors({
   origin: '*', 
   methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
+  allowedHeaders: ['Content-Type', 'Authorization'] // Added Authorization for Admin updates
 }));
 
 app.use(express.json());
@@ -158,7 +159,6 @@ app.post('/verify-otp', async (req, res) => {
 // ==========================================
 
 app.post('/send-push', async (req, res) => {
-  // Log incoming request body to Render to confirm connection
   console.log("Received push notification request:", req.body); 
 
   const { title, message } = req.body;
@@ -170,11 +170,9 @@ app.post('/send-push', async (req, res) => {
   try {
     const db = getDatabase();
     
-    // Fetch OneSignal App ID and REST API Key from Firebase Config Node 
     const configSnapshot = await db.ref('config/onesignal').once('value');
     const configData = configSnapshot.val();
 
-    // Fallback to environment variables if Firebase node is empty
     const appId = (configData && configData.appId) ? configData.appId : process.env.ONESIGNAL_APP_ID;
     const restApiKey = (configData && configData.restApiKey) ? configData.restApiKey : process.env.ONESIGNAL_REST_API_KEY;
 
@@ -182,7 +180,6 @@ app.post('/send-push', async (req, res) => {
       return res.status(500).json({ error: 'OneSignal credentials are not configured.' });
     }
 
-    // Call the OneSignal REST API
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
       method: 'POST',
       headers: {
@@ -193,7 +190,6 @@ app.post('/send-push', async (req, res) => {
         app_id: appId,
         headings: { en: title },
         contents: { en: message },
-        // UPDATED: Target both possible default segment names
         included_segments: ['Subscribed Users', 'Total Subscriptions'] 
       })
     });
@@ -201,7 +197,6 @@ app.post('/send-push', async (req, res) => {
     const responseData = await response.json();
 
     if (response.ok) {
-      // Log the successful OneSignal dispatch ID
       console.log("OneSignal successfully accepted notification. ID:", responseData.id); 
       return res.status(200).json({ success: true, data: responseData });
     } else {
@@ -212,6 +207,66 @@ app.post('/send-push', async (req, res) => {
   } catch (error) {
     console.error("Broadcast Notification Error:", error);
     return res.status(500).json({ error: 'Server error while sending notification.' });
+  }
+});
+
+// ==========================================
+// 6. GEMINI AI CHAT & MANAGEMENT ENDPOINTS
+// ==========================================
+
+// Endpoint for admin dashboard (ais.html) to securely update the key inside the closed 'secrets' node
+app.post('/api/admin/apikey', async (req, res) => {
+  const { apiKey } = req.body;
+  const authHeader = req.headers.authorization;
+
+  // Verify secret authorization token
+  if (authHeader !== 'Bearer YOUR_ADMIN_SECRET_TOKEN') {
+    return res.status(403).json({ error: 'Unauthorized access.' });
+  }
+
+  if (!apiKey) {
+    return res.status(400).json({ error: 'API Key is required.' });
+  }
+
+  try {
+    const db = getDatabase();
+    // Written into the completely locked-down node path
+    await db.ref('secrets/gemini_api_key').set(apiKey);
+    return res.status(200).json({ success: true, message: 'API Key saved securely to Firebase.' });
+  } catch (error) {
+    console.error("Firebase admin key sync error:", error);
+    return res.status(500).json({ error: 'Failed to write key to database.' });
+  }
+});
+
+// Endpoint for user client assistant (ai.html) to chat securely
+app.post('/api/chat', async (req, res) => {
+  const { prompt } = req.body;
+
+  if (!prompt) {
+    return res.status(400).json({ error: 'Prompt text is required.' });
+  }
+
+  try {
+    const db = getDatabase();
+    // Backend reads key using super-user admin privileges bypassing the cascade lock
+    const snapshot = await db.ref('secrets/gemini_api_key').once('value');
+    const activeApiKey = snapshot.val();
+
+    if (!activeApiKey) {
+      return res.status(503).json({ error: 'The AI assistant configuration is pending dashboard setup.' });
+    }
+
+    // Initialize Gemini and stream generation content
+    const genAI = new GoogleGenerativeAI(activeApiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const result = await model.generateContent(prompt);
+    return res.status(200).json({ reply: result.response.text() });
+
+  } catch (error) {
+    console.error("Gemini AI Chat execution error:", error.message);
+    return res.status(500).json({ error: 'Failed to process assistant request.' });
   }
 });
 
