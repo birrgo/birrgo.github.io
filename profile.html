@@ -6,449 +6,196 @@
     <title>BirrGo - Premium Account Profile</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- OneSignal Web SDK Integration -->
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "afd5dff1-2571-4ac3-bbd9-14afe75c8474",
-          notifyButton: {
-            enable: false, 
-          },
-          allowLocalhostAsSecureOrigin: false // Strictly disabled for production
-        });
-      });
-    </script>
-
     <style>
-        :root {
-            --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
-            --accent-glow: rgba(128, 0, 32, 0.15);
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --bg-light: #f8fafc;
-            --border-light: #e2e8f0;
-            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
-            --success-green: #10b981;
-            --success-bg: #ecfdf5;
-            --warning-amber: #f59e0b;
-            --warning-bg: #fffbeb;
-            --error-red: #ef4444;
-            --error-bg: #fef2f2;
-            --border-radius-lg: 24px;
-            --border-radius-md: 16px;
-        }
+        :root{
+            --primary-burgundy:#5c0016;
+            --primary-gradient:linear-gradient(135deg, #70001b 0%, #3a000d 100%);
+            --accent-glow:rgba(92, 0, 22, 0.15);
+            --text-dark:#0f172a;
+            --text-muted:#64748b;
+            --bg-light:#f8fafc;
+            --border-light:#e2e8f0;
+            --card-shadow:0 10px 30px -5px rgba(0,0,0,0.05),0 4px 12px -2px rgba(0,0,0,0.03);
+            --success-green:#10b981;
+            --success-bg:#ecfdf5;
+            --warning-amber:#f59e0b;
+            --warning-bg:#fffbeb;
+            --error-red:#ef4444;
+            --error-bg:#fef2f2;
+            --border-radius-lg:20px;
+            --border-radius-md:14px;
+            --bottom-nav-space:85px;
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.2px;
-            -webkit-tap-highlight-color: transparent;
+            /* 3D Red Theme Variables */
+            --red-card-bg: linear-gradient(145deg, #880e22 0%, #4a0010 100%);
+            --red-card-shadow: 0 12px 24px -6px rgba(136, 14, 34, 0.4), 0 4px 8px -2px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            --white-3d-shadow: 0 8px 18px -4px rgba(15, 23, 42, 0.08), 0 3px 6px -2px rgba(0, 0, 0, 0.04), inset 0 -2px 0 0 #e2e8f0;
         }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-light);
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .app-view {
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            background-color: var(--bg-light);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .bg-wave {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .bg-wave-top {
-            top: 0;
-            height: 12vh;
-            min-height: 80px;
-        }
-        .bg-wave-bottom {
-            bottom: 0;
-            height: 10vh;
-            min-height: 70px;
-        }
-
-        .app-content {
-            flex: 1;
-            overflow-y: auto;
-            background-color: transparent;
-            padding: calc(20px + env(safe-area-inset-top)) 20px calc(30px + env(safe-area-inset-bottom)) 20px;
-            scrollbar-width: none;
-            position: relative;
-            z-index: 1;
-        }
-        .app-content::-webkit-scrollbar { display: none; }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-
-        .back-btn, .notification-ring-btn {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-            position: relative;
-        }
-        .back-btn:active, .notification-ring-btn:active {
-            transform: scale(0.9);
-        }
-
-        .notification-ring-btn.disabled-badge::after {
-            content: '';
-            position: absolute;
-            top: 10px;
-            right: 11px;
-            width: 7px;
-            height: 7px;
-            background-color: var(--error-red);
-            border-radius: 50%;
-            border: 1px solid #ffffff;
-        }
-
-        .profile-title {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .profile-avatar-section {
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .profile-avatar-large {
-            width: 86px;
-            height: 86px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 3px solid var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 38px;
-            margin: 0 auto 10px auto;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        }
-
-        .verification-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background-color: var(--warning-bg);
-            color: var(--warning-amber);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);
-        }
-
-        .section-title {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin: 18px 2px 10px 2px;
-        }
-
-        .profile-display-box {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-0.1px;-webkit-tap-highlight-color:transparent;}
+        html,body{width:100%;height:100%;background-color:var(--bg-light);overflow:hidden;}
+        body{display:flex;flex-direction:column;position:relative;}
+        .app-view{width:100%;height:100dvh;background-color:var(--bg-light);display:flex;flex-direction:column;position:relative;transition:filter 0.3s ease,transform 0.3s ease;}
+        .bg-wave{position:absolute;left:0;width:100%;z-index:0;pointer-events:none;}
+        .bg-wave-top{top:0;height:12vh;min-height:80px;}
+        .bg-wave-bottom{bottom:0;height:10vh;min-height:70px;}
+        .app-content{flex:1;overflow-y:auto;background:transparent;padding:calc(16px + env(safe-area-inset-top)) 16px calc(var(--bottom-nav-space) + env(safe-area-inset-bottom)) 16px;scrollbar-width:none;position:relative;z-index:1;}
+        .app-content::-webkit-scrollbar{display:none;}
+        .profile-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+        .back-btn,.notification-ring-btn{background:#fff;border:1px solid var(--border-light);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.05);transition:transform 0.2s;position:relative;}
+        .back-btn:active,.notification-ring-btn:active{transform:scale(0.9);}
+        .notification-ring-btn.disabled-badge::after{content:'';position:absolute;top:8px;right:9px;width:6px;height:6px;background:var(--error-red);border-radius:50%;border:1px solid #fff;}
+        .profile-title{font-size:18px;font-weight:800;color:var(--text-dark);}
+        .profile-avatar-section{text-align:center;margin-bottom:16px;position:relative;}
+        .profile-avatar-large{width:76px;height:76px;border-radius:50%;background:#fff;border:2px solid var(--border-light);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 10px auto;box-shadow:0 10px 20px rgba(0,0,0,0.05);overflow:hidden;}
+        .profile-avatar-large img{width:100%;height:100%;object-fit:cover;}
+        .blur-load{filter:blur(10px);transition:filter 0.4s ease-in-out;}
+        .blur-load.loaded{filter:blur(0);}
+        .verification-badge{display:inline-flex;align-items:center;gap:4px;background:var(--warning-bg);color:var(--warning-amber);padding:5px 12px;border-radius:16px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;border:1px solid rgba(245,158,11,0.2);box-shadow:0 2px 8px rgba(245,158,11,0.08);}
+        .section-title{font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin:16px 2px 8px 2px;}
+        .profile-display-box{background:#fff;border:1px solid var(--border-light);border-radius:var(--border-radius-lg);padding:16px;box-shadow:var(--card-shadow);margin-bottom:12px;}
+        .profile-info-row{margin-bottom:12px;border-bottom:1px solid #f1f5f9;padding-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+        .profile-info-row:last-child{margin-bottom:0;border-bottom:none;padding-bottom:0;}
+        .info-col{display:flex;flex-direction:column;gap:2px;}
+        .profile-info-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;}
+        .profile-info-val{font-size:14px;font-weight:700;color:var(--text-dark);}
+        
+        /* Premium 3D Red Verification Box */
+        .verification-box-3d {
+            background: var(--red-card-bg);
             border-radius: var(--border-radius-lg);
-            padding: 20px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 16px;
-        }
-
-        .profile-info-row {
-            margin-bottom: 16px;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .profile-info-row:last-child {
-            margin-bottom: 0;
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .info-col {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .profile-info-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .profile-info-val {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .status-badge-inline {
-            font-size: 11px;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 12px;
-            text-transform: uppercase;
-        }
-        .status-badge-inline.locked {
-            background-color: #f1f5f9;
-            color: var(--text-muted);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .action-arrow {
-            color: var(--primary-burgundy);
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 4px;
-        }
-
-        .toggle-switch {
+            padding: 18px;
+            box-shadow: var(--red-card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 20px;
             position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-        }
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #cbd5e1;
-            transition: .3s;
-            border-radius: 24px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-        }
-        input:checked + .slider {
-            background-color: var(--primary-burgundy);
-        }
-        input:checked + .slider:before {
-            transform: translateX(20px);
-        }
-
-        .btn-logout-premium {
-            width: 100%;
-            height: 52px;
-            background: var(--primary-gradient);
-            color: #ffffff;
-            border: none;
-            border-radius: var(--border-radius-md);
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 6px 16px var(--accent-glow);
-            transition: all 0.2s ease;
-            margin-bottom: 20px;
-        }
-        .btn-logout-premium:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-
-        .custom-popup-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
-            z-index: 5000;
-            opacity: 0;
-            transition: opacity 0.25s ease;
-        }
-        .custom-popup-backdrop.show-modal {
-            display: flex;
-            opacity: 1;
-        }
-        .custom-popup-card {
-            background: #ffffff;
-            width: 100%;
-            max-width: 360px;
-            border-radius: var(--border-radius-lg);
-            padding: 28px 24px;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
-            transform: scale(0.9);
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .custom-popup-backdrop.show-modal .custom-popup-card {
-            transform: scale(1);
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .modal-title {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-        .close-modal-btn {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-        .input-group {
-            margin-bottom: 16px;
-            text-align: left;
-        }
-        .input-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            display: block;
-        }
-        .text-input {
-            width: 100%;
-            height: 48px;
-            border: 1px solid var(--border-light);
-            border-radius: var(--border-radius-md);
-            padding: 0 16px;
-            font-size: 14px;
-            font-weight: 600;
-            outline: none;
-            color: var(--text-dark);
-            background-color: var(--bg-light);
-            transition: border-color 0.2s;
-        }
-        .text-input:focus {
-            border-color: var(--primary-burgundy);
-        }
-
-        .bio-iframe-container {
-            width: 100%;
-            height: 310px;
-            border: none;
             overflow: hidden;
         }
 
-        .toast-container {
-            position: fixed;
-            top: calc(20px + env(safe-area-inset-top));
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            width: calc(100% - 40px);
-            max-width: 335px;
-            background: #ffffff;
-            border-radius: var(--border-radius-md);
-            padding: 16px;
-            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.12);
-            z-index: 9999;
+        .verification-box-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
-            opacity: 0;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
-            pointer-events: none;
+            cursor: pointer;
+            user-select: none;
         }
-        .toast-container.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
+
+        .verification-title {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 800;
         }
-        .toast-icon {
-            width: 24px;
-            height: 24px;
+
+        .verification-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .arrow-badge-3d {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
-        .toast-content {
-            flex: 1;
+
+        /* Dropdown 3D White Cards Container */
+        .dropdown-container-3d {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
         }
-        .toast-title {
+
+        .dropdown-container-3d.open {
+            display: flex;
+        }
+
+        /* 3D White Option Cards */
+        .option-card-3d {
+            background: #ffffff;
+            border-radius: var(--border-radius-md);
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--white-3d-shadow);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-light);
+            position: relative;
+        }
+
+        .option-card-3d:active {
+            transform: translateY(2px);
+            box-shadow: 0 3px 8px -2px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 #cbd5e1;
+        }
+
+        .option-card-title {
             font-size: 13px;
             font-weight: 800;
             color: var(--text-dark);
         }
-        .toast-desc {
-            font-size: 12px;
-            font-weight: 500;
+
+        .option-card-desc {
+            font-size: 10px;
+            font-weight: 600;
             color: var(--text-muted);
             margin-top: 2px;
         }
+
+        .option-card-arrow {
+            color: var(--primary-burgundy);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .action-arrow{color:var(--primary-burgundy);font-size:16px;font-weight:bold;cursor:pointer;padding:2px;}
+        .toggle-switch{position:relative;display:inline-block;width:38px;height:20px;}
+        .toggle-switch input{opacity:0;width:0;height:0;}
+        .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;transition:.3s;border-radius:20px;}
+        .slider:before{position:absolute;content:"";height:16px;width:16px;left:2px;bottom:2px;background:#fff;transition:.3s;border-radius:50%;}
+        input:checked+.slider{background:var(--primary-burgundy);}
+        input:checked+.slider:before{transform:translateX(18px);}
+        .btn-action-small{background:var(--primary-burgundy);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:800;padding:6px 12px;cursor:pointer;transition:background 0.2s;display:none;}
+        .btn-action-small:hover{background:#3a000d;}
+        .btn-logout-premium{width:100%;height:48px;background:var(--primary-gradient);color:#fff;border:none;border-radius:var(--border-radius-md);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px var(--accent-glow);transition:all 0.2s ease;margin-bottom:10px;}
+        .btn-logout-premium:active{transform:scale(0.98);opacity:0.9;}
+        .custom-popup-backdrop{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;padding:20px;z-index:5000;opacity:0;transition:opacity 0.25s ease;}
+        .custom-popup-backdrop.show-modal{display:flex;opacity:1;}
+        .custom-popup-card{background:#fff;width:100%;max-width:340px;border-radius:var(--border-radius-lg);padding:24px 20px;box-shadow:0 20px 40px -10px rgba(0,0,0,0.15);transform:scale(0.9);transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);}
+        .custom-popup-backdrop.show-modal .custom-popup-card{transform:scale(1);}
+        #userpushPopup{background:rgba(0,0,0,0.2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:0;}
+        .transparent-fullscreen-container{width:100%;height:100%;display:flex;flex-direction:column;background:transparent;}
+        .floating-close-btn{align-self:flex-end;margin:calc(16px + env(safe-area-inset-top)) 16px 8px 0;color:#fff;font-size:24px;font-weight:700;background:rgba(255,255,255,0.2);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+        .modal-title{font-size:16px;font-weight:800;color:var(--text-dark);}
+        .close-modal-btn{font-size:20px;font-weight:700;color:var(--text-muted);cursor:pointer;}
+        .input-group{margin-bottom:12px;text-align:left;}
+        .input-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px;display:block;}
+        .text-input{width:100%;height:44px;border:1px solid var(--border-light);border-radius:var(--border-radius-md);padding:0 14px;font-size:13px;font-weight:600;outline:none;color:var(--text-dark);background:var(--bg-light);transition:border-color 0.2s;}
+        .text-input:focus{border-color:var(--primary-burgundy);}
+        .bio-iframe-container{width:100%;height:290px;border:none;overflow:hidden;}
+        .toast-container{position:fixed;top:calc(16px + env(safe-area-inset-top));left:50%;transform:translateX(-50%) translateY(-100px);width:calc(100% - 32px);max-width:320px;background:#fff;border-radius:var(--border-radius-md);padding:14px;box-shadow:0 15px 35px rgba(15,23,42,0.12);z-index:9999;display:flex;align-items:center;gap:10px;opacity:0;transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275),opacity 0.3s ease;pointer-events:none;}
+        .toast-container.show{transform:translateX(-50%) translateY(0);opacity:1;}
+        .toast-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .toast-content{flex:1;}
+        .toast-title{font-size:12px;font-weight:800;color:var(--text-dark);}
+        .toast-desc{font-size:11px;font-weight:500;color:var(--text-muted);margin-top:2px;}
     </style>
 </head>
 <body>
@@ -461,25 +208,25 @@
         </div>
     </div>
 
-    <div class="app-view">
+    <div class="app-view" id="mainAppView">
         <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
             <defs>
                 <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#9A0019"/>
-                    <stop offset="1" stop-color="#700010"/>
+                    <stop stop-color="#70001b"/>
+                    <stop offset="1" stop-color="#3a000d"/>
                 </linearGradient>
             </defs>
         </svg>
 
         <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
+            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#5c0016"/>
         </svg>
         
         <div class="app-content">
             <div class="profile-header">
                 <div class="back-btn" onclick="window.location.href='dashboard.html'">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-dark)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-dark)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
@@ -487,7 +234,7 @@
                 <h2 class="profile-title">Profile Hub</h2>
                 
                 <div class="notification-ring-btn disabled-badge" id="notificationRingBtn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                     </svg>
@@ -495,28 +242,58 @@
             </div>
 
             <div class="profile-avatar-section">
-                <div class="profile-avatar-large">👤</div>
+                <div class="profile-avatar-large">
+                    <img src="https://via.placeholder.com/150/e2e8f0/64748b?text=👤" 
+                         data-src="https://via.placeholder.com/300" 
+                         class="blur-load" alt="User Avatar" id="userAvatarImg">
+                </div>
                 <div class="verification-badge">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
                         <line x1="12" y1="9" x2="12" y2="13"></line>
                         <line x1="12" y1="17" x2="12.01" y2="17"></line>
                     </svg>
-                    Fayda ID Not Verified
+                    Identity Unverified
                 </div>
             </div>
 
-            <h3 class="section-title">Verification Methods</h3>
-            <div class="profile-display-box" style="margin-bottom: 24px;">
-                <div class="profile-info-row" style="opacity: 0.7;">
-                    <div class="info-col">
-                        <span class="profile-info-label">Fayda ID</span>
-                        <span class="profile-info-val" style="font-size:13px; font-weight:500; color:var(--text-muted);">National Digital ID Card</span>
+            <h3 class="section-title">Verification Method</h3>
+            
+            <!-- Red 3D Main Verification Container -->
+            <div class="verification-box-3d">
+                <div class="verification-box-header" id="verificationMethodBtn">
+                    <div>
+                        <div class="verification-title">Verification Method</div>
+                        <div class="verification-subtitle">Choose document type to proceed</div>
                     </div>
-                    <span class="status-badge-inline locked">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        Locked
-                    </span>
+                    <div class="arrow-badge-3d" id="verificationArrow">&#8250;</div>
+                </div>
+
+                <!-- Dropdown List with White 3D Cards -->
+                <div class="dropdown-container-3d" id="verificationList">
+                    <div class="option-card-3d verification-option">
+                        <div>
+                            <div class="option-card-title">Fayda National ID</div>
+                            <div class="option-card-desc">National Digital ID Card</div>
+                        </div>
+                        <span class="option-card-arrow">&#8250;</span>
+                    </div>
+
+                    <div class="option-card-3d verification-option">
+                        <div>
+                            <div class="option-card-title">Driver's License</div>
+                            <div class="option-card-desc">Official Driving Permit</div>
+                        </div>
+                        <span class="option-card-arrow">&#8250;</span>
+                    </div>
+
+                    <div class="option-card-3d verification-option">
+                        <div>
+                            <div class="option-card-title">Passport</div>
+                            <div class="option-card-desc">International Travel Document</div>
+                        </div>
+                        <span class="option-card-arrow">&#8250;</span>
+                    </div>
                 </div>
             </div>
 
@@ -541,7 +318,7 @@
                 <div class="profile-info-row">
                     <div class="info-col">
                         <span class="profile-info-label">Biometric Login</span>
-                        <span class="profile-info-val" id="biometricsStatusText">Use fingerprint scanner</span>
+                        <span class="profile-info-val" id="biometricsStatusText">Use fingerprint</span>
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" id="biometricsToggle">
@@ -551,23 +328,36 @@
                 <div class="profile-info-row">
                     <div class="info-col">
                         <span class="profile-info-label">App Notifications</span>
-                        <span class="profile-info-val" id="notificationsStatusText">Enable PWA push alerts</span>
+                        <span class="profile-info-val" id="notificationsStatusText">Connecting...</span>
                     </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="notificationsToggle">
-                        <span class="slider"></span>
-                    </label>
+                    <button id="subscribeBtn" class="btn-action-small">ENABLE</button>
                 </div>
                 <div class="profile-info-row" id="changePassRow">
                     <div class="info-col">
                         <span class="profile-info-label">Update Pin/Password</span>
-                        <span class="profile-info-val" style="font-size:13px; font-weight:500; color:var(--text-muted);">Change secure access PIN</span>
+                        <span class="profile-info-val" style="font-size:12px; font-weight:500; color:var(--text-muted);">Change access PIN</span>
                     </div>
                     <span class="action-arrow">&#8250;</span>
                 </div>
             </div>
 
             <button class="btn-logout-premium" id="logoutConfirmBtn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Eligibility Notice Modal -->
+    <div class="custom-popup-backdrop" id="eligibilityPopup">
+        <div class="custom-popup-card" style="text-align: center;">
+            <div style="width: 52px; height: 52px; background: var(--error-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--error-red)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <h3 class="modal-title" style="margin-bottom: 8px;">Not Eligible</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">You are not eligible for verification.</p>
+            <button class="btn-logout-premium" id="closeEligibilityBtn" style="margin-bottom: 0; height: 44px;">Dismiss</button>
         </div>
     </div>
 
@@ -580,13 +370,13 @@
             </div>
             <div class="input-group">
                 <label class="input-label" for="verifyPasswordInput">Password / Security PIN</label>
-                <input type="password" id="verifyPasswordInput" class="text-input" placeholder="Enter your 6-digit PIN" maxlength="6">
+                <input type="password" id="verifyPasswordInput" class="text-input" placeholder="Enter 6-digit PIN" maxlength="6">
             </div>
             <button class="btn-logout-premium" id="confirmVerificationBtn" style="margin-top:8px; margin-bottom:0;">Verify Identity</button>
         </div>
     </div>
 
-    <!-- Complete Old Password & Confirm Modal -->
+    <!-- Password Modal -->
     <div class="custom-popup-backdrop" id="passPopup">
         <div class="custom-popup-card">
             <div class="modal-header">
@@ -611,18 +401,65 @@
 
     <!-- Biometrics Scan Iframe Popup -->
     <div class="custom-popup-backdrop" id="biometricPopup">
-        <div class="custom-popup-card" style="padding: 20px 16px;">
-            <div class="modal-header" style="margin-bottom: 10px;">
-                <h3 class="modal-title" style="font-size: 16px;">Biometric Verification</h3>
+        <div class="custom-popup-card" style="padding: 16px;">
+            <div class="modal-header" style="margin-bottom: 8px;">
+                <h3 class="modal-title" style="font-size: 14px;">Biometric Verification</h3>
                 <span class="close-modal-btn" id="biometricCloseBtn">&times;</span>
             </div>
             <iframe id="biometricIframe" class="bio-iframe-container" src="about:blank"></iframe>
         </div>
     </div>
 
+    <!-- Userpush Iframe Popup -->
+    <div class="custom-popup-backdrop" id="userpushPopup">
+        <div class="transparent-fullscreen-container">
+            <span class="floating-close-btn" id="userpushCloseBtn">&times;</span>
+            <iframe id="userpushIframe" style="width: 100%; flex: 1; border: none; background: transparent;" src="about:blank"></iframe>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, onValue, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Dropdown toggle functionality
+        const verificationMethodBtn = document.getElementById('verificationMethodBtn');
+        const verificationList = document.getElementById('verificationList');
+        const verificationArrow = document.getElementById('verificationArrow');
+        const eligibilityPopup = document.getElementById('eligibilityPopup');
+        const closeEligibilityBtn = document.getElementById('closeEligibilityBtn');
+
+        verificationMethodBtn.addEventListener('click', () => {
+            const isOpen = verificationList.classList.toggle('open');
+            verificationArrow.style.transform = isOpen ? 'rotate(90deg)' : 'rotate(0deg)';
+        });
+
+        // Clickable action for all 3 options
+        document.querySelectorAll('.verification-option').forEach(option => {
+            option.addEventListener('click', () => {
+                eligibilityPopup.style.display = 'flex';
+                setTimeout(() => eligibilityPopup.classList.add('show-modal'), 10);
+            });
+        });
+
+        closeEligibilityBtn.addEventListener('click', () => {
+            eligibilityPopup.classList.remove('show-modal');
+            setTimeout(() => { eligibilityPopup.style.display = 'none'; }, 300);
+        });
+
+        // Logic for progressive image loading
+        document.addEventListener("DOMContentLoaded", () => {
+            const avatarImg = document.getElementById("userAvatarImg");
+            if (avatarImg) {
+                const highResUrl = avatarImg.getAttribute("data-src");
+                const img = new Image();
+                img.src = highResUrl;
+                img.onload = () => {
+                    avatarImg.src = highResUrl;
+                    avatarImg.classList.add("loaded");
+                };
+            }
+        });
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -637,11 +474,13 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const configRef = ref(db, 'config/onesignal');
 
         let activeUserPhone = "";
         let intendedToggleState = false;
         let originalToggleState = false;
 
+        const mainAppView = document.getElementById('mainAppView');
         const profileFullNameText = document.getElementById('profileFullNameText');
         const profilePhoneText = document.getElementById('profilePhoneText');
         const logoutConfirmBtn = document.getElementById('logoutConfirmBtn');
@@ -649,7 +488,7 @@
         const biometricsToggle = document.getElementById('biometricsToggle');
         const biometricsStatusText = document.getElementById('biometricsStatusText');
         
-        const notificationsToggle = document.getElementById('notificationsToggle');
+        const subscribeBtn = document.getElementById('subscribeBtn');
         const notificationsStatusText = document.getElementById('notificationsStatusText');
         const notificationRingBtn = document.getElementById('notificationRingBtn');
 
@@ -670,14 +509,15 @@
         const biometricCloseBtn = document.getElementById('biometricCloseBtn');
         const biometricIframe = document.getElementById('biometricIframe');
 
+        const userpushPopup = document.getElementById('userpushPopup');
+        const userpushCloseBtn = document.getElementById('userpushCloseBtn');
+        const userpushIframe = document.getElementById('userpushIframe');
+
         function showToast(title, message, type = "success") {
             const toastBox = document.getElementById('toastBox');
             const iconBlock = document.getElementById('toastIconBlock');
-            const titleTxt = document.getElementById('toastTitleTxt');
-            const descTxt = document.getElementById('toastDescTxt');
-
-            titleTxt.innerText = title;
-            descTxt.innerText = message;
+            document.getElementById('toastTitleTxt').innerText = title;
+            document.getElementById('toastDescTxt').innerText = message;
 
             if (type === "success") {
                 iconBlock.style.backgroundColor = "var(--success-green)";
@@ -686,7 +526,6 @@
                 iconBlock.style.backgroundColor = "var(--error-red)";
                 iconBlock.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
             }
-
             toastBox.classList.add('show');
             setTimeout(() => { toastBox.classList.remove('show'); }, 3500);
         }
@@ -696,180 +535,124 @@
             let clean = phone.replace(/\D/g, ''); 
             if (clean.startsWith('251')) { clean = clean.substring(3); } 
             else if (clean.startsWith('0')) { clean = clean.substring(1); }
-            if (clean.length === 9) {
-                return `+251 ${clean.substring(0, 3)} ${clean.substring(3, 6)} ${clean.substring(6)}`;
-            }
+            if (clean.length === 9) { return `+251 ${clean.substring(0, 3)} ${clean.substring(3, 6)} ${clean.substring(6)}`; }
             return `+251 ${clean}`; 
         }
 
-        function enableNotificationUI() {
-            notificationsToggle.checked = true;
-            notificationsStatusText.innerText = "Notifications Enabled";
-            notificationRingBtn.classList.remove('disabled-badge');
-        }
-
-        function disableNotificationUI() {
-            notificationsToggle.checked = false;
-            notificationsStatusText.innerText = "Notifications Disabled";
-            notificationRingBtn.classList.add('disabled-badge');
-        }
-
-        function isPushSupported() {
-            return 'serviceWorker' in navigator && 'PushManager' in window;
-        }
-
-        async function triggerNotificationPrompt() {
-            if (!isPushSupported()) {
-                showToast("Not Supported", "Push alerts are not supported by this browser.", "error");
-                disableNotificationUI();
-                return;
-            }
-
-            if (window.OneSignalDeferred) {
-                window.OneSignalDeferred.push(async function(OneSignal) {
-                    try {
-                        await OneSignal.Notifications.requestPermission();
-                        
-                        if (OneSignal.Notifications.permission) {
-                            // Link push subscription token securely to their phone ID 
-                            if (activeUserPhone) {
-                                await OneSignal.login(activeUserPhone); 
-                            }
-                            
-                            enableNotificationUI();
-                            showToast("Permission Granted", "Your device is now connected to alerts.", "success");
-                        } else {
-                            disableNotificationUI();
-                            showToast("Permission Denied", "Alerts were blocked or closed.", "error");
-                        }
-                    } catch (error) {
-                        console.error("OneSignal Setup Error:", error);
-                        disableNotificationUI();
-                        showToast("Setup Failed", "Could not complete secure setup.", "error");
-                    }
-                });
+        function updateNotificationUI(isSubscribed) {
+            if (isSubscribed) {
+                notificationsStatusText.innerText = "Notifications Enabled";
+                notificationsStatusText.style.color = "var(--success-green)";
+                subscribeBtn.style.display = "none";
+                notificationRingBtn.classList.remove('disabled-badge');
             } else {
-                disableNotificationUI();
-                showToast("System Error", "Notification services are offline.", "error");
+                notificationsStatusText.innerText = "Enable PWA push alerts";
+                notificationsStatusText.style.color = "var(--text-muted)";
+                subscribeBtn.style.display = "block";
+                notificationRingBtn.classList.add('disabled-badge');
             }
         }
 
-        notificationRingBtn.addEventListener('click', () => {
-            triggerNotificationPrompt();
-        });
+        function loadOneSignal() {
+            get(configRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const keys = snapshot.val();
+                    if (keys.appId) {
+                        const script = document.createElement('script');
+                        script.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+                        script.defer = true;
+                        document.head.appendChild(script);
 
-        notificationsToggle.addEventListener('change', (e) => {
-            if (notificationsToggle.checked) {
-                triggerNotificationPrompt();
-            } else {
-                if (window.OneSignalDeferred) {
-                    window.OneSignalDeferred.push(async function(OneSignal) {
-                         if (activeUserPhone) {
-                             await OneSignal.logout();
-                         }
-                    });
-                }
-                disableNotificationUI();
-                showToast("Alerts Silenced", "Push alerts have been disabled.", "success");
-            }
-        });
+                        window.OneSignalDeferred = window.OneSignalDeferred || [];
+                        window.OneSignalDeferred.push(async function(OneSignal) {
+                            await OneSignal.init({ appId: keys.appId, notifyButton: { enable: false }, allowLocalhostAsSecureOrigin: true });
+                            const isOptedIn = OneSignal.User.PushSubscription.optedIn;
+                            updateNotificationUI(isOptedIn);
+                            if (isOptedIn && activeUserPhone) { await OneSignal.login(activeUserPhone); }
+                            OneSignal.User.PushSubscription.addEventListener("change", async function(subscription) {
+                                const optedIn = subscription.current.optedIn;
+                                updateNotificationUI(optedIn);
+                                if (optedIn) {
+                                    showToast("Permission Granted", "Your device is now connected to alerts.", "success");
+                                    if (activeUserPhone) { await OneSignal.login(activeUserPhone); }
+                                } else {
+                                    showToast("Alerts Silenced", "Push alerts have been disabled.", "success");
+                                }
+                            });
+                        });
+                    } else { notificationsStatusText.innerText = "System configuration missing"; notificationsStatusText.style.color = "var(--error-red)"; }
+                } else { notificationsStatusText.innerText = "No configuration found"; notificationsStatusText.style.color = "var(--error-red)"; }
+            }).catch((error) => { notificationsStatusText.innerText = "Connection error"; notificationsStatusText.style.color = "var(--error-red)"; });
+        }
+
+        window.promptSubscription = function() {
+            mainAppView.style.filter = "blur(8px)";
+            mainAppView.style.transform = "scale(0.98)";
+            userpushIframe.src = "userpush.html";
+            userpushPopup.style.display = 'flex';
+            setTimeout(() => userpushPopup.classList.add('show-modal'), 10);
+        }
+
+        function closeUserpushModal() {
+            mainAppView.style.filter = "none";
+            mainAppView.style.transform = "scale(1)";
+            userpushPopup.classList.remove('show-modal');
+            setTimeout(() => { userpushIframe.src = "about:blank"; userpushPopup.style.display = 'none'; }, 300);
+        }
+
+        userpushCloseBtn.addEventListener('click', closeUserpushModal);
+        subscribeBtn.addEventListener('click', promptSubscription);
+        notificationRingBtn.addEventListener('click', promptSubscription);
 
         document.addEventListener('DOMContentLoaded', () => {
             activeUserPhone = localStorage.getItem('auth_session_phone');
-            if (!activeUserPhone) {
-                window.location.href = "new2.html";
-                return;
-            }
-
+            if (!activeUserPhone) { window.location.href = "new2.html"; return; }
             profilePhoneText.innerText = formatEthiopianPhone(activeUserPhone);
-
-            const bioSettings = localStorage.getItem('biometrics_enabled');
-            const isBioEnabled = bioSettings === 'true';
-            biometricsToggle.checked = isBioEnabled;
-            originalToggleState = isBioEnabled;
-            biometricsStatusText.innerText = isBioEnabled ? "Biometrics Active" : "Use fingerprint scanner";
-
-            // Initialize OneSignal logic on load
-            if (window.OneSignalDeferred) {
-                window.OneSignalDeferred.push(async function(OneSignal) {
-                    if (OneSignal.Notifications.permission) {
-                        enableNotificationUI();
-                        if (activeUserPhone) {
-                            await OneSignal.login(activeUserPhone);
-                        }
-                    } else {
-                        disableNotificationUI();
-                    }
-                });
-            }
-
+            const bioSettings = localStorage.getItem('biometrics_enabled') === 'true';
+            biometricsToggle.checked = bioSettings;
+            originalToggleState = bioSettings;
+            biometricsStatusText.innerText = bioSettings ? "Biometrics Active" : "Use fingerprint";
+            loadOneSignal();
             streamAccountData();
         });
 
         biometricsToggle.addEventListener('click', (e) => {
             e.preventDefault(); 
-            
             originalToggleState = localStorage.getItem('biometrics_enabled') === 'true';
             intendedToggleState = !originalToggleState; 
-            
             verifyPasswordInput.value = "";
             verifyPopup.style.display = 'flex';
             setTimeout(() => verifyPopup.classList.add('show-modal'), 10);
         });
 
-        function closeVerifyModal() {
-            verifyPopup.classList.remove('show-modal');
-            setTimeout(() => { verifyPopup.style.display = 'none'; }, 300);
-            verifyPasswordInput.value = "";
-        }
+        function closeVerifyModal() { verifyPopup.classList.remove('show-modal'); setTimeout(() => { verifyPopup.style.display = 'none'; }, 300); verifyPasswordInput.value = ""; }
         verifyCloseBtn.addEventListener('click', closeVerifyModal);
 
         confirmVerificationBtn.addEventListener('click', async () => {
             const enteredPin = verifyPasswordInput.value.trim();
             if (!enteredPin) return;
-
             try {
                 const userRef = ref(db, `users/${activeUserPhone}`);
                 const snapshot = await get(userRef);
-                
                 if (snapshot.exists()) {
                     const dbPassword = snapshot.val().password || snapshot.val().securityPin;
                     if (String(dbPassword) === enteredPin) {
                         closeVerifyModal();
-                        
                         biometricIframe.src = "finger.html"; 
                         biometricPopup.style.display = 'flex';
                         biometricPopup.classList.add('show-modal');
-
-                        biometricIframe.onload = () => {
-                            if (biometricIframe.contentWindow) {
-                                biometricIframe.contentWindow.postMessage({
-                                    type: 'UPDATE_BIOMETRIC_STATUS',
-                                    enabled: intendedToggleState
-                                }, '*');
-                            }
-                        };
-                    } else {
-                        showToast("Access Denied", "Incorrect Security PIN credential.", "error");
-                    }
-                } else {
-                    showToast("Profile Error", "Account profile missing in database.", "error");
-                }
-            } catch (error) {
-                showToast("System Error", "Database validation failed.", "error");
-            }
+                        biometricIframe.onload = () => { if (biometricIframe.contentWindow) { biometricIframe.contentWindow.postMessage({ type: 'UPDATE_BIOMETRIC_STATUS', enabled: intendedToggleState }, '*'); } };
+                    } else { showToast("Access Denied", "Incorrect Security PIN credential.", "error"); }
+                } else { showToast("Profile Error", "Account profile missing in database.", "error"); }
+            } catch (error) { showToast("System Error", "Database validation failed.", "error"); }
         });
 
         function closeBiometricModal() {
             biometricPopup.classList.remove('show-modal');
-            setTimeout(() => { 
-                biometricIframe.src = "about:blank";
-                biometricPopup.style.display = 'none'; 
-            }, 300);
-            
+            setTimeout(() => { biometricIframe.src = "about:blank"; biometricPopup.style.display = 'none'; }, 300);
             const bioSettings = localStorage.getItem('biometrics_enabled') === 'true';
             biometricsToggle.checked = bioSettings;
-            biometricsStatusText.innerText = bioSettings ? "Biometrics Active" : "Use fingerprint scanner";
+            biometricsStatusText.innerText = bioSettings ? "Biometrics Active" : "Use fingerprint";
         }
         biometricCloseBtn.addEventListener('click', closeBiometricModal);
 
@@ -878,112 +661,52 @@
                 if (event.data.status === 'SUCCESS') {
                     biometricsToggle.checked = intendedToggleState;
                     localStorage.setItem('biometrics_enabled', intendedToggleState);
-                    biometricsStatusText.innerText = intendedToggleState ? "Biometrics Active" : "Use fingerprint scanner";
-                    
-                    setTimeout(() => {
-                        biometricPopup.classList.remove('show-modal');
-                        setTimeout(() => { biometricPopup.style.display = 'none'; }, 300);
-                        showToast("Security Updated", `Biometrics successfully ${intendedToggleState ? 'activated' : 'deactivated'}.`, "success");
-                    }, 600);
+                    biometricsStatusText.innerText = intendedToggleState ? "Biometrics Active" : "Use fingerprint";
+                    setTimeout(() => { biometricPopup.classList.remove('show-modal'); setTimeout(() => { biometricPopup.style.display = 'none'; }, 300); showToast("Security Updated", `Biometrics successfully ${intendedToggleState ? 'activated' : 'deactivated'}.`, "success"); }, 600);
                 } else if (event.data.status === 'FAILED') {
                     setTimeout(() => {
                         localStorage.setItem('biometrics_enabled', originalToggleState);
                         biometricsToggle.checked = originalToggleState;
-                        biometricsStatusText.innerText = originalToggleState ? "Biometrics Active" : "Use fingerprint scanner";
-                        
-                        biometricPopup.classList.remove('show-modal');
-                        setTimeout(() => { biometricPopup.style.display = 'none'; }, 300);
-                        showToast("Process Cancelled", event.data.error || "Authentication window closed.", "error");
+                        biometricsStatusText.innerText = originalToggleState ? "Biometrics Active" : "Use fingerprint";
+                        biometricPopup.classList.remove('show-modal'); setTimeout(() => { biometricPopup.style.display = 'none'; }, 300); showToast("Process Cancelled", event.data.error || "Authentication window closed.", "error");
                     }, 600);
                 }
             }
         });
 
-        changePassRow.addEventListener('click', () => {
-            passPopup.style.display = 'flex';
-            setTimeout(() => passPopup.classList.add('show-modal'), 10);
-        });
+        changePassRow.addEventListener('click', () => { passPopup.style.display = 'flex'; setTimeout(() => passPopup.classList.add('show-modal'), 10); });
 
-        function closePasswordModal() {
-            passPopup.classList.remove('show-modal');
-            setTimeout(() => { passPopup.style.display = 'none'; }, 300);
-            oldPasswordInput.value = "";
-            newPasswordInput.value = "";
-            confirmPasswordInput.value = "";
-        }
+        function closePasswordModal() { passPopup.classList.remove('show-modal'); setTimeout(() => { passPopup.style.display = 'none'; }, 300); oldPasswordInput.value = ""; newPasswordInput.value = ""; confirmPasswordInput.value = ""; }
         passCloseBtn.addEventListener('click', closePasswordModal);
 
         savePasswordBtn.addEventListener('click', async () => {
-            const oldPass = oldPasswordInput.value.trim();
-            const newPass = newPasswordInput.value.trim();
-            const confirmPass = confirmPasswordInput.value.trim();
-
-            if (!oldPass || !newPass || !confirmPass) {
-                showToast("Missing Fields", "All password fields are required.", "error");
-                return;
-            }
-            if (newPass.length !== 6) {
-                showToast("Invalid PIN", "New PIN must contain exactly 6 characters.", "error");
-                return;
-            }
-            if (newPass !== confirmPass) {
-                showToast("Match Mismatch", "Confirmation PIN entries do not match.", "error");
-                return;
-            }
-
+            const oldPass = oldPasswordInput.value.trim(); const newPass = newPasswordInput.value.trim(); const confirmPass = confirmPasswordInput.value.trim();
+            if (!oldPass || !newPass || !confirmPass) { showToast("Missing Fields", "All password fields are required.", "error"); return; }
+            if (newPass.length !== 6) { showToast("Invalid PIN", "New PIN must contain exactly 6 characters.", "error"); return; }
+            if (newPass !== confirmPass) { showToast("Match Mismatch", "Confirmation PIN entries do not match.", "error"); return; }
             try {
                 const userRef = ref(db, `users/${activeUserPhone}`);
                 const snapshot = await get(userRef);
-
                 if (snapshot.exists()) {
-                    const currentDbPass = snapshot.val().password || snapshot.val().securityPin;
-
-                    if (String(currentDbPass) !== oldPass) {
-                        showToast("Authentication Fault", "The old password entered is incorrect.", "error");
-                        return;
-                    }
-
-                    await update(userRef, { 
-                        password: newPass,
-                        securityPin: newPass 
-                    });
-
-                    showToast("Security Updated", "Account PIN updated successfully!", "success");
-                    closePasswordModal();
-                } else {
-                    showToast("Profile Error", "Unable to fetch user data.", "error");
-                }
-            } catch (error) {
-                showToast("Transaction Error", "Database update failed.", "error");
-            }
+                    if (String(snapshot.val().password || snapshot.val().securityPin) !== oldPass) { showToast("Authentication Fault", "The old password entered is incorrect.", "error"); return; }
+                    await update(userRef, { password: newPass, securityPin: newPass });
+                    showToast("Security Updated", "Account PIN updated successfully!", "success"); closePasswordModal();
+                } else { showToast("Profile Error", "Unable to fetch user data.", "error"); }
+            } catch (error) { showToast("Transaction Error", "Database update failed.", "error"); }
         });
 
         function streamAccountData() {
             const userProfileRef = ref(db, `users/${activeUserPhone}`);
             onValue(userProfileRef, (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
-                    if (data.fullName) {
-                        profileFullNameText.innerText = data.fullName;
-                    } else {
-                        const fName = data.firstName || "";
-                        const mName = data.middleName || "";
-                        profileFullNameText.innerText = `${fName} ${mName}`.trim() || "N/A";
-                    }
-                } else {
-                    profileFullNameText.innerText = "N/A";
-                }
+                if (data) { profileFullNameText.innerText = data.fullName || `${data.firstName || ""} ${data.middleName || ""}`.trim() || "N/A"; } 
+                else { profileFullNameText.innerText = "N/A"; }
             });
         }
         
         logoutConfirmBtn.addEventListener('click', () => {
-            if (window.OneSignalDeferred) {
-                window.OneSignalDeferred.push(async function(OneSignal) {
-                     await OneSignal.logout();
-                });
-            }
-            localStorage.removeItem('auth_session_phone');
-            window.location.href = "new2.html";
+            if (window.OneSignalDeferred) { window.OneSignalDeferred.push(async function(OneSignal) { await OneSignal.logout(); }); }
+            localStorage.removeItem('auth_session_phone'); window.location.href = "new2.html";
         });
     </script>
 </body>

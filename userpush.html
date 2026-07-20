@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BirrGo - Enable Notifications</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; 
+            background: transparent; /* Transparent to let the blurred profile show through */
+            padding: 20px; 
+            margin: 0;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        .card { 
+            background: #ffffff; 
+            padding: 32px 24px; 
+            border-radius: 24px; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); 
+            width: 100%; 
+            max-width: 340px; 
+            border-top: 6px solid #800020; 
+            text-align: center;
+            box-sizing: border-box; 
+        }
+        h2 { 
+            color: #0f172a; 
+            margin-top: 0; 
+            font-size: 22px; 
+            font-weight: 800;
+            margin-bottom: 12px; 
+            letter-spacing: -0.5px;
+        }
+        p { 
+            color: #64748b; 
+            font-size: 14px; 
+            line-height: 1.6; 
+            font-weight: 500;
+            margin-bottom: 24px; 
+        }
+        button { 
+            background: #800020; 
+            color: white; 
+            width: 100%; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+            display: none; /* Hidden until loaded */
+            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.2);
+        }
+        button:hover { background: #66001a; }
+        button:active { transform: scale(0.98); }
+        #status { 
+            margin-top: 18px; 
+            font-weight: 700; 
+            font-size: 13px; 
+            color: #f59e0b; 
+        }
+        .icon { 
+            font-size: 48px; 
+            margin-bottom: 16px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="icon">🔔</div>
+    <h2>Stay Updated</h2>
+    <p>Enable push notifications to receive instant alerts for deposits, cash received, and secure account updates.</p>
+    
+    <div id="status">Connecting to BirrGo servers...</div>
+    <button id="subscribe-btn" onclick="promptSubscription()">Enable Notifications</button>
+</div>
+
+<!-- Firebase App SDKs -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+    authDomain: "birrgo-fdf7e.firebaseapp.com",
+    databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+    projectId: "birrgo-fdf7e",
+    storageBucket: "birrgo-fdf7e.firebasestorage.app",
+    messagingSenderId: "2317445154",
+    appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+    measurementId: "G-24X13TZ43D"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+  const configRef = ref(database, 'config/onesignal');
+  
+  const statusDiv = document.getElementById('status');
+  const subscribeBtn = document.getElementById('subscribe-btn');
+
+  function loadOneSignal() {
+      get(configRef).then((snapshot) => {
+          if (snapshot.exists()) {
+              const keys = snapshot.val();
+              const appId = keys.appId;
+              
+              if (appId) {
+                  statusDiv.innerText = "Ready to connect.";
+                  statusDiv.style.color = "#10b981";
+                  subscribeBtn.style.display = "block";
+                  
+                  const script = document.createElement('script');
+                  script.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+                  script.defer = true;
+                  document.head.appendChild(script);
+
+                  window.OneSignalDeferred = window.OneSignalDeferred || [];
+                  window.OneSignalDeferred.push(async function(OneSignal) {
+                      await OneSignal.init({
+                          appId: appId,
+                          notifyButton: { enable: false },
+                          allowLocalhostAsSecureOrigin: true
+                      });
+                      
+                      OneSignal.User.PushSubscription.addEventListener("change", function(subscription) {
+                          if (subscription.current.optedIn) {
+                              statusDiv.innerText = "✔️ You are subscribed to notifications!";
+                              statusDiv.style.color = "#10b981";
+                              subscribeBtn.style.display = "none";
+                          }
+                      });
+                  });
+              } else {
+                  statusDiv.innerText = "Error: Notification system not configured.";
+                  statusDiv.style.color = "#ef4444";
+              }
+          } else {
+              statusDiv.innerText = "Error: Notification keys missing from database.";
+              statusDiv.style.color = "#ef4444";
+          }
+      }).catch((error) => {
+          statusDiv.innerText = 'Database Link Error: ' + error.message;
+          statusDiv.style.color = "#ef4444";
+      });
+  }
+
+  loadOneSignal();
+
+  window.promptSubscription = function() {
+      window.OneSignalDeferred.push(async function(OneSignal) {
+          try {
+              await OneSignal.Slidedown.promptPush();
+          } catch (error) {
+              console.error("Subscription prompt failed:", error);
+          }
+      });
+  }
+</script>
+
+</body>
+</html>
