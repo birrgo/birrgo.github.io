@@ -6,13 +6,13 @@
     <title>BirrGo Premium — Electric Bajaj Luxury Raffle</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-burgundy: #77051c;
-            --primary-gradient: linear-gradient(135deg, #77051c 0%, #3f010b 100%);
-            --accent-glow: rgba(119, 5, 28, 0.05);
+            --primary-burgundy: #6b0519;
+            --primary-gradient: linear-gradient(135deg, #6b0519 0%, #38000b 100%);
+            --accent-glow: rgba(107, 5, 25, 0.08);
             --text-dark: #111827;
             --text-muted: #64748b;
             --bg-light: #f8fafc;
@@ -51,7 +51,7 @@
             width: 100%;
             height: 100dvh;
             max-width: 450px;
-            background-color: #ffffff;
+            background-color: #f8fafc;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -60,16 +60,19 @@
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
+        /* --- REDESIGNED HEADER MATCHING THE IMAGE --- */
         .app-header {
+            background: var(--primary-gradient);
+            padding: 16px 20px 28px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
-            background: #ffffff;
-            border-bottom: 1px solid var(--border-light);
             position: relative;
             z-index: 10;
             flex-shrink: 0;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+            box-shadow: 0 8px 20px rgba(56, 0, 11, 0.25);
         }
 
         .header-left {
@@ -79,62 +82,85 @@
         }
 
         .btn-back {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            width: 36px;
-            height: 36px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 38px;
+            height: 38px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-dark);
+            color: #ffffff;
             cursor: pointer;
+            backdrop-filter: blur(4px);
             transition: all 0.2s ease;
         }
         .btn-back:active {
-            transform: scale(0.95);
+            transform: scale(0.94);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .birrgo-logo-container {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
+
+        .birrgo-badge-icon {
+            width: 34px;
+            height: 34px;
+            background: #ffffff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-burgundy);
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
         .birrgo-brand-text {
             display: flex;
             flex-direction: column;
         }
+
         .brand-main-title {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 800;
-            color: var(--primary-burgundy);
+            color: #ffffff;
             line-height: 1.1;
         }
+
         .brand-sub-motto {
             font-size: 9px;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.6px;
         }
-        .birrgo-badge-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--primary-gradient);
-            border-radius: 9px;
+
+        .header-profile-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ffffff;
-            font-weight: 800;
-            font-size: 15px;
-            box-shadow: 0 4px 12px rgba(119, 5, 28, 0.2);
+            color: #334155;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .header-profile-btn:active {
+            transform: scale(0.95);
         }
 
         .app-content {
             flex: 1;
             overflow-y: auto;
             background-color: #fafbfc;
-            padding: 12px 14px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -148,12 +174,13 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             flex-shrink: 0;
+            margin-top: 2px;
         }
 
         .stat-card {
             background: #ffffff;
             border: 1px solid var(--border-light);
-            padding: 10px 12px;
+            padding: 12px;
             border-radius: var(--border-radius-md);
             position: relative;
             box-shadow: var(--card-shadow);
@@ -240,16 +267,22 @@
             text-align: center;
             flex-shrink: 0;
             position: relative;
-            box-shadow: 0 12px 24px -6px rgba(119, 5, 28, 0.25);
+            box-shadow: 0 12px 24px -6px rgba(107, 5, 25, 0.3);
         }
 
         .search-engine-box h3 {
             font-size: 10px;
             font-weight: 600;
             color: #ffffff;
-            opacity: 0.8;
+            opacity: 0.85;
             letter-spacing: 0.6px;
             text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .search-engine-subtitle {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 2px;
         }
 
@@ -283,12 +316,12 @@
         }
         .status-feedback.available {
             display: inline-block;
-            background-color: rgba(255, 255, 255, 0.15);
+            background-color: rgba(255, 255, 255, 0.18);
             color: #ffffff;
         }
         .status-feedback.taken {
             display: inline-block;
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.35);
             color: #ffffff;
             opacity: 0.9;
         }
@@ -304,6 +337,14 @@
             flex-direction: column;
             overflow: hidden;
             box-shadow: var(--card-shadow);
+        }
+
+        .feed-empty-state {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: 15px;
         }
 
         #liveOrdersFeed {
@@ -367,7 +408,7 @@
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 6px 16px rgba(119, 5, 28, 0.2);
+            box-shadow: 0 6px 18px rgba(107, 5, 25, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -400,7 +441,7 @@
         .modal-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.2);
+            background: rgba(15, 23, 42, 0.25);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             display: flex;
@@ -554,22 +595,23 @@
 
     <div class="app-view">
         
+        <!-- REDESIGNED HEADER MATCHING BRAND BANNER IMAGE -->
         <div class="app-header">
             <div class="header-left">
                 <button class="btn-back" onclick="window.location.href='lottery.html'">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 </button>
-                <div class="header-title">
-                    <h2 style="font-size: 15px; font-weight: 700; color: var(--text-dark);">Electric Bajaj Campaign</h2>
+                <div class="birrgo-logo-container">
+                    <div class="birrgo-badge-icon">B</div>
+                    <div class="birrgo-brand-text">
+                        <span class="brand-main-title">BirrGo</span>
+                        <span class="brand-sub-motto">PREMIUM</span>
+                    </div>
                 </div>
             </div>
             
-            <div class="birrgo-logo-container">
-                <div class="birrgo-brand-text" style="text-align: right;">
-                    <span class="brand-main-title">BirrGo</span>
-                    <span class="brand-sub-motto">PREMIUM</span>
-                </div>
-                <div class="birrgo-badge-icon">B</div>
+            <div class="header-profile-btn" onclick="window.location.href='wallet.html'">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
             </div>
         </div>
 
@@ -598,13 +640,13 @@
 
             <div class="search-engine-box">
                 <h3>Select Raffle Position</h3>
-                <p style="font-size: 10px; color: rgba(255, 255, 255, 0.7); margin-bottom: 2px;">Enter code sequence interval (0 - 5000)</p>
+                <p class="search-engine-subtitle">Enter code sequence interval (0 - 5000)</p>
                 <input type="number" id="ticketNumberInput" class="large-number-input" placeholder="0000" min="0" max="5000">
                 <div id="feedbackBadge" class="status-feedback"></div>
             </div>
 
             <div class="live-feed-panel">
-                <div class="form-heading" style="margin-bottom: 4px;">Live Allocation Stream</div>
+                <div class="form-heading">Live Allocation Stream</div>
                 <div id="liveOrdersFeed"></div>
             </div>
 
@@ -670,7 +712,7 @@
         let validatedTicketNumber = null;
         let globallyTakenTicketsMap = {}; 
         
-        // Configuration Parameters Updated to 1,500 Birr
+        // Configuration Parameters
         const totalTicketsCount = 5000; 
         const ticketCostValue = 1500; 
         let currentAlertCallback = null;
@@ -863,7 +905,7 @@
             
             const entries = Object.values(data);
             if(entries.length === 0) {
-                container.innerHTML = `<div style="text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);padding:15px;">NO TRANSACTIONS IN WINDOW.</div>`;
+                container.innerHTML = `<div class="feed-empty-state">NO TRANSACTIONS IN WINDOW.</div>`;
                 return;
             }
 
