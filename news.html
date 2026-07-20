@@ -275,7 +275,6 @@
         .inline-card-logo { width: 18px; height: 18px; object-fit: contain; opacity: 0.85; }
 
         .promo-redeem-card {
-            display: none;
             background: #ffffff;
             border: 1px solid var(--border-light);
             border-radius: 18px;
@@ -517,9 +516,7 @@
                     <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
-            <div class="news-reader-content" id="fullNewsReaderBody">
-                <!-- Content injected dynamically -->
-            </div>
+            <div class="news-reader-content" id="fullNewsReaderBody"></div>
         </div>
 
         <!-- Search Drawer Overlay -->
@@ -527,13 +524,13 @@
             <div class="search-box-header">
                 <div class="search-input-wrapper">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" class="search-news-field" id="newsCodeSearchInput" placeholder="Enter News Code (e.g. N-102) or title..." autocomplete="off">
+                    <input type="text" class="search-news-field" id="newsCodeSearchInput" placeholder="Enter News Code..." autocomplete="off">
                 </div>
                 <button class="close-search-btn" id="closeSearchDrawerBtn">Cancel</button>
             </div>
             <div class="search-results-area" id="searchResultsArea">
                 <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
-                    Type a news code or keyword above to find updates quickly.
+                    Type a news code above to find updates quickly.
                 </div>
             </div>
         </div>
@@ -560,7 +557,8 @@
                 <span class="filter-pill" data-category="Promo Rewards">Promo Rewards</span>
             </div>
 
-            <section class="promo-redeem-card" id="promoRedeemSection">
+            <!-- Standalone Promo Claim Card (Shows only in Promo Rewards tab) -->
+            <section class="promo-redeem-card" id="promoRedeemSection" style="display: none;">
                 <div class="promo-header-group">
                     <span class="promo-gift-badge">🎁</span>
                     <div>
@@ -573,14 +571,6 @@
                     <button class="promo-submit-btn" id="claimPromoBtn">Claim</button>
                 </div>
             </section>
-
-            <article class="featured-broadcast-card native-ad-card" id="promoTabAdCard" style="display: none;">
-                <div class="badge-meta-row" style="margin-bottom: 8px;">
-                    <span class="spotlight-pill inline-ad-badge">Our Partner</span>
-                    <span class="timestamp-log-text">Verified Partner</span>
-                </div>
-                <div class="ad-script-wrapper" id="promoAdSlotWrapper"></div>
-            </article>
 
             <div class="broadcasts-container" id="broadcastsContainer">
                 <div class="featured-broadcast-card">
@@ -687,6 +677,7 @@
                         localCachedBroadcasts.push({ id: key, ...data[key] });
                     });
                     
+                    // Sort Order: Newest updates first (Descending)
                     localCachedBroadcasts.sort((a, b) => {
                         let timeA = a.updatedAt || a.createdAtTimestamp || a.timestamp || 0;
                         let timeB = b.updatedAt || b.createdAtTimestamp || b.timestamp || 0;
@@ -716,7 +707,7 @@
             if (currentActiveCategoryFilter === "Promo Rewards") {
                 container.innerHTML = `
                     <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12.5px; font-weight:600;">
-                        Use the form module above to verify live codes.
+                        Use the promo code box above to redeem active reward vouchers.
                     </div>
                 `;
             } else {
@@ -777,14 +768,12 @@
             iframeDoc.close();
         }
 
-        /* Build Card Preview HTML (Only text, whole card content opens full article reader) */
         function buildSingleNewsCardHTML(item) {
             const headline = item.title || "Platform Announcement";
             const fullContent = item.content || item.message || "";
             const category = item.category || "All Updates";
             const imageUrl = item.imageUrl || "";
 
-            // Truncate text for preview
             const maxPreviewLen = 120;
             const isLongText = fullContent.length > maxPreviewLen;
             const previewContent = isLongText ? fullContent.substring(0, maxPreviewLen).trim() + "..." : fullContent;
@@ -842,7 +831,6 @@
             const imageUrl = item.imageUrl || "";
             const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
             
-            // Dynamic action button label configured from admin side
             const customActionLabel = item.actionButtonLabel || item.actionLabel || item.buttonLabel || item.btnLabel || "Visit External Source / Link";
 
             let numericalTime = item.updatedAt || item.createdAtTimestamp || item.timestamp;
@@ -902,22 +890,16 @@
 
         function renderFilteredBroadcasts() {
             const container = document.getElementById('broadcastsContainer');
+            const promoSection = document.getElementById('promoRedeemSection');
             if (!container) return;
             
             container.innerHTML = "";
 
-            const promoBox = document.getElementById('promoRedeemSection');
-            const promoAd = document.getElementById('promoTabAdCard');
-
+            // Show Promo Code box only when inside the "Promo Rewards" tab
             if (currentActiveCategoryFilter === "Promo Rewards") {
-                if (promoBox) promoBox.style.display = "block";
-                if (promoAd) {
-                    promoAd.style.display = "block";
-                    triggerNativeAdExecution('promoAdSlotWrapper');
-                }
+                if (promoSection) promoSection.style.display = "block";
             } else {
-                if (promoBox) promoBox.style.display = "none";
-                if (promoAd) promoAd.style.display = "none";
+                if (promoSection) promoSection.style.display = "none";
             }
 
             const filtered = localCachedBroadcasts.filter(item => {
@@ -929,36 +911,36 @@
             });
 
             if (filtered.length === 0) {
-                if (currentActiveCategoryFilter !== "Promo Rewards") renderEmptyState();
+                renderEmptyState();
                 return;
             }
 
+            // Strictly alternate: 1 News -> 1 Ad -> 1 News -> 1 Ad
             filtered.forEach((item, index) => {
+                // 1. News Card
                 const card = document.createElement('article');
                 card.className = "featured-broadcast-card";
                 card.innerHTML = buildSingleNewsCardHTML(item);
                 container.appendChild(card);
 
-                if (currentActiveCategoryFilter === "All Updates" || currentActiveCategoryFilter === "System Releases") {
-                    const adCard = document.createElement('article');
-                    adCard.className = "featured-broadcast-card native-ad-card";
-                    
-                    const dynamicAdSlotId = `live-inline-zone-${index}-${Date.now()}`;
-                    
-                    card.style.marginBottom = "0"; 
-                    adCard.innerHTML = `
-                        <div class="badge-meta-row" style="margin-bottom: 8px;">
-                            <span class="spotlight-pill inline-ad-badge">Our Partner</span>
-                            <span class="timestamp-log-text">Verified Partner Content</span>
-                        </div>
-                        <div class="ad-script-wrapper" id="${dynamicAdSlotId}"></div>
-                    `;
-                    container.appendChild(adCard);
+                // 2. Native Ad Card (Injected right after EVERY news card)
+                const adCard = document.createElement('article');
+                adCard.className = "featured-broadcast-card native-ad-card";
+                
+                const dynamicAdSlotId = `live-inline-ad-${index}-${Date.now()}`;
+                
+                adCard.innerHTML = `
+                    <div class="badge-meta-row" style="margin-bottom: 8px;">
+                        <span class="spotlight-pill inline-ad-badge">Our Partner</span>
+                        <span class="timestamp-log-text">Verified Partner Content</span>
+                    </div>
+                    <div class="ad-script-wrapper" id="${dynamicAdSlotId}"></div>
+                `;
+                container.appendChild(adCard);
 
-                    setTimeout(() => {
-                        triggerNativeAdExecution(dynamicAdSlotId);
-                    }, index * 120 + 20);
-                }
+                setTimeout(() => {
+                    triggerNativeAdExecution(dynamicAdSlotId);
+                }, index * 100 + 20);
             });
         }
 
@@ -974,7 +956,7 @@
             });
         }
 
-        /* News Code Search Engine Logic (Supports searching codes in background) */
+        /* News Search Engine Logic */
         function setupSearchEngineControls() {
             const openBtn = document.getElementById('openSearchBtn');
             const closeBtn = document.getElementById('closeSearchDrawerBtn');
@@ -1014,7 +996,7 @@
             if (!cleanQuery) {
                 resultsArea.innerHTML = `
                     <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
-                        Type a news code or keyword above to find updates quickly.
+                        Type a news code above to find updates quickly.
                     </div>
                 `;
                 return;
@@ -1038,7 +1020,7 @@
             }
 
             resultsArea.innerHTML = '';
-            matchedNews.forEach(item => {
+            matchedNews.forEach((item, index) => {
                 const card = document.createElement('article');
                 card.className = "featured-broadcast-card";
                 card.innerHTML = buildSingleNewsCardHTML(item);

@@ -224,6 +224,34 @@
             border: 1px solid var(--border-light);
         }
 
+        /* Category Filter Buttons in Manager */
+        .filter-btn-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            padding: 8px 6px;
+            font-size: 11px;
+            font-weight: 800;
+            border-radius: 10px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-light);
+            color: var(--text-muted);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-burgundy);
+            color: #ffffff;
+            border-color: var(--primary-burgundy);
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+
         .manage-news-card {
             background: var(--bg-light);
             border: 1px solid var(--border-light);
@@ -296,6 +324,8 @@
         .node-tag-old { background: #e2e8f0; color: #475569; }
         .node-tag-new { background: #dbeafe; color: #1d4ed8; }
         .node-tag-promo { background: #fef3c7; color: #b45309; }
+        
+        .hidden-fields { display: none !important; }
     </style>
 </head>
 <body>
@@ -332,7 +362,6 @@
             Back to Dashboard
         </a>
 
-        <!-- Clean Title Bar with Subtitles Removed -->
         <div class="header-brand-row">
             <div class="brand-title-group">
                 <img class="brand-logo-img" src="birrgo-logo.png" alt="BirrGo Logo" onerror="this.style.display='none'">
@@ -349,14 +378,15 @@
         <div class="input-field-wrapper">
             <label>Target Category</label>
             <select class="form-select" id="postCategory">
-                <option value="All Updates">All Updates (General Feed Post)</option>
-                <option value="System Releases">System Releases (Version Update Post)</option>
-                <option value="Promo Rewards">Promo Rewards (Special Announcement)</option>
+                <option value="All Updates">1. All Updates (General Feed Post)</option>
+                <option value="System Releases">2. System Releases (Version Update Post)</option>
+                <option value="Promo Rewards">3. Promo Rewards (Standard Announcement News)</option>
+                <option value="Promo Code News">4. Promo Code News (Claimable Gift Code)</option>
             </select>
         </div>
 
-        <!-- News Entry Fields -->
-        <div id="broadcastFormFields">
+        <!-- Standard News Entry Fields -->
+        <div id="standardFormFields">
             <div class="input-field-wrapper">
                 <label>News Search Code</label>
                 <input class="admin-input" type="text" id="newsCustomCode" placeholder="e.g. N-101 (Leave blank to auto-generate)" style="text-transform: uppercase;">
@@ -388,6 +418,30 @@
             </div>
         </div>
 
+        <!-- Dynamic Promo Code Creation Fields (Option 4) -->
+        <div id="promoFormFields" class="hidden-fields">
+            <div style="background: #fef3c7; border: 1px solid rgba(245, 158, 11, 0.3); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+                <p style="font-size: 12px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 12px;">
+                    🎁 Promo Code Setup (Creates New Promo Code Entry)
+                </p>
+                
+                <div class="input-field-wrapper">
+                    <label>Promo Code Text</label>
+                    <input class="admin-input" type="text" id="promoCode" placeholder="e.g. BIRR2026, BONUS100" style="text-transform: uppercase;">
+                </div>
+
+                <div class="input-field-wrapper">
+                    <label>Number of Users Allowed to Claim</label>
+                    <input class="admin-input" type="number" id="promoMaxClaims" placeholder="e.g. 50">
+                </div>
+
+                <div class="input-field-wrapper" style="margin-bottom: 0;">
+                    <label>Win Amount Per User (ETB / Birr)</label>
+                    <input class="admin-input" type="number" id="promoRewardAmount" placeholder="e.g. 100">
+                </div>
+            </div>
+        </div>
+
         <div class="btn-row" style="margin-bottom: 24px;">
             <button class="btn-admin-action btn-broadcast" id="publishNewsBtn">
                 <span id="buttonText">Publish Feed Item</span>
@@ -395,8 +449,18 @@
             <button class="btn-admin-action btn-delete" id="deleteAllCategoriesBtn" style="width: auto; padding: 0 16px;">Purge All News</button>
         </div>
 
+        <!-- Manage News & Promo Section -->
         <div style="border-top: 1px dashed var(--border-light); padding-top:20px;">
-            <h3 class="section-title" style="font-size: 16px; color: var(--text-dark); margin-bottom: 14px;">Manage News</h3>
+            <h3 class="section-title" style="font-size: 16px; color: var(--text-dark); margin-bottom: 12px;">Manage News & Promo Codes</h3>
+            
+            <!-- 4 Category Filter Buttons -->
+            <div class="filter-btn-grid">
+                <button class="filter-btn active" data-filter="ALL">1. All Items</button>
+                <button class="filter-btn" data-filter="All Updates">2. News Feed</button>
+                <button class="filter-btn" data-filter="System Releases">3. Releases</button>
+                <button class="filter-btn" data-filter="Promo">4. Promo Codes</button>
+            </div>
+
             <div id="manageNewsCardsContainer"></div>
         </div>
     </div>
@@ -408,9 +472,29 @@
         let res = null;
         let oldNewsState = {};
         let newNewsState = {};
-        let promoState = {};
+        let promoCodesState = {};
+        let legacyPromoState = {};
         let currentEditingKey = null;
         let currentEditingNode = 'newNews';
+        let activeCategoryFilter = 'ALL';
+
+        // Toggle promo form UI based on Category Selection
+        const categorySelect = document.getElementById('postCategory');
+        categorySelect.addEventListener('change', (e) => {
+            const isPromoCodeOption = e.target.value === 'Promo Code News';
+            document.getElementById('standardFormFields').classList.toggle('hidden-fields', isPromoCodeOption);
+            document.getElementById('promoFormFields').classList.toggle('hidden-fields', !isPromoCodeOption);
+        });
+
+        // 4 Category Filter Button Event Listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeCategoryFilter = btn.getAttribute('data-filter');
+                render();
+            });
+        });
 
         // Modal Utility
         function openModal(t, d, m, c, tx) {
@@ -447,10 +531,15 @@
             render(); 
         }, error => console.error("Database 'newNews' Connection Error:", error));
 
-        onValue(ref(db, 'globalPromoCampaign'), snapshot => { 
-            promoState = snapshot.val() || {}; 
+        onValue(ref(db, 'promoCodes'), snapshot => { 
+            promoCodesState = snapshot.val() || {}; 
             render(); 
-        }, error => console.warn("Promo Campaign Node Error:", error));
+        }, error => console.warn("Promo Codes Node Error:", error));
+
+        onValue(ref(db, 'globalPromoCampaign'), snapshot => { 
+            legacyPromoState = snapshot.val() || {}; 
+            render(); 
+        }, error => console.warn("Legacy Promo Node Error:", error));
 
         // Combined UI Render Engine
         function render() {
@@ -469,32 +558,70 @@
 
             combined.sort((a, b) => (b.data.timestamp || 0) - (a.data.timestamp || 0));
 
-            // Render Promo Item
-            if(promoState && promoState.code) {
-                container.innerHTML += `
-                    <div class="manage-news-card">
-                        <div class="manage-news-header">
-                            <div>
-                                <span class="code-badge">${promoState.code}</span>
-                                <strong style="margin-left:6px; font-size:14px;">Promo Campaign</strong>
+            let renderedItemsCount = 0;
+
+            // Render Promo Codes (`promoCodes` collection)
+            if (activeCategoryFilter === 'ALL' || activeCategoryFilter === 'Promo') {
+                Object.keys(promoCodesState).forEach(k => {
+                    const item = promoCodesState[k];
+                    renderedItemsCount++;
+                    container.innerHTML += `
+                        <div class="manage-news-card">
+                            <div class="manage-news-header">
+                                <div>
+                                    <span class="code-badge">${item.code}</span>
+                                    <strong style="margin-left:6px; font-size:14px; color:var(--text-dark);">Promo Code (${item.rewardAmount || 0} ETB)</strong>
+                                </div>
+                                <span class="node-tag node-tag-promo">Promo Code</span>
                             </div>
-                            <span class="node-tag node-tag-promo">Promo</span>
-                        </div>
-                        <p style="font-size:12px; color:var(--text-muted);">Claims: ${promoState.currentClaimCount || 0}/${promoState.maxClaims || 0}</p>
-                        <div class="manage-btn-group">
-                            <button class="btn-news-ctrl btn-ctrl-delete del-btn" data-key="" data-node="globalPromoCampaign">Delete News</button>
-                        </div>
-                    </div>`;
+                            <p style="font-size:12px; color:var(--text-muted);">
+                                Users Claimed: <strong>${item.currentClaimCount || 0} / ${item.maxClaims || 0}</strong> | Win: <strong>${item.rewardAmount || 0} Birr</strong>
+                            </p>
+                            <div class="manage-btn-group">
+                                <button class="btn-news-ctrl btn-ctrl-delete del-btn" data-key="${k}" data-node="promoCodes">Delete Promo Code</button>
+                            </div>
+                        </div>`;
+                });
+
+                // Render Legacy Promo Item if present
+                if(legacyPromoState && legacyPromoState.code) {
+                    renderedItemsCount++;
+                    container.innerHTML += `
+                        <div class="manage-news-card">
+                            <div class="manage-news-header">
+                                <div>
+                                    <span class="code-badge">${legacyPromoState.code}</span>
+                                    <strong style="margin-left:6px; font-size:14px;">Legacy Promo (${legacyPromoState.rewardAmount || 0} Birr)</strong>
+                                </div>
+                                <span class="node-tag node-tag-promo">Promo</span>
+                            </div>
+                            <p style="font-size:12px; color:var(--text-muted);">
+                                Claims: <strong>${legacyPromoState.currentClaimCount || 0} / ${legacyPromoState.maxClaims || 0} Users</strong> | Win: <strong>${legacyPromoState.rewardAmount || 0} ETB</strong>
+                            </p>
+                            <div class="manage-btn-group">
+                                <button class="btn-news-ctrl btn-ctrl-delete del-btn" data-key="" data-node="globalPromoCampaign">Delete Promo</button>
+                            </div>
+                        </div>`;
+                }
             }
 
-            if(combined.length > 0) { 
-                combined.forEach(itemObj => { 
-                    const item = itemObj.data; 
-                    const k = itemObj.key;
-                    const nodeName = itemObj.node;
-                    const newsCode = item.newsCode || item.code || 'N-NONE';
-                    const tagClass = nodeName === 'news' ? 'node-tag-old' : 'node-tag-new';
+            // Render Standard Feed News Items
+            combined.forEach(itemObj => { 
+                const item = itemObj.data; 
+                const k = itemObj.key;
+                const nodeName = itemObj.node;
+                const newsCode = item.newsCode || item.code || 'N-NONE';
+                const tagClass = nodeName === 'news' ? 'node-tag-old' : 'node-tag-new';
+                const itemCategory = item.category || 'All Updates';
 
+                // Category Filter Matching
+                let isMatch = false;
+                if (activeCategoryFilter === 'ALL') isMatch = true;
+                else if (activeCategoryFilter === 'Promo' && (itemCategory === 'Promo Rewards' || itemCategory === 'Promo Code News')) isMatch = true;
+                else if (itemCategory === activeCategoryFilter) isMatch = true;
+
+                if (isMatch) {
+                    renderedItemsCount++;
                     container.innerHTML += `
                         <div class="manage-news-card">
                             <div class="manage-news-header">
@@ -504,16 +631,18 @@
                                 </div>
                                 <span class="node-tag ${tagClass}">${nodeName}</span>
                             </div>
-                            <div style="font-size:12px; color:var(--text-muted);">Category: <strong>${item.category || 'General'}</strong></div>
+                            <div style="font-size:12px; color:var(--text-muted);">Category: <strong>${itemCategory}</strong></div>
                             <div class="manage-btn-group">
                                 <button class="btn-news-ctrl btn-ctrl-edit edit-btn" data-key="${k}" data-node="${nodeName}">Edit News</button>
                                 <button class="btn-news-ctrl btn-ctrl-preview preview-btn" data-key="${k}" data-node="${nodeName}">Preview News</button>
                                 <button class="btn-news-ctrl btn-ctrl-delete del-btn" data-key="${k}" data-node="${nodeName}">Delete News</button>
                             </div>
                         </div>`; 
-                }); 
-            } else if (!promoState.code) {
-                container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:600; font-size:13px;">No news items active across database.</div>';
+                }
+            });
+
+            if (renderedItemsCount === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:600; font-size:13px;">No items found for '${activeCategoryFilter}'.</div>`;
             }
             
             // Delete Handlers
@@ -544,6 +673,9 @@
                 currentEditingNode = nodeName;
                 
                 document.getElementById('postCategory').value = item.category || 'All Updates';
+                document.getElementById('standardFormFields').classList.remove('hidden-fields');
+                document.getElementById('promoFormFields').classList.add('hidden-fields');
+
                 document.getElementById('newsCustomCode').value = item.newsCode || item.code || '';
                 document.getElementById('newsTitle').value = item.title || item.newsTitle || '';
                 document.getElementById('newsMessage').value = item.content || item.message || '';
@@ -577,7 +709,7 @@
             }));
         }
 
-        // Reset Editing Form State
+        // Reset Form State
         document.getElementById('cancelEditBtn').addEventListener('click', resetFormState);
 
         function resetFormState() {
@@ -585,19 +717,71 @@
             currentEditingNode = 'newNews';
             document.getElementById('editingBanner').style.display = 'none';
             document.getElementById('buttonText').innerText = "Publish Feed Item";
+            
+            document.getElementById('postCategory').value = 'All Updates';
+            document.getElementById('standardFormFields').classList.remove('hidden-fields');
+            document.getElementById('promoFormFields').classList.add('hidden-fields');
+
             document.getElementById('newsCustomCode').value = '';
             document.getElementById('newsTitle').value = '';
             document.getElementById('newsMessage').value = '';
             document.getElementById('newsRedirectUrl').value = '';
             document.getElementById('newsButtonLabel').value = '';
+
+            document.getElementById('promoCode').value = '';
+            document.getElementById('promoMaxClaims').value = '';
+            document.getElementById('promoRewardAmount').value = '';
         }
 
-        // Publish or Update Post Pipeline
+        // Publish Action
         document.getElementById('publishNewsBtn').addEventListener('click', async () => {
             const cat = document.getElementById('postCategory').value;
             const publishBtn = document.getElementById('publishNewsBtn');
             const buttonText = document.getElementById('buttonText');
 
+            publishBtn.disabled = true;
+
+            const timestampWithTime = new Date().toLocaleString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric',
+                hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true
+            });
+
+            // Option 4: Adding New Promo Code
+            if (cat === 'Promo Code News') {
+                const promoCode = document.getElementById('promoCode').value.trim().toUpperCase();
+                const maxClaims = parseInt(document.getElementById('promoMaxClaims').value, 10);
+                const rewardAmount = parseFloat(document.getElementById('promoRewardAmount').value);
+
+                if (!promoCode || isNaN(maxClaims) || isNaN(rewardAmount)) {
+                    publishBtn.disabled = false;
+                    return triggerAdminAlert("Please enter Promo Code, User Limit, and Win Amount.", false);
+                }
+
+                buttonText.innerText = "Creating Promo Code...";
+
+                const promoPayload = {
+                    code: promoCode,
+                    maxClaims: maxClaims,
+                    rewardAmount: rewardAmount,
+                    currentClaimCount: 0,
+                    createdAt: timestampWithTime,
+                    timestamp: Date.now()
+                };
+
+                try {
+                    await set(push(ref(db, 'promoCodes')), promoPayload);
+                    triggerAdminAlert(`Promo Code [${promoCode}] Created Successfully!`);
+                    resetFormState();
+                } catch(err) {
+                    console.error(err);
+                    triggerAdminAlert("Failed to save promo: " + err.message, false);
+                } finally {
+                    publishBtn.disabled = false;
+                }
+                return;
+            }
+
+            // Options 1, 2, 3: Standard News Feed Posts
             const title = document.getElementById('newsTitle').value.trim();
             const message = document.getElementById('newsMessage').value.trim();
             const redirectUrl = document.getElementById('newsRedirectUrl').value.trim();
@@ -605,6 +789,7 @@
             let newsCode = document.getElementById('newsCustomCode').value.trim().toUpperCase();
 
             if(!title || !message) {
+                publishBtn.disabled = false;
                 return triggerAdminAlert("Title and content message are required.", false);
             }
 
@@ -612,18 +797,7 @@
                 newsCode = `N-${Math.floor(1000 + Math.random() * 9000)}`;
             }
             
-            publishBtn.disabled = true;
             buttonText.innerText = currentEditingKey ? "Updating..." : "Publishing...";
-
-            const timestampWithTime = new Date().toLocaleString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true
-            });
 
             const newsDataPayload = { 
                 newsCode: newsCode,
@@ -658,10 +832,11 @@
 
         // Purge All Database Records
         document.getElementById('deleteAllCategoriesBtn').addEventListener('click', async () => {
-            if(!await openModal("CRITICAL PURGE", "Permanently delete ALL news and promo records across the database?", [{label:"Target Nodes:", value:"news, newNews, globalPromoCampaign"}], "btn-delete", "Delete Everything")) return;
+            if(!await openModal("CRITICAL PURGE", "Permanently delete ALL news and promo entries across database?", [{label:"Target Nodes:", value:"news, newNews, promoCodes, globalPromoCampaign"}], "btn-delete", "Delete Everything")) return;
             try {
                 await remove(ref(db, 'news')); 
                 await remove(ref(db, 'newNews')); 
+                await remove(ref(db, 'promoCodes')); 
                 await remove(ref(db, 'globalPromoCampaign')); 
                 resetFormState();
                 triggerAdminAlert("Flushed all database items!");
