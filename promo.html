@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BirrGo - New Updates</title>
+    <title>BirrGo - Promo Rewards</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
@@ -74,14 +74,28 @@
 
         <main class="app-content">
             <div class="category-filter-row" id="filterPillsRow">
-                <a href="news.html" class="filter-pill active-pill">New Updates</a>
+                <a href="news.html" class="filter-pill">New Updates</a>
                 <a href="system.html" class="filter-pill">System Releases</a>
-                <a href="Promo.html" class="filter-pill">Promo Rewards</a>
+                <a href="Promo.html" class="filter-pill active-pill">Promo Rewards</a>
             </div>
 
+            <section class="promo-redeem-card" id="promoRedeemSection">
+                <div class="promo-header-group">
+                    <span class="promo-gift-badge">🎁</span>
+                    <div>
+                        <h3 class="promo-header-title">Claim Reward Voucher</h3>
+                        <p class="promo-header-subtitle">Enter your official limit promo code for instant bonus</p>
+                    </div>
+                </div>
+                <div class="promo-action-fields">
+                    <input type="text" class="promo-input-field" id="promoCodeInput" placeholder="ENTER PROMO CODE" maxlength="20" autocomplete="off">
+                    <button class="promo-submit-btn" id="claimPromoBtn">Claim</button>
+                </div>
+            </section>
+
             <div class="broadcasts-container" id="broadcastsContainer">
-                <div class="featured-broadcast-card">
-                    <h2 class="broadcast-title" style="font-size:14px; text-align:center; color: var(--text-muted);">Connecting to Secure Node...</h2>
+                <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12.5px; font-weight:600;">
+                    Use the promo code box above to redeem active reward vouchers.
                 </div>
             </div>
 
@@ -93,7 +107,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, get, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -111,7 +125,6 @@
         
         let activeUserPhone = "912345678"; 
         let localCachedBroadcasts = [];
-        let currentActiveCategoryFilter = "All Updates";
         let cardClockIntervalId = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -125,6 +138,9 @@
             streamLiveAdminUpdatesLog();
             setupSearchEngineControls();
             setupNewsReaderModalControls();
+            
+            const claimBtn = document.getElementById('claimPromoBtn');
+            if (claimBtn) claimBtn.addEventListener('click', processPromoClaim);
 
             const closeBtn = document.getElementById('closePopupBtn');
             if (closeBtn) {
@@ -192,28 +208,8 @@
                     });
 
                     renderFilteredBroadcasts();
-                } else {
-                    renderEmptyState();
                 }
-            }, (error) => {
-                console.error("Database Core Error:", error);
-                const container = document.getElementById('broadcastsContainer');
-                if(container) container.innerHTML = '<p style="text-align:center;color:red;font-size:12px;">Synchronization Halted</p>';
             });
-        }
-
-        function renderEmptyState() {
-            const container = document.getElementById('broadcastsContainer');
-            if (!container) return;
-            
-            container.innerHTML = `
-                <article class="featured-broadcast-card">
-                    <div class="badge-meta-row"><span class="spotlight-pill">System OK</span></div>
-                    <h2 class="broadcast-title">All Systems Nominal</h2>
-                    <p class="broadcast-body-text">There are no updates or notices posted under this filter category today.</p>
-                    <div class="card-footer-branding-row"><div></div><img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token"></div>
-                </article>
-            `;
         }
 
         function triggerNativeAdExecution(containerId) {
@@ -386,17 +382,14 @@
             const container = document.getElementById('broadcastsContainer');
             if (!container) return;
             
-            container.innerHTML = "";
-
             const filtered = localCachedBroadcasts.filter(item => {
                 const nodeCategory = (item.category || "All Updates").trim();
-                return nodeCategory.toLowerCase() !== "system releases";
+                return nodeCategory.toLowerCase() === "promo rewards";
             });
 
-            if (filtered.length === 0) {
-                renderEmptyState();
-                return;
-            }
+            if (filtered.length === 0) return;
+
+            container.innerHTML = "";
 
             filtered.forEach((item, index) => {
                 const card = document.createElement('article');
@@ -493,6 +486,109 @@
                 card.innerHTML = buildSingleNewsCardHTML(item);
                 resultsArea.appendChild(card);
             });
+        }
+
+        async function processPromoClaim() {
+            const inputField = document.getElementById('promoCodeInput');
+            const claimBtn = document.getElementById('claimPromoBtn');
+            if (!inputField || !claimBtn) return;
+
+            const enteredCode = inputField.value.trim().toUpperCase();
+            if (!enteredCode) {
+                triggerUiPopup("⚠️", "Input Empty", "Please enter a valid code voucher string to process.");
+                return;
+            }
+
+            claimBtn.disabled = true;
+            claimBtn.innerText = "Checking...";
+
+            try {
+                const campaignRef = ref(db, 'globalPromoCampaign');
+                const campaignSnap = await get(campaignRef);
+
+                if (!campaignSnap.exists()) {
+                    triggerUiPopup("❌", "No Active Promo", "There are no ongoing promotional rewards events active at this time.");
+                    return;
+                }
+
+                const campaignData = campaignSnap.val();
+                if (enteredCode !== String(campaignData.code).trim().toUpperCase()) {
+                    triggerUiPopup("❌", "Wrong Promo Code", "The code you entered is invalid. Please try again with a correct code.");
+                    return;
+                }
+
+                const currentCount = parseInt(campaignData.currentClaimCount) || 0;
+                const maxClaims = parseInt(campaignData.maxClaims) || 0;
+                if (currentCount >= maxClaims) {
+                    triggerUiPopup("🚫", "Promo Expired", "This promotional campaign has expired! Limit cap allocations are complete.");
+                    return;
+                }
+
+                const userHistoryRef = ref(db, `users/${activeUserPhone}/claimedPromos/${enteredCode}`);
+                const historySnap = await get(userHistoryRef);
+                if (historySnap.exists()) {
+                    triggerUiPopup("⚠️", "Already Claimed", "You have already collected this voucher bonus value to your account balance.");
+                    return;
+                }
+
+                const counterRef = ref(db, 'globalPromoCampaign/currentClaimCount');
+                const transactionResult = await runTransaction(counterRef, (currentValue) => {
+                    let val = parseInt(currentValue);
+                    if (currentValue === null || isNaN(val)) val = 0;
+                    if (val >= maxClaims) return; 
+                    return val + 1;
+                });
+
+                if (!transactionResult.committed) {
+                    triggerUiPopup("🚫", "Promo Expired", "This promotional campaign has expired! Limit cap allocations are complete.");
+                    return;
+                }
+
+                const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
+                const currentBalanceSnap = await get(balanceRef);
+                let reward = parseFloat(campaignData.rewardAmount) || 0;
+                let currentBalance = 0;
+                
+                if (currentBalanceSnap.exists() && currentBalanceSnap.val() !== null) {
+                    currentBalance = parseFloat(currentBalanceSnap.val()) || 0;
+                }
+                
+                await set(balanceRef, currentBalance + reward);
+                await set(userHistoryRef, { claimedAt: Date.now(), amountClaimed: reward });
+
+                triggerUiPopup("", "Voucher Redeemed!", "Successfully updated onto your wallet balance.", `+${reward} Birr`);
+                inputField.value = "";
+            } catch (error) {
+                console.error("Voucher operation pipeline fail:", error);
+                triggerUiPopup("❌", "Network Error", "Secure server connection failure. Please try again.");
+            } finally {
+                claimBtn.disabled = false;
+                claimBtn.innerText = "Claim";
+            }
+        }
+
+        function triggerUiPopup(icon, title, desc, greenAmount = "") {
+            const overlay = document.getElementById('customPopupModule');
+            const iconNode = document.getElementById('popupIconNode');
+            const amountNode = document.getElementById('popupAmountNode');
+            const titleNode = document.getElementById('popupTitleNode');
+            const descNode = document.getElementById('popupDescNode');
+            
+            if (overlay && iconNode && titleNode && descNode && amountNode) {
+                if (greenAmount) {
+                    iconNode.style.display = "none";
+                    amountNode.innerText = greenAmount;
+                    amountNode.className = "popup-success-amount";
+                    amountNode.style.display = "block";
+                } else {
+                    iconNode.innerText = icon;
+                    iconNode.style.display = "inline-block";
+                    amountNode.style.display = "none";
+                }
+                titleNode.innerText = title;
+                descNode.innerText = desc;
+                overlay.classList.add('show-popup');
+            }
         }
     </script>
 </body>

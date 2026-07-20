@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BirrGo - New Updates</title>
+    <title>BirrGo - System Releases</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
@@ -74,8 +74,8 @@
 
         <main class="app-content">
             <div class="category-filter-row" id="filterPillsRow">
-                <a href="news.html" class="filter-pill active-pill">New Updates</a>
-                <a href="system.html" class="filter-pill">System Releases</a>
+                <a href="news.html" class="filter-pill">New Updates</a>
+                <a href="system.html" class="filter-pill active-pill">System Releases</a>
                 <a href="Promo.html" class="filter-pill">Promo Rewards</a>
             </div>
 
@@ -111,7 +111,7 @@
         
         let activeUserPhone = "912345678"; 
         let localCachedBroadcasts = [];
-        let currentActiveCategoryFilter = "All Updates";
+        let currentActiveCategoryFilter = "System Releases";
         let cardClockIntervalId = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -390,7 +390,7 @@
 
             const filtered = localCachedBroadcasts.filter(item => {
                 const nodeCategory = (item.category || "All Updates").trim();
-                return nodeCategory.toLowerCase() !== "system releases";
+                return nodeCategory.toLowerCase() === "system releases";
             });
 
             if (filtered.length === 0) {
