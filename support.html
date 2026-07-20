@@ -1,49 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>new
+<html lang="en" class="notranslate" translate="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="google" content="notranslate">
     <title>Contact Support | BirrGo - Empowering Digital Africa</title>
     
+    <!-- Preload fonts to prevent system layout shifts on low connection clusters -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-burgundy: #8b0015;
-            --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
-            --text-dark: #111827; 
-            --text-muted: #4b5563; 
-            --bg-light: #f8f9fa;
-            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-            --btn-shadow: 0 10px 20px rgba(139, 0, 21, 0.15);
+            --primary-burgundy: #800020;
+            --primary-burgundy-gradient: linear-gradient(135deg, #4a0012 0%, #800020 50%, #2b000a 100%);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --input-bg: #f1f5f9;
+            --focus-shadow: 0 4px 12px rgba(128, 0, 32, 0.1);
+            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.04);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            letter-spacing: -0.3px;
             -webkit-tap-highlight-color: transparent;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
         html, body {
-            background-color: var(--bg-light); 
             width: 100%;
+            margin: 0;
+            padding: 0;
             min-height: 100vh;
-            color: var(--text-dark);
-        }
-
-        body {
+            min-height: 100dvh;
+            background-color: #fafbfc;
+            /* Matches login & register geometric layout blueprint */
+            background-image: 
+                radial-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px), 
+                linear-gradient(to right, rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px, 40px 40px, 40px 40px;
+            background-position: 0 0, 0 0, 0 0;
             display: flex;
             flex-direction: column;
             position: relative;
+            overflow-x: hidden;
+            color: var(--text-dark);
         }
 
-        /* Responsive Background Waves */
+        /* Adaptive Wave Overlays */
         .bg-wave {
             position: absolute;
             left: 0;
@@ -54,101 +65,122 @@
         
         .bg-wave-top {
             top: 0;
-            height: 160px;
+            height: 11vh;
+            min-height: 82px;
         }
 
-        /* Main Viewport Wrapper - Adjusted top padding to match other pages */
-        .app-view {
-            width: 100%;
-            padding: calc(12px + env(safe-area-inset-top)) 24px 60px 24px;
-            position: relative;
-            z-index: 1;
+        .bg-wave-bottom {
+            bottom: env(safe-area-inset-bottom, 0px);
+            height: 7vh;
+            min-height: 48px;
+            z-index: 2;
         }
 
-        /* Top Header Navigation Area */
-        .header-navigation {
+        /* Top Bar Element Rules */
+        .header-top-area {
+            position: absolute;
+            top: calc(10px + env(safe-area-inset-top));
+            left: 16px;
+            right: 16px;
             display: flex;
             align-items: center;
-            justify-content: flex-start;
-            width: 100%;
-            margin-bottom: 10px;
+            gap: 12px;
+            z-index: 10;
         }
 
         .header-back-btn {
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            text-decoration: none;
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            transition: transform 0.1s ease, background 0.2s ease;
+            transition: background 0.2s ease;
+            flex-shrink: 0;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
         }
 
         .header-back-btn:active {
-            transform: scale(0.95);
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Top Header Area */
-        .header-top-area {
+        /* Responsive Viewport Management Wrapper */
+        .app-view {
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: calc(90px + env(safe-area-inset-top)) 20px calc(65px + env(safe-area-inset-bottom)) 20px;
+            position: relative;
+            z-index: 1;
+            box-sizing: border-box;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        /* Font Sizing Framework Aligned exactly with Register/Login screens */
+        .screen-header {
             text-align: center;
-            margin-bottom: 32px;
-            color: #ffffff;
-        }
-
-        .header-top-area h1 {
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            margin-bottom: 8px;
-        }
-
-        .header-top-area p {
-            font-size: 15px;
-            opacity: 0.9;
-            font-weight: 400;
-        }
-
-        /* Two Column Layout for Large Screens, shifts to Single Column for Mobile */
-        .support-layout {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 24px;
-            max-width: 1200px;
-            margin: 0 auto 28px auto;
+            margin-bottom: 3.5vh;
             width: 100%;
         }
 
-        @media (max-width: 850px) {
+        .screen-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+
+        .screen-header h1 span {
+            color: var(--primary-burgundy);
+        }
+
+        .screen-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Support Grid Configuration */
+        .support-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
             .support-layout {
                 grid-template-columns: 1fr;
-            }
-            .header-top-area h1 {
-                font-size: 26px;
+                gap: 16px;
             }
         }
 
         /* Content Blocks */
         .content-card {
             background: #ffffff;
-            border-radius: 24px;
-            padding: 32px;
+            border-radius: 16px;
+            padding: 24px;
             box-shadow: var(--card-shadow);
-            border: 1px solid rgba(0,0,0,0.01);
+            border: 1px solid rgba(226, 232, 240, 0.8);
             height: fit-content;
         }
 
         h2 {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 16px;
-            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
         }
 
         h2 span {
@@ -156,78 +188,84 @@
         }
 
         .subtitle-desc {
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-muted);
-            margin-bottom: 24px;
-            line-height: 1.6;
+            margin-bottom: 18px;
+            line-height: 1.5;
+            font-weight: 500;
         }
 
-        /* Channel Contact Links Row */
+        /* Interactive Action Channels */
         .contact-channels {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 10px;
         }
 
         .channel-item {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 16px;
-            background: #fdfafb;
-            border: 1px solid rgba(139, 0, 21, 0.05);
-            border-radius: 16px;
+            gap: 12px;
+            padding: 14px;
+            background: var(--input-bg);
+            border: 1.5px solid transparent;
+            border-radius: 12px;
             text-decoration: none;
             color: var(--text-dark);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.2s ease;
         }
 
-        .channel-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(139, 0, 21, 0.05);
+        .channel-item:focus, .channel-item:hover {
+            border-color: var(--primary-burgundy);
+            background-color: #ffffff;
+            box-shadow: var(--focus-shadow);
         }
 
         .channel-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             background: #ffffff;
             color: var(--primary-burgundy);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
             flex-shrink: 0;
         }
 
         .channel-info h4 {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .channel-info p {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-muted);
+            font-weight: 500;
         }
 
-        /* Interactive FAQ Accordion Styles */
+        /* FAQ Interactive Systems */
         .faq-wrapper {
-            margin-top: 16px;
+            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .faq-item {
-            border-bottom: 1px solid #e5e7eb;
-            padding: 16px 0;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 0;
         }
 
         .faq-item:last-child {
             border-bottom: none;
+            padding-bottom: 0;
         }
 
         .faq-question {
-            font-size: 14.5px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-dark);
             cursor: pointer;
@@ -240,158 +278,177 @@
         .faq-answer {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
-            font-size: 13.5px;
+            transition: max-height 0.25s cubic-bezier(0, 1, 0, 1);
+            font-size: 12px;
             color: var(--text-muted);
-            line-height: 1.6;
+            line-height: 1.5;
+            font-weight: 500;
         }
 
         .faq-item.active .faq-answer {
-            max-height: 200px;
-            margin-top: 10px;
-            transition: max-height 0.3s cubic-bezier(1, 0, 1, 0);
+            max-height: 160px;
+            margin-top: 8px;
+            transition: max-height 0.25s cubic-bezier(1, 0, 1, 0);
         }
 
         .faq-toggle-icon {
+            color: var(--text-muted);
             transition: transform 0.2s ease;
+            flex-shrink: 0;
+            margin-left: 8px;
         }
 
         .faq-item.active .faq-toggle-icon {
             transform: rotate(180deg);
+            color: var(--primary-burgundy);
         }
 
-        /* Professional Contact Ticket Form Controls */
+        /* Form Ticket Input Modules matching exact site metrics */
         .form-group {
+            position: relative;
+            width: 100%;
             margin-bottom: 16px;
         }
 
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
+        .form-label {
+            position: absolute;
+            top: -7px;
+            left: 12px;
+            background-color: #ffffff;
+            padding: 0 5px;
+            font-size: 11px;
+            font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 6px;
+            z-index: 2;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 16px;
-            font-size: 14px;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
+            height: 48px;
+            background-color: var(--input-bg);
+            border: 1.5px solid transparent;
             border-radius: 12px;
+            padding: 0 14px;
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text-dark);
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s ease;
         }
 
         .form-control:focus {
             border-color: var(--primary-burgundy);
-            background: #ffffff;
+            background-color: #ffffff;
+            box-shadow: var(--focus-shadow);
         }
 
         textarea.form-control {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            height: 105px;
             resize: none;
-            height: 110px;
         }
 
+        /* System Action Submission Nodes */
         .submit-btn {
             width: 100%;
             height: 48px;
-            background: var(--primary-gradient);
+            background: var(--primary-burgundy-gradient);
             color: #ffffff;
-            border: none;
-            border-radius: 12px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
+            border: none;
+            border-radius: 30px;
             cursor: pointer;
-            box-shadow: var(--btn-shadow);
-            transition: transform 0.1s ease;
+            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.2);
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
         }
 
-        .submit-btn:active {
-            transform: scale(0.98);
-        }
+        .submit-btn:active { transform: scale(0.98); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* Back Button Alignment Component */
         .action-container {
             display: flex;
             justify-content: center;
             width: 100%;
-            margin-top: 12px;
+            margin-top: 8px;
         }
 
         .back-btn {
             width: 100%;
-            max-width: 320px;
-            height: 54px; 
-            border-radius: 16px;
-            font-size: 15px;
-            font-weight: 600; 
+            max-width: 360px;
+            height: 46px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             cursor: pointer;
-            transition: transform 0.1s ease;
+            transition: transform 0.15s ease;
             text-decoration: none;
-            letter-spacing: -0.01em;
             background: #ffffff;
             color: var(--text-dark);
-            border: 1px solid #e5e7eb; 
+            border: 1.5px solid #e2e8f0;
             box-shadow: var(--card-shadow);
         }
 
         .back-btn:active {
             transform: scale(0.98);
+            background: #f8fafc;
         }
     </style>
 </head>
 <body>
 
-    <!-- Flat Top Responsive Background Wave -->
-    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0 0H375V75C250 95 125 95 0 75V0Z" fill="url(#paint0_linear)"/>
+    <!-- Top Fluid Gradient Wave Background Asset -->
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V65C375 65 280 155 0 95V0Z" fill="url(#paint0_linear)"/>
         <defs>
-            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="100" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#9A0019"/>
-                <stop offset="1" stop-color="#700010"/>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4a0012"/>
+                <stop offset="1" stop-color="#800020"/>
             </linearGradient>
         </defs>
     </svg>
 
-    <div class="app-view">
+    <!-- Bottom Geometric Structural Wave Footer -->
+    <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M375 90H0V70C120 62 250 55 375 65V90Z" fill="#2b000a"/>
+    </svg>
+
+    <!-- Header Navigation Node -->
+    <div class="header-top-area">
+        <a href="index.html" class="header-back-btn" aria-label="Go back" title="Go back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- App Main Portal Layer -->
+    <main class="app-view">
         
-        <!-- Top Header Navigation -->
-        <div class="header-navigation">
-            <a href="index.html" class="header-back-btn" aria-label="Go back">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-            </a>
-        </div>
-
-        <!-- Header Section -->
-        <div class="header-top-area">
-            <h1>Contact Support</h1>
+        <header class="screen-header">
+            <h1>Contact <span style="color: var(--primary-burgundy);">Support</span></h1>
             <p>We're here to help you secure and manage your digital experience</p>
-        </div>
+        </header>
 
-        <!-- Support Dynamic Multi-Card Panel Grid -->
         <div class="support-layout">
             
-            <!-- Left Grid Pane: Direct Contract Links and Help Guides -->
-            <div>
-                <div class="content-card" style="margin-bottom: 24px; width: 100%;">
+            <!-- Side Pane: Links and FAQ Engine -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                
+                <section class="content-card">
                     <h2>Official <span>Channels</span></h2>
-                    <p class="subtitle-desc">Reach out directly to our verification and operations management specialists across our verified social dashboards.</p>
+                    <p class="subtitle-desc">Reach out directly to our verification and operations management specialists across our verified dashboards.</p>
                     
                     <div class="contact-channels">
-                        <!-- Email Link Frame -->
                         <a href="mailto:birrgo@gmail.com" class="channel-item">
                             <div class="channel-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                                     <polyline points="22,6 12,13 2,6"></polyline>
                                 </svg>
@@ -402,10 +459,9 @@
                             </div>
                         </a>
 
-                        <!-- Telegram Channel Frame -->
                         <a href="https://t.me/birrgo_online" target="_blank" class="channel-item">
                             <div class="channel-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <line x1="22" y1="2" x2="11" y2="13"></line>
                                     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                                 </svg>
@@ -416,10 +472,9 @@
                             </div>
                         </a>
 
-                        <!-- Instagram Profile Frame -->
                         <a href="https://instagram.com/birrgo.oline" target="_blank" class="channel-item">
                             <div class="channel-icon">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
@@ -431,82 +486,139 @@
                             </div>
                         </a>
                     </div>
-                </div>
+                </section>
 
-                <!-- Self Service FAQ Section -->
-                <div class="content-card" style="width: 100%;">
+                <section class="content-card">
                     <h2>Frequently Asked <span>Questions</span></h2>
                     <div class="faq-wrapper">
                         <div class="faq-item">
                             <div class="faq-question">
                                 <span>How do I install the BirrGo App?</span>
-                                <svg class="faq-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <svg class="faq-toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                             </div>
-                            <div class="faq-answer"> Tap the "Download" button on our home page banner to install the standalone application configuration smoothly onto your home screen display framework natively.</div>
+                            <div class="faq-answer">Tap the "Download" button on our home page banner to install the standalone application configuration smoothly onto your home screen display framework natively.</div>
                         </div>
                         <div class="faq-item">
                             <div class="faq-question">
                                 <span>Are transaction configurations secure?</span>
-                                <svg class="faq-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <svg class="faq-toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                             </div>
                             <div class="faq-answer">Yes, we process all interactions with bank-level encryptions to protect your wallet keys and assets against malicious vulnerabilities.</div>
                         </div>
                     </div>
-                </div>
+                </section>
             </div>
 
-            <!-- Right Grid Pane: Support Assistance Ticket Form Content Box -->
-            <div class="content-card">
+            <!-- Main Interactive Help-Ticket Container Form -->
+            <section class="content-card">
                 <h2>Open a <span>Support Ticket</span></h2>
-                <p class="subtitle-desc">Can't log into your dashboard? Drop your specific issue detail profile below, and a specialist will respond via email shortly.</p>
+                <p class="subtitle-desc">Can't log into your dashboard? Drop your specific issue details below, and a specialist will respond via email shortly.</p>
                 
-                <form id="supportTicketForm" onsubmit="event.preventDefault(); alert('Thank you! Your ticket context has been received.');">
+                <form id="supportTicketForm">
                     <div class="form-group">
-                        <label for="userName">Full Name</label>
-                        <input type="text" id="userName" class="form-control" placeholder="Enter your full name" required>
+                        <label class="form-label" for="userName">Full Name</label>
+                        <input type="text" id="userName" class="form-control" placeholder="Enter your full name" required autocomplete="name">
                     </div>
                     
                     <div class="form-group">
-                        <label for="userEmail">Email Address</label>
-                        <input type="email" id="userEmail" class="form-control" placeholder="name@domain.com" required>
+                        <label class="form-label" for="userEmail">Email Address</label>
+                        <input type="email" id="userEmail" class="form-control" placeholder="name@domain.com" required autocomplete="email">
                     </div>
 
                     <div class="form-group">
-                        <label for="ticketSubject">What can we help you with?</label>
-                        <input type="text" id="ticketSubject" class="form-control" placeholder="e.g., Application access issue, verification help" required>
+                        <label class="form-label" for="ticketSubject">What can we help you with?</label>
+                        <input type="text" id="ticketSubject" class="form-control" placeholder="e.g., Verification help, login issue" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="userMessage">Message Body</label>
-                        <textarea id="userMessage" class="form-control" placeholder="Provide detailed insight regarding your profile issue request context..." required></textarea>
+                        <label class="form-label" for="userMessage">Message Body</label>
+                        <textarea id="userMessage" class="form-control" placeholder="Provide details regarding your issue..." required></textarea>
                     </div>
 
-                    <button type="submit" class="submit-btn">Submit Ticket Request</button>
+                    <button type="submit" class="submit-btn" id="submitTicketBtn">Submit Ticket Request</button>
                 </form>
-            </div>
+            </section>
 
         </div>
 
-        <!-- Footer Back Navigation Component -->
-        <div class="action-container">
+        <!-- Exit Node Layout Footer -->
+        <footer class="action-container">
             <a href="index.html" class="back-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
+                    <polyline points="12 19 5 12 12 5"/>
                 </svg>
                 <span>Return to Homepage</span>
             </a>
-        </div>
+        </footer>
 
-    </div>
+    </main>
 
-    <!-- Script to handle interactive FAQ open/close animations seamlessly -->
-    <script>
+    <!-- Firebase App & Realtime Database Client Engine Integration Framework Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // ⚠️ Inject your project variables securely inside this configuration frame
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Native Database Clusters
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Accordion Interface Execution Logic
         document.querySelectorAll('.faq-question').forEach(item => {
             item.addEventListener('click', () => {
                 const parent = item.parentElement;
                 parent.classList.toggle('active');
             });
+        });
+
+        // Async Realtime Stream Pipeline Dispatch Configuration
+        const ticketForm = document.getElementById('supportTicketForm');
+        const submitBtn = document.getElementById('submitTicketBtn');
+
+        ticketForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Set element node into processing lock phase
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Sending Request...";
+
+            const payload = {
+                fullName: document.getElementById('userName').value.trim(),
+                email: document.getElementById('userEmail').value.trim(),
+                subject: document.getElementById('ticketSubject').value.trim(),
+                message: document.getElementById('userMessage').value.trim(),
+                status: "open",
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // Generates an auto-increment unique ID node array inside 'support_tickets' path routing mapping
+                const ticketsRef = ref(database, 'support_tickets');
+                const newTicketRef = push(ticketsRef);
+                
+                await set(newTicketRef, payload);
+                
+                alert('Thank you! Your support ticket has been received securely.');
+                ticketForm.reset();
+            } catch (error) {
+                console.error("Database Connection Failure Execution: ", error);
+                alert('Network cluster interaction delay. Please try again or reach out through Telegram.');
+            } finally {
+                // Clear state mutations
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Submit Ticket Request";
+            }
         });
     </script>
 </body>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en" class="notranslate" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="google" content="notranslate">
+    <title>Admin Support Management | BirrGo Dashboard</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-burgundy-gradient: linear-gradient(135deg, #4a0012 0%, #800020 50%, #2b000a 100%);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --input-bg: #f1f5f9;
+            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.04);
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            letter-spacing: -0.3px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            background-color: #fafbfc;
+            background-image: 
+                radial-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px), 
+                linear-gradient(to right, rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px, 40px 40px, 40px 40px;
+            color: var(--text-dark);
+        }
+
+        .app-view {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: calc(24px + env(safe-area-inset-top)) 20px 40px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Top bar back button targeting new.html */
+        .btn-back-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            color: var(--text-dark);
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+
+        .btn-back-nav:hover {
+            background: var(--input-bg);
+            transform: translateX(-2px);
+        }
+
+        .admin-title h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .admin-title h1 span {
+            color: var(--primary-burgundy);
+        }
+
+        .admin-title p {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* Settings Card Styling */
+        .settings-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .settings-card h2 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            background: var(--input-bg);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-dark);
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-burgundy);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.1);
+        }
+
+        .btn-save-links {
+            background: var(--primary-burgundy-gradient);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-save-links:hover {
+            opacity: 0.9;
+        }
+
+        .section-divider {
+            border: 0;
+            height: 1px;
+            background: #e2e8f0;
+            margin: 10px 0;
+        }
+
+        /* Filter Controls */
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 30px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #e2e8f0;
+            align-self: flex-start;
+        }
+
+        .filter-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-burgundy-gradient);
+            color: #ffffff;
+        }
+
+        /* Tickets System */
+        .tickets-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .ticket-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .ticket-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .ticket-meta h3 {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .ticket-meta p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .badge.open {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-orange);
+        }
+
+        .badge.resolved {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+        }
+
+        .ticket-body {
+            background: var(--input-bg);
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #334155;
+            font-weight: 500;
+            white-space: pre-wrap;
+        }
+
+        .ticket-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 12px;
+        }
+
+        .user-details {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .user-details a {
+            color: var(--primary-burgundy);
+            text-decoration: none;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-ui {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
+        }
+
+        .btn-resolve {
+            background: #ffffff;
+            color: var(--success-green);
+            border-color: var(--success-green);
+        }
+
+        .btn-resolve:hover {
+            background: var(--success-green);
+            color: #ffffff;
+        }
+
+        .btn-delete {
+            background: #ffffff;
+            color: #ef4444;
+            border-color: #fee2e2;
+        }
+
+        .btn-delete:hover {
+            background: #ef4444;
+            color: #ffffff;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <main class="app-view">
+        
+        <header class="admin-header">
+            <div class="header-left">
+                <!-- Back Button component pointing directly to new.html -->
+                <a href="new.html" class="btn-back-nav" title="Back to Control Panel">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"/>
+                    </svg>
+                </a>
+                <div class="admin-title">
+                    <h1>Support <span>Control Panel</span></h1>
+                    <p>Monitor customer inquiries and manage official platform contact links</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Link Modifier Control Section -->
+        <section class="settings-card">
+            <h2>🔗 Live Contact Links Management</h2>
+            <div class="links-grid">
+                <div class="input-group">
+                    <label for="linkEmail">Support Email Address</label>
+                    <input type="email" id="linkEmail" placeholder="support@birrgo.com">
+                </div>
+                <div class="input-group">
+                    <label for="linkInstagram">Instagram URL</label>
+                    <input type="url" id="linkInstagram" placeholder="https://instagram.com/birrgo">
+                </div>
+                <div class="input-group">
+                    <label for="linkTelegram">Telegram Channel/Username URL</label>
+                    <input type="url" id="linkTelegram" placeholder="https://t.me/birrgo">
+                </div>
+            </div>
+            <button class="btn-save-links" onclick="saveContactLinks()">Update Channels Instantly</button>
+        </section>
+
+        <hr class="section-divider">
+
+        <div class="filter-row">
+            <button class="filter-btn active" onclick="setFilter('all')">All Tickets</button>
+            <button class="filter-btn" onclick="setFilter('open')">Open</button>
+            <button class="filter-btn" onclick="setFilter('resolved')">Resolved</button>
+        </div>
+
+        <!-- Support Cards Render List View -->
+        <div class="tickets-container" id="ticketsWrapper">
+            <div class="empty-state">
+                <h3>Connecting...</h3>
+                <p>Fetching real-time streams...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        
+        let allTickets = {};
+        let currentFilter = 'all';
+
+        // --- CONTACT LINKS LIVE CONFIG HANDLING ---
+        const linksRef = ref(database, 'app_settings/contact_links');
+        
+        // Listen for current active link configurations dynamically
+        onValue(linksRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            document.getElementById('linkEmail').value = data.email || '';
+            document.getElementById('linkInstagram').value = data.instagram || '';
+            document.getElementById('linkTelegram').value = data.telegram || '';
+        });
+
+        // Write link updates globally down to the database cluster
+        window.saveContactLinks = async function() {
+            const emailVal = document.getElementById('linkEmail').value.trim();
+            const instaVal = document.getElementById('linkInstagram').value.trim();
+            const teleVal = document.getElementById('linkTelegram').value.trim();
+
+            try {
+                await set(linksRef, {
+                    email: emailVal,
+                    instagram: instaVal,
+                    telegram: teleVal
+                });
+                alert("Success! Platform channels modified across user devices instantly.");
+            } catch (err) {
+                console.error("Link update failure:", err);
+                alert("Failed to write links to database. Check security configuration rules.");
+            }
+        };
+
+        // --- SUPPORT TICKET SYSTEM LOGIC ---
+        window.updateStatus = async function(ticketId, currentStatus) {
+            const nextStatus = currentStatus === 'open' ? 'resolved' : 'open';
+            try {
+                await update(ref(database, `support_tickets/${ticketId}`), { status: nextStatus });
+            } catch (err) {
+                console.error("Status modification error:", err);
+            }
+        };
+
+        window.deleteTicket = async function(ticketId) {
+            if(!confirm("Permanently erase this support record entry?")) return;
+            try {
+                await remove(ref(database, `support_tickets/${ticketId}`));
+            } catch (err) {
+                console.error("Purge operations failure:", err);
+            }
+        };
+
+        window.setFilter = function(filterValue) {
+            currentFilter = filterValue;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.toLowerCase().includes(filterValue));
+            });
+            renderTickets();
+        };
+
+        const ticketsPathRef = ref(database, 'support_tickets');
+        onValue(ticketsPathRef, (snapshot) => {
+            allTickets = snapshot.val() || {};
+            renderTickets();
+        });
+
+        function renderTickets() {
+            const container = document.getElementById('ticketsWrapper');
+            container.innerHTML = '';
+            
+            const ticketIds = Object.keys(allTickets).reverse();
+            let visibleCount = 0;
+
+            if (ticketIds.length === 0) {
+                showEmptyView(container, "No Active Log", "No consumer threads submitted yet.");
+                return;
+            }
+
+            ticketIds.forEach(id => {
+                const ticket = allTickets[id];
+                if (currentFilter !== 'all' && ticket.status !== currentFilter) return;
+                visibleCount++;
+
+                const formattedTime = new Date(ticket.timestamp).toLocaleString([], {
+                    month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'
+                });
+
+                container.innerHTML += `
+                    <div class="ticket-card">
+                        <div class="ticket-top">
+                            <div class="ticket-meta">
+                                <h3>${escapeHtml(ticket.subject || 'General Inquiry')}</h3>
+                                <p>Submitted: ${formattedTime}</p>
+                            </div>
+                            <span class="badge ${ticket.status === 'resolved' ? 'resolved' : 'open'}">${ticket.status}</span>
+                        </div>
+                        <div class="ticket-body">${escapeHtml(ticket.message)}</div>
+                        <div class="ticket-actions">
+                            <div class="user-details">
+                                <span>${escapeHtml(ticket.fullName)}</span> &bull; 
+                                <a href="mailto:${ticket.email}">${escapeHtml(ticket.email)}</a>
+                            </div>
+                            <div class="action-group">
+                                <button class="btn-ui btn-resolve" onclick="updateStatus('${id}', '${ticket.status}')">
+                                    Mark as ${ticket.status === 'open' ? 'Resolved' : 'Open'}
+                                </button>
+                                <button class="btn-ui btn-delete" onclick="deleteTicket('${id}')">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (visibleCount === 0) {
+                showEmptyView(container, "Filter Clean", `No logs match status criteria: '${currentFilter}'`);
+            }
+        }
+
+        function showEmptyView(target, title, message) {
+            target.innerHTML = `<div class="empty-state"><h3>${title}</h3><p>${message}</p></div>`;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
