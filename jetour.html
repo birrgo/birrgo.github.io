@@ -22,8 +22,8 @@
             --border-radius-md: 14px;
             --bottom-nav-height: 70px;
             
-            /* BYD Modern System Typography Token */
-            --font-family-byd: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            /* Times New Roman Bold Typography Token */
+            --font-family-byd: "Times New Roman", Times, serif;
         }
 
         * {
@@ -31,6 +31,7 @@
             margin: 0;
             padding: 0;
             font-family: var(--font-family-byd);
+            font-weight: 700;
             letter-spacing: -0.01em;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -125,7 +126,7 @@
         }
         .brand-sub-motto { 
             font-size: 9px; 
-            font-weight: 600; 
+            font-weight: 700; 
             color: rgba(255, 255, 255, 0.8); 
             letter-spacing: 0.05em; 
             text-transform: uppercase;
@@ -159,24 +160,6 @@
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        /* BYD Style Banner Styling */
-        .text-price-banner {
-            width: 100%;
-            background: var(--primary-gradient);
-            color: #ffffff;
-            border-radius: var(--border-radius-md);
-            box-shadow: var(--card-shadow);
-            border: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            padding: 16px 0;
-            flex-shrink: 0;
-        }
-
         .analytics-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -195,7 +178,7 @@
 
         .stat-card p {
             font-size: 9px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-muted);
             margin-bottom: 3px;
             text-transform: uppercase;
@@ -232,7 +215,7 @@
 
         .field-group label {
             font-size: 9px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -245,7 +228,7 @@
             border: 1px solid #e2e8f0;
             padding: 0 12px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-dark);
             outline: none;
             background: #f8fafc;
@@ -334,7 +317,7 @@
         }
         .feed-row:last-child { border-bottom: none; }
         
-        .buyer-id { font-weight: 600; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
+        .buyer-id { font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
         .buyer-id::before { content: ''; width: 5px; height: 5px; background: var(--success-green); border-radius: 50%; display: inline-block; }
         
         .buyer-ticket { 
@@ -383,7 +366,7 @@
         .btn-secondary-link {
             text-align: center;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--primary-burgundy);
             text-decoration: none;
             display: flex;
@@ -450,7 +433,7 @@
         }
         .popup-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5; }
         .popup-title { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
-        .popup-subtitle { font-size: 11px; font-weight: 500; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; }
+        .popup-subtitle { font-size: 11px; font-weight: 700; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; }
 
         .password-input-field {
             width: 100%;
@@ -477,7 +460,7 @@
             border: none;
             border-radius: 10px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
         }
         .btn-popup-confirm {
@@ -487,7 +470,7 @@
             border: none;
             border-radius: 10px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
         }
 
@@ -503,7 +486,7 @@
         .status-icon-circle.error-state { background: #fdf2f2; color: var(--error-crimson); }
         .status-icon-circle.success-state { background: #ecfdf5; color: var(--success-green); }
         .status-msg-title { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
-        .status-msg-desc { font-size: 11.5px; font-weight: 500; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px; }
+        .status-msg-desc { font-size: 11.5px; font-weight: 700; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px; }
         .btn-status-close {
             width: 100%;
             height: 40px;
@@ -512,7 +495,7 @@
             border: none;
             border-radius: var(--border-radius-md);
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
         }
     </style>
@@ -543,11 +526,6 @@
 
         <div class="app-content">
 
-            <!-- Banner aligned with BYD style -->
-            <div class="text-price-banner">
-                5000 BIRR
-            </div>
-
             <div class="analytics-grid">
                 <div class="stat-card sold">
                     <p>Total Distributed</p>
@@ -571,7 +549,7 @@
 
             <div class="search-engine-box">
                 <h3>Select Raffle Position</h3>
-                <p style="font-size: 9px; color: rgba(255, 255, 255, 0.75); margin-bottom: 2px; font-weight: 500;">Enter code sequence interval (0 - 3500)</p>
+                <p style="font-size: 9px; color: rgba(255, 255, 255, 0.75); margin-bottom: 2px; font-weight: 700;">Enter code sequence interval (0 - 3500)</p>
                 <input type="number" id="ticketNumberInput" class="large-number-input" placeholder="0000" min="0" max="3500">
                 <div id="feedbackBadge" class="status-feedback"></div>
             </div>
@@ -842,7 +820,7 @@
             
             const entries = Object.values(data);
             if(entries.length === 0) {
-                container.innerHTML = `<div style="text-align:center;font-size:11px;font-weight:600;color:var(--text-muted);padding:12px;">NO TRANSACTIONS IN WINDOW.</div>`;
+                container.innerHTML = `<div style="text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);padding:12px;">NO TRANSACTIONS IN WINDOW.</div>`;
                 return;
             }
 

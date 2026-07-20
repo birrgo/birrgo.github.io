@@ -4,34 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BirrGo Premium — Motorcycle Luxury Raffle</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
+        /* === SYSTEM & DESIGN VARIABLES === */
         :root {
             --primary-burgundy: #6B001B;
             --primary-gradient: linear-gradient(135deg, #7A001E 0%, #3F000E 100%);
             --accent-glow: rgba(107, 0, 27, 0.06);
             --text-dark: #0f172a;
-            --text-muted: #64748b;
+            --text-muted: #475569;
             --bg-light: #f8fafc;
-            --border-light: #e2e8f0;
-            --card-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.05);
-            --success-green: #10b981;
-            --danger-red: #ef4444;
-            --border-radius-lg: 20px;
-            --border-radius-md: 14px;
-            --bottom-nav-height: 70px;
-            --font-family-byd: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --border-light: #cbd5e1;
+            --card-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+            --success-green: #15803d;
+            --danger-red: #dc2626;
+            --border-radius-lg: 16px;
+            --border-radius-md: 10px;
+            --bottom-nav-height: 64px;
+            /* Updated font stack to Times New Roman Bold per instructions */
+            --font-family-byd: "Times New Roman", Times, Baskerville, Georgia, serif;
         }
 
+        /* === GLOBAL RESET & COMPACT TYPOGRAPHY === */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: var(--font-family-byd);
-            letter-spacing: -0.01em;
+            font-weight: 700; /* Bold typography baseline */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             -webkit-tap-highlight-color: transparent;
@@ -41,7 +41,7 @@
             width: 100%;
             height: 100dvh;
             overflow: hidden;
-            background-color: #f1f5f9;
+            background-color: #0f172a;
         }
 
         body {
@@ -50,6 +50,7 @@
             align-items: center;
         }
 
+        /* === PWA CONTAINER FRAMEWORK === */
         .app-view {
             width: 100%;
             height: 100dvh;
@@ -58,33 +59,34 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
 
         /* Top Curved Burgundy Header */
         .top-red-header {
             background: var(--primary-burgundy);
-            padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 28px 16px;
+            padding: calc(8px + env(safe-area-inset-top, 0px)) 12px 20px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             color: #ffffff;
-            border-bottom-left-radius: 50% 16px;
-            border-bottom-right-radius: 50% 16px;
+            border-bottom-left-radius: 50% 12px;
+            border-bottom-right-radius: 50% 12px;
             position: relative;
             z-index: 10;
+            flex-shrink: 0;
         }
 
         .brand-logo-area {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn-header-back {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             background: rgba(255, 255, 255, 0.18);
             border: none;
             border-radius: 50%;
@@ -94,21 +96,17 @@
             color: #ffffff;
             cursor: pointer;
             text-decoration: none;
-            transition: background 0.15s ease;
-        }
-        .btn-header-back:active {
-            background: rgba(255, 255, 255, 0.35);
         }
 
         .brand-logo-text {
-            font-size: 15px;
-            font-weight: 800;
+            font-size: 13px;
             letter-spacing: 0.02em;
+            text-transform: uppercase;
         }
 
         .profile-circle-btn {
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             background: rgba(255, 255, 255, 0.22);
             border-radius: 50%;
             display: flex;
@@ -117,50 +115,48 @@
             cursor: pointer;
         }
 
-        /* Scrollable Content Container */
+        /* Scrollable Content Engine with Bottom-Nav Inset Clearance */
         .app-content {
             flex: 1;
             overflow-y: auto;
             background-color: #f8fafc;
-            padding: 14px 14px calc(env(safe-area-inset-bottom, 0px) + 20px) 14px;
+            padding: 10px 10px calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 12px) 10px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
             scrollbar-width: none;
             min-height: 0;
-            margin-top: -12px;
+            margin-top: -8px;
         }
         .app-content::-webkit-scrollbar { display: none; }
 
+        /* Modern Grid & Micro Stat-Cards */
         .analytics-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
         }
 
         .stat-card {
             background: #ffffff;
             border: 1px solid var(--border-light);
-            padding: 12px 14px;
+            padding: 8px 10px;
             border-radius: var(--border-radius-md);
             position: relative;
             box-shadow: var(--card-shadow);
         }
 
         .stat-card p {
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 9px;
             color: var(--text-muted);
             margin-bottom: 2px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .stat-card h3 {
-            font-size: 18px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
+            font-size: 15px;
+            letter-spacing: -0.3px;
         }
         .stat-card.sold h3 { color: var(--text-dark); }
         .stat-card.remain h3 { color: var(--success-green); }
@@ -169,39 +165,36 @@
             background: #ffffff;
             border: 1px solid var(--border-light);
             border-radius: var(--border-radius-md);
-            padding: 14px 16px;
+            padding: 10px 12px;
             flex-shrink: 0;
             box-shadow: var(--card-shadow);
         }
 
         .form-heading {
-            font-size: 13px;
-            font-weight: 800;
+            font-size: 11px;
             color: var(--text-dark);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
         }
 
         .field-group {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
         }
 
         .field-group label {
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 9px;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.4px;
         }
 
         .premium-input {
-            height: 42px;
+            height: 36px;
             border-radius: var(--border-radius-md);
             border: 1px solid var(--border-light);
-            padding: 0 12px;
-            font-size: 14px;
-            font-weight: 600;
+            padding: 0 10px;
+            font-size: 12px;
             color: var(--text-dark);
             outline: none;
             background: var(--bg-light);
@@ -213,73 +206,97 @@
             background: #ffffff;
         }
 
-        /* Number Search Box */
+        /* Compact Engine Search Box */
         .search-engine-box {
             background: var(--primary-gradient);
             border-radius: var(--border-radius-md);
-            padding: 16px 14px;
+            padding: 10px 12px;
             text-align: center;
             flex-shrink: 0;
-            box-shadow: 0 8px 20px -4px rgba(107, 0, 27, 0.3);
+            box-shadow: 0 4px 12px rgba(107, 0, 27, 0.2);
         }
 
         .search-engine-box h3 {
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 10px;
             color: #ffffff;
-            opacity: 0.85;
-            letter-spacing: 0.6px;
+            opacity: 0.9;
             text-transform: uppercase;
-            margin-bottom: 2px;
         }
 
         .large-number-input {
             width: 100%;
-            height: 46px;
-            font-size: 20px;
-            font-weight: 800;
+            height: 38px;
+            font-size: 16px;
             text-align: center;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
             color: #ffffff;
             background: rgba(255, 255, 255, 0.12);
             outline: none;
-            margin-top: 6px;
-            margin-bottom: 8px;
+            margin-top: 4px;
+            margin-bottom: 6px;
             letter-spacing: 1px;
-            transition: all 0.2s ease;
         }
         .large-number-input:focus {
-            border-color: rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .status-feedback {
-            font-size: 10px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 6px;
+            font-size: 9px;
+            padding: 3px 8px;
+            border-radius: 4px;
             display: none;
+            text-transform: uppercase;
         }
         .status-feedback.available {
             display: inline-block;
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.25);
             color: #ffffff;
         }
         .status-feedback.taken {
             display: inline-block;
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: rgba(0, 0, 0, 0.5);
             color: #ffffff;
         }
 
-        /* Live Stream Feeds */
+        /* Progressive Blur Image Component */
+        .pwa-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 110px;
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            background-color: #e2e8f0;
+            border: 1px solid var(--border-light);
+            flex-shrink: 0;
+        }
+
+        .pwa-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: filter 0.4s ease, opacity 0.4s ease;
+        }
+
+        .pwa-image-wrapper img.loading {
+            filter: blur(12px);
+            opacity: 0.6;
+        }
+
+        .pwa-image-wrapper img.loaded {
+            filter: blur(0);
+            opacity: 1;
+        }
+
+        /* Live Feeds Panel */
         .live-feed-panel {
             background: #ffffff;
             border: 1px solid var(--border-light);
             border-radius: var(--border-radius-md);
-            padding: 14px 16px;
+            padding: 10px 12px;
             flex: 1;
-            min-height: 120px;
+            min-height: 90px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -297,23 +314,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
+            padding: 6px 0;
             border-bottom: 1px solid var(--border-light);
-            font-size: 12px;
+            font-size: 11px;
         }
         .feed-row:last-child { border-bottom: none; }
         
         .buyer-id { 
-            font-weight: 700; 
             color: var(--text-dark); 
             display: flex; 
             align-items: center; 
-            gap: 6px; 
+            gap: 4px; 
         }
         .buyer-id::before { 
             content: ''; 
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
             background: var(--success-green);
             border-radius: 50%;
             display: inline-block;
@@ -322,19 +338,17 @@
         .buyer-ticket { 
             background: var(--bg-light);
             color: var(--text-dark); 
-            font-weight: 800; 
-            padding: 4px 8px; 
-            border-radius: 6px; 
-            font-size: 11px;
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            font-size: 10px;
             border: 1px solid var(--border-light);
         }
 
         .action-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
             flex-shrink: 0;
-            padding-top: 4px;
             margin-top: auto;
         }
 
@@ -342,18 +356,17 @@
             background: var(--primary-gradient);
             color: white;
             border: none;
-            height: 48px;
-            font-size: 0.95rem;
-            font-weight: 700;
+            height: 40px;
+            font-size: 12px;
             border-radius: var(--border-radius-md);
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 4px 12px rgba(107, 0, 27, 0.2);
-            transition: transform 0.1s ease;
+            box-shadow: 0 4px 10px rgba(107, 0, 27, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
+            text-transform: uppercase;
         }
         .btn:disabled {
             background: #cbd5e1;
@@ -365,30 +378,69 @@
 
         .btn-secondary-link {
             text-align: center;
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 10px;
             color: var(--primary-burgundy);
             text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 4px 0;
+            gap: 4px;
+            padding: 2px 0;
+            text-transform: uppercase;
         }
 
-        /* Bottom Sheet Modal Overlays */
+        /* Fixed Bottom Navigation Area Bar */
+        .pwa-bottom-navbar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            background: #ffffff;
+            border-top: 1px solid var(--border-light);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 9px;
+            height: 100%;
+            text-transform: uppercase;
+        }
+
+        .nav-tab.active {
+            color: var(--primary-burgundy);
+        }
+
+        .nav-tab svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2.2;
+        }
+
+        /* Modal Overlays */
         .modal-overlay {
             display: none;
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100dvh;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             z-index: 5000;
             justify-content: center;
             align-items: flex-end;
             opacity: 0;
-            transition: opacity 0.25s ease;
+            transition: opacity 0.2s ease;
         }
 
         .modal-overlay.active {
@@ -401,9 +453,9 @@
             width: 100%;
             border-top-left-radius: var(--border-radius-lg);
             border-top-right-radius: var(--border-radius-lg);
-            padding: 20px 16px calc(env(safe-area-inset-bottom, 0px) + 20px) 16px;
+            padding: 16px 14px calc(env(safe-area-inset-bottom, 0px) + 16px) 16px;
             text-align: center;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
             transform: translateY(100%);
             transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
         }
@@ -412,64 +464,58 @@
         }
 
         .sheet-handle {
-            width: 36px;
-            height: 4px;
+            width: 32px;
+            height: 3px;
             background: var(--border-light);
             border-radius: 10px;
-            margin: 0 auto 12px auto;
+            margin: 0 auto 10px auto;
         }
 
         .modal-title {
-            font-size: 1.1rem;
-            font-weight: 800;
+            font-size: 13px;
             color: var(--text-dark);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
         }
         .modal-title.win { color: var(--success-green); }
         .modal-title.lose { color: var(--danger-red); }
 
         .modal-subtitle {
-            font-size: 12px;
+            font-size: 10px;
             color: var(--text-muted);
-            margin-bottom: 16px;
-            line-height: 1.4;
-            font-weight: 500;
+            margin-bottom: 12px;
+            line-height: 1.3;
         }
 
         .input-field {
             width: 100%;
-            height: 44px;
+            height: 38px;
             background: var(--bg-light);
             border: 1px solid var(--border-light);
             border-radius: var(--border-radius-md);
-            padding: 0 12px;
-            font-size: 16px;
-            font-weight: 700;
+            padding: 0 10px;
+            font-size: 14px;
             outline: none;
             text-align: center;
-            letter-spacing: 4px;
-            margin-bottom: 16px;
-        }
-        .input-field:focus {
-            border-color: var(--primary-burgundy);
-            background: #ffffff;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
         }
 
         .popup-action-row {
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn-cancel {
-            height: 46px;
+            height: 40px;
             background: #f1f5f9;
             color: var(--text-dark);
             border: none;
             border-radius: var(--border-radius-md);
-            font-size: 0.9rem;
-            font-weight: 700;
+            font-size: 11px;
             cursor: pointer;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -477,24 +523,25 @@
 
     <div class="app-view">
         
-        <!-- Standard Header -->
+        <!-- PWA Fixed Top Header -->
         <div class="top-red-header">
             <div class="brand-logo-area">
                 <button class="btn-header-back" onclick="window.location.href='lottery.html'" aria-label="Go Back">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </button>
                 <span class="brand-logo-text">Motorcycle Campaign</span>
             </div>
             <div class="profile-circle-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
             </div>
         </div>
 
+        <!-- Scrollable Main Canvas -->
         <div class="app-content">
 
             <div class="analytics-grid">
@@ -508,6 +555,15 @@
                 </div>
             </div>
 
+            <!-- Progressive Blur Image Display -->
+            <div class="pwa-image-wrapper">
+                <img id="campaignBanner" 
+                     src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 150'%3E%3Crect width='400' height='150' fill='%3C3F000E'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Times New Roman' font-size='16' fill='%23ffffff' font-weight='bold'%3EBIRRGO LUXURY RAFFLE%3C/text%3E%3C/svg%3E" 
+                     data-src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80" 
+                     alt="Motorcycle Luxury Campaign" 
+                     class="loading">
+            </div>
+
             <div class="premium-card-box">
                 <div class="form-heading">Participant Verification</div>
                 <div class="field-group">
@@ -518,13 +574,13 @@
 
             <div class="search-engine-box">
                 <h3>Select Raffle Position</h3>
-                <p style="font-size: 10px; color: rgba(255, 255, 255, 0.7); margin-bottom: 2px;">Enter code sequence interval (0 - 5000)</p>
+                <p style="font-size: 8px; color: rgba(255, 255, 255, 0.75); margin-bottom: 2px;">INTERVAL CODE (0 - 5000)</p>
                 <input type="number" id="ticketNumberInput" class="large-number-input" placeholder="0000" min="0" max="5000">
                 <div id="feedbackBadge" class="status-feedback"></div>
             </div>
 
             <div class="live-feed-panel">
-                <div class="form-heading" style="margin-bottom: 6px;">Live Allocation Stream</div>
+                <div class="form-heading" style="margin-bottom: 4px;">Live Allocation Stream</div>
                 <div id="liveOrdersFeed"></div>
             </div>
 
@@ -533,19 +589,39 @@
                     Authorize Placement (1,000 Br)
                 </button>
                 <a href="ms.html" class="btn-secondary-link">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                    View Real-time Metrics Matrix
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    Real-time Metrics Matrix
                 </a>
             </div>
 
         </div>
+
+        <!-- PWA Bottom Navigation Menu -->
+        <nav class="pwa-bottom-navbar">
+            <a href="home.html" class="nav-tab">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                Home
+            </a>
+            <a href="lottery.html" class="nav-tab active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Raffle
+            </a>
+            <a href="wallet.html" class="nav-tab">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                Wallet
+            </a>
+            <a href="profile.html" class="nav-tab">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Account
+            </a>
+        </nav>
 
         <!-- Security Gateway Modal -->
         <div class="modal-overlay" id="passwordModal">
             <div class="modal-box">
                 <div class="sheet-handle"></div>
                 <div class="modal-title">Security Gateway</div>
-                <div class="modal-subtitle">Please enter your 6-digit security PIN to authenticate fund movement.</div>
+                <div class="modal-subtitle">Enter 6-digit security PIN to authenticate fund movement.</div>
                 
                 <input type="password" id="transactionPin" maxlength="6" inputmode="numeric" class="input-field" placeholder="••••••">
                 
@@ -561,7 +637,7 @@
             <div class="modal-box">
                 <div class="sheet-handle"></div>
                 <div class="modal-title" id="statusAlertTitle">Notification</div>
-                <div class="modal-subtitle" id="statusAlertMessage">Alert content status text placeholder.</div>
+                <div class="modal-subtitle" id="statusAlertMessage">Alert text placeholder.</div>
                 <button class="btn" id="statusAlertCloseBtn">OK</button>
             </div>
         </div>
@@ -595,12 +671,33 @@
         const totalTicketsCount = 5000; 
         let currentAlertCallback = null;
 
+        /* Low-Connection Image Progressive Loader */
+        function initProgressiveImages() {
+            const img = document.getElementById('campaignBanner');
+            if (!img) return;
+            const highResSrc = img.getAttribute('data-src');
+            
+            const tempImage = new Image();
+            tempImage.src = highResSrc;
+            tempImage.onload = () => {
+                img.src = highResSrc;
+                img.classList.remove('loading');
+                img.classList.add('loaded');
+            };
+            tempImage.onerror = () => {
+                // Keep SVG blur fallback if offline/failed
+                img.classList.remove('loading');
+            };
+        }
+
         function normalizePhoneNumber(phoneStr) {
             if (!phoneStr) return "";
             return phoneStr.replace(/\D/g, ''); 
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
+            initProgressiveImages();
+            
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if(!activeUserPhone) {
                 window.location.href = "new2.html";
@@ -647,7 +744,7 @@
                 setupFormEngineListeners();
 
             } catch (err) {
-                console.error("Initialization scanner breakdown:", err);
+                console.error("Initialization error:", err);
                 completeRawCardSequence = cleanPhone;
                 attachRealtimeDatabaseListeners();
                 setupFormEngineListeners();
@@ -745,7 +842,7 @@
             if(buyerCardMatch) {
                 const maskedCard = buyerCardMatch.substring(0, 4) + "••••" + buyerCardMatch.slice(-4);
                 feedback.className = "status-feedback taken";
-                feedback.innerText = `ALLOCATED TO CARD ID ${maskedCard}`;
+                feedback.innerText = `TAKEN BY CARD ID ${maskedCard}`;
                 isTicketAvailable = false;
                 validatedTicketNumber = null;
             } else {
@@ -775,11 +872,11 @@
             
             const entries = Object.values(data);
             if(entries.length === 0) {
-                container.innerHTML = `<div style="text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);padding:15px;">NO TRANSACTIONS IN WINDOW.</div>`;
+                container.innerHTML = `<div style="text-align:center;font-size:10px;color:var(--text-muted);padding:10px;">NO TRANSACTIONS RECORDED.</div>`;
                 return;
             }
 
-            entries.reverse().slice(0, 6).forEach(tx => {
+            entries.reverse().slice(0, 5).forEach(tx => {
                 if(parseInt(tx.ticketNum) > 5000) return;
 
                 const row = document.createElement('div');
@@ -820,7 +917,7 @@
                 } else {
                     submitVerifyBtn.disabled = false;
                     submitVerifyBtn.innerText = "Authorize";
-                    openCustomAlert("Configuration Error", `Profile ledger node [${completeRawCardSequence}] not matched. Check path configuration layout.`, "error");
+                    openCustomAlert("Configuration Error", `Profile ledger node [${completeRawCardSequence}] not matched.`, "error");
                 }
             } catch (err) {
                 submitVerifyBtn.disabled = false;
@@ -832,7 +929,7 @@
         async function executeTicketPurchasePipeline() {
             const confirmBtn = document.getElementById('confirmPurchaseBtn');
             confirmBtn.disabled = true;
-            confirmBtn.innerText = "Processing safe ledger write...";
+            confirmBtn.innerText = "PROCESSING WRITES...";
 
             const ticketInputVal = parseInt(document.getElementById('ticketNumberInput').value);
             const userLocationVal = document.getElementById('userLocation').value.trim();
