@@ -198,7 +198,7 @@
                         localCachedBroadcasts.push({ id: key, ...data[key] });
                     });
                     
-                    // Sort Order: Newest updates first (Descending)
+                    // Sort Order: Newest updates first (Top) -> Oldest (Bottom)
                     localCachedBroadcasts.sort((a, b) => {
                         let timeA = a.updatedAt || a.createdAtTimestamp || a.timestamp || 0;
                         let timeB = b.updatedAt || b.createdAtTimestamp || b.timestamp || 0;
@@ -416,7 +416,6 @@
             
             container.innerHTML = "";
 
-            // Show Promo Code box only when inside the "Promo Rewards" tab
             if (currentActiveCategoryFilter === "Promo Rewards") {
                 if (promoSection) promoSection.style.display = "block";
             } else {
@@ -436,15 +435,12 @@
                 return;
             }
 
-            // Strictly alternate: 1 News -> 1 Ad -> 1 News -> 1 Ad
             filtered.forEach((item, index) => {
-                // 1. News Card
                 const card = document.createElement('article');
                 card.className = "featured-broadcast-card";
                 card.innerHTML = buildSingleNewsCardHTML(item);
                 container.appendChild(card);
 
-                // 2. Native Ad Card (Injected right after EVERY news card)
                 const adCard = document.createElement('article');
                 adCard.className = "featured-broadcast-card native-ad-card";
                 
@@ -477,7 +473,6 @@
             });
         }
 
-        /* News Search Engine Logic */
         function setupSearchEngineControls() {
             const openBtn = document.getElementById('openSearchBtn');
             const closeBtn = document.getElementById('closeSearchDrawerBtn');
