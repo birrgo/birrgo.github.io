@@ -69,7 +69,6 @@
             gap: 16px;
         }
 
-        /* Top bar back button targeting new.html */
         .btn-back-nav {
             display: flex;
             align-items: center;
@@ -108,7 +107,6 @@
             margin-top: 2px;
         }
 
-        /* Settings Card Styling */
         .settings-card {
             background: #ffffff;
             border-radius: 16px;
@@ -187,7 +185,6 @@
             margin: 10px 0;
         }
 
-        /* Filter Controls */
         .filter-row {
             display: flex;
             gap: 8px;
@@ -216,7 +213,6 @@
             color: #ffffff;
         }
 
-        /* Tickets System */
         .tickets-container {
             display: flex;
             flex-direction: column;
@@ -356,15 +352,82 @@
             font-size: 13px;
             color: var(--text-muted);
         }
+
+        /* CUSTOM UI MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px auto;
+        }
+
+        .modal-icon.info { background: rgba(128, 0, 32, 0.1); color: var(--primary-burgundy); }
+        .modal-icon.danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+        .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+        .modal-message { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px; }
+
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+        .modal-btn {
+            flex: 1;
+            height: 42px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .modal-btn-primary { background: var(--primary-burgundy-gradient); color: #fff; }
+        .modal-btn-danger { background: #ef4444; color: #fff; }
+        .modal-btn-secondary { background: var(--input-bg); color: var(--text-dark); }
     </style>
 </head>
 <body>
 
     <main class="app-view">
-        
         <header class="admin-header">
             <div class="header-left">
-                <!-- Back Button component pointing directly to new.html -->
                 <a href="new.html" class="btn-back-nav" title="Back to Control Panel">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -378,7 +441,6 @@
             </div>
         </header>
 
-        <!-- Dynamic Link Modifier Control Section -->
         <section class="settings-card">
             <h2>🔗 Live Contact Links Management</h2>
             <div class="links-grid">
@@ -401,33 +463,44 @@
         <hr class="section-divider">
 
         <div class="filter-row">
-            <button class="filter-btn active" onclick="setFilter('all')">All Tickets</button>
-            <button class="filter-btn" onclick="setFilter('open')">Open</button>
-            <button class="filter-btn" onclick="setFilter('resolved')">Resolved</button>
+            <button class="filter-btn active" id="btn-filter-all" onclick="setFilter('all')">All Tickets</button>
+            <button class="filter-btn" id="btn-filter-open" onclick="setFilter('open')">Open</button>
+            <button class="filter-btn" id="btn-filter-resolved" onclick="setFilter('resolved')">Resolved</button>
         </div>
 
-        <!-- Support Cards Render List View -->
         <div class="tickets-container" id="ticketsWrapper">
             <div class="empty-state">
                 <h3>Connecting...</h3>
                 <p>Fetching real-time streams...</p>
             </div>
         </div>
-
     </main>
+
+    <!-- CUSTOM UI MODAL DIALOG CONTAINER -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-box">
+            <div class="modal-icon info" id="modalIcon"></div>
+            <h3 class="modal-title" id="modalTitle">Notice</h3>
+            <p class="modal-message" id="modalMessage">Message content goes here.</p>
+            <div class="modal-actions" id="modalActions">
+                <button class="modal-btn modal-btn-primary" onclick="closeModal()">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -436,10 +509,51 @@
         let allTickets = {};
         let currentFilter = 'all';
 
-        // --- CONTACT LINKS LIVE CONFIG HANDLING ---
-        const linksRef = ref(database, 'app_settings/contact_links');
+        // MODAL ENGINE LOGIC
+        window.showModal = function({ title, message, type = 'info', confirmText = 'OK', showCancel = false, onConfirm = null }) {
+            const overlay = document.getElementById('customModal');
+            const icon = document.getElementById('modalIcon');
+            const titleEl = document.getElementById('modalTitle');
+            const msgEl = document.getElementById('modalMessage');
+            const actionsEl = document.getElementById('modalActions');
+
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+            
+            icon.className = `modal-icon ${type === 'danger' ? 'danger' : 'info'}`;
+            icon.innerHTML = type === 'danger' 
+                ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+                : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+
+            actionsEl.innerHTML = '';
+
+            if (showCancel) {
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'modal-btn modal-btn-secondary';
+                cancelBtn.innerText = 'Cancel';
+                cancelBtn.onclick = closeModal;
+                actionsEl.appendChild(cancelBtn);
+            }
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = `modal-btn ${type === 'danger' ? 'modal-btn-danger' : 'modal-btn-primary'}`;
+            confirmBtn.innerText = confirmText;
+            confirmBtn.onclick = () => {
+                closeModal();
+                if (onConfirm) onConfirm();
+            };
+            actionsEl.appendChild(confirmBtn);
+
+            overlay.classList.add('active');
+        };
+
+        window.closeModal = function() {
+            document.getElementById('customModal').classList.remove('active');
+        };
+
+        // DATABASE OPERATIONS
+        const linksRef = ref(database, 'settings/contact_links');
         
-        // Listen for current active link configurations dynamically
         onValue(linksRef, (snapshot) => {
             const data = snapshot.val() || {};
             document.getElementById('linkEmail').value = data.email || '';
@@ -447,49 +561,58 @@
             document.getElementById('linkTelegram').value = data.telegram || '';
         });
 
-        // Write link updates globally down to the database cluster
         window.saveContactLinks = async function() {
             const emailVal = document.getElementById('linkEmail').value.trim();
             const instaVal = document.getElementById('linkInstagram').value.trim();
             const teleVal = document.getElementById('linkTelegram').value.trim();
 
             try {
-                await set(linksRef, {
-                    email: emailVal,
-                    instagram: instaVal,
-                    telegram: teleVal
+                await set(linksRef, { email: emailVal, instagram: instaVal, telegram: teleVal });
+                showModal({
+                    title: "Channels Updated",
+                    message: "Official support and social links have been updated across all user devices dynamically.",
+                    type: "info"
                 });
-                alert("Success! Platform channels modified across user devices instantly.");
             } catch (err) {
-                console.error("Link update failure:", err);
-                alert("Failed to write links to database. Check security configuration rules.");
+                showModal({
+                    title: "Update Failed",
+                    message: "Could not modify system configuration. Check your Database Rule permissions.",
+                    type: "danger"
+                });
             }
         };
 
-        // --- SUPPORT TICKET SYSTEM LOGIC ---
         window.updateStatus = async function(ticketId, currentStatus) {
-            const nextStatus = currentStatus === 'open' ? 'resolved' : 'open';
+            const nextStatus = (currentStatus === 'open') ? 'resolved' : 'open';
             try {
                 await update(ref(database, `support_tickets/${ticketId}`), { status: nextStatus });
             } catch (err) {
-                console.error("Status modification error:", err);
+                console.error("Status error:", err);
             }
         };
 
-        window.deleteTicket = async function(ticketId) {
-            if(!confirm("Permanently erase this support record entry?")) return;
-            try {
-                await remove(ref(database, `support_tickets/${ticketId}`));
-            } catch (err) {
-                console.error("Purge operations failure:", err);
-            }
+        window.deleteTicket = function(ticketId) {
+            showModal({
+                title: "Delete Support Ticket?",
+                message: "Are you sure you want to permanently erase this support inquiry entry from the database?",
+                type: "danger",
+                confirmText: "Erase Entry",
+                showCancel: true,
+                onConfirm: async () => {
+                    try {
+                        await remove(ref(database, `support_tickets/${ticketId}`));
+                    } catch (err) {
+                        console.error("Delete error:", err);
+                    }
+                }
+            });
         };
 
         window.setFilter = function(filterValue) {
             currentFilter = filterValue;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.innerText.toLowerCase().includes(filterValue));
-            });
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            const targetBtn = document.getElementById(`btn-filter-${filterValue}`);
+            if(targetBtn) targetBtn.classList.add('active');
             renderTickets();
         };
 
@@ -507,16 +630,19 @@
             let visibleCount = 0;
 
             if (ticketIds.length === 0) {
-                showEmptyView(container, "No Active Log", "No consumer threads submitted yet.");
+                showEmptyView(container, "No Active Tickets", "No support tickets have been submitted yet.");
                 return;
             }
 
             ticketIds.forEach(id => {
                 const ticket = allTickets[id];
-                if (currentFilter !== 'all' && ticket.status !== currentFilter) return;
+                const status = ticket.status || 'open';
+
+                if (currentFilter !== 'all' && status !== currentFilter) return;
                 visibleCount++;
 
-                const formattedTime = new Date(ticket.timestamp).toLocaleString([], {
+                const rawDate = ticket.timestamp ? new Date(ticket.timestamp) : new Date();
+                const formattedTime = rawDate.toLocaleString([], {
                     month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'
                 });
 
@@ -527,17 +653,17 @@
                                 <h3>${escapeHtml(ticket.subject || 'General Inquiry')}</h3>
                                 <p>Submitted: ${formattedTime}</p>
                             </div>
-                            <span class="badge ${ticket.status === 'resolved' ? 'resolved' : 'open'}">${ticket.status}</span>
+                            <span class="badge ${status === 'resolved' ? 'resolved' : 'open'}">${status}</span>
                         </div>
-                        <div class="ticket-body">${escapeHtml(ticket.message)}</div>
+                        <div class="ticket-body">${escapeHtml(ticket.message || '')}</div>
                         <div class="ticket-actions">
                             <div class="user-details">
-                                <span>${escapeHtml(ticket.fullName)}</span> &bull; 
-                                <a href="mailto:${ticket.email}">${escapeHtml(ticket.email)}</a>
+                                <span>${escapeHtml(ticket.fullName || 'Anonymous')}</span> &bull; 
+                                <a href="mailto:${escapeHtml(ticket.email || '')}">${escapeHtml(ticket.email || 'No Email')}</a>
                             </div>
                             <div class="action-group">
-                                <button class="btn-ui btn-resolve" onclick="updateStatus('${id}', '${ticket.status}')">
-                                    Mark as ${ticket.status === 'open' ? 'Resolved' : 'Open'}
+                                <button class="btn-ui btn-resolve" onclick="updateStatus('${id}', '${status}')">
+                                    Mark as ${status === 'open' ? 'Resolved' : 'Open'}
                                 </button>
                                 <button class="btn-ui btn-delete" onclick="deleteTicket('${id}')">Delete</button>
                             </div>
@@ -547,7 +673,7 @@
             });
 
             if (visibleCount === 0) {
-                showEmptyView(container, "Filter Clean", `No logs match status criteria: '${currentFilter}'`);
+                showEmptyView(container, "Filter Clean", `No tickets found matching '${currentFilter}' status.`);
             }
         }
 
@@ -557,7 +683,12 @@
 
         function escapeHtml(str) {
             if (!str) return '';
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
     </script>
 </body>

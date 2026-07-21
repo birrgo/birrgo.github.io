@@ -1,4 +1,4 @@
-<!DOCTYPE html>new
+<!DOCTYPE html>
 <html lang="en" class="notranslate" translate="no">
 <head>
     <meta charset="UTF-8">
@@ -6,7 +6,6 @@
     <meta name="google" content="notranslate">
     <title>Contact Support | BirrGo - Empowering Digital Africa</title>
     
-    <!-- Preload fonts to prevent system layout shifts on low connection clusters -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -30,7 +29,6 @@
             letter-spacing: -0.3px;
             -webkit-tap-highlight-color: transparent;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         html, body {
@@ -40,13 +38,11 @@
             min-height: 100vh;
             min-height: 100dvh;
             background-color: #fafbfc;
-            /* Matches login & register geometric layout blueprint */
             background-image: 
                 radial-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px), 
                 linear-gradient(to right, rgba(148, 163, 184, 0.03) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
             background-size: 20px 20px, 40px 40px, 40px 40px;
-            background-position: 0 0, 0 0, 0 0;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -54,7 +50,6 @@
             color: var(--text-dark);
         }
 
-        /* Adaptive Wave Overlays */
         .bg-wave {
             position: absolute;
             left: 0;
@@ -63,20 +58,9 @@
             pointer-events: none;
         }
         
-        .bg-wave-top {
-            top: 0;
-            height: 11vh;
-            min-height: 82px;
-        }
+        .bg-wave-top { top: 0; height: 11vh; min-height: 82px; }
+        .bg-wave-bottom { bottom: env(safe-area-inset-bottom, 0px); height: 7vh; min-height: 48px; z-index: 2; }
 
-        .bg-wave-bottom {
-            bottom: env(safe-area-inset-bottom, 0px);
-            height: 7vh;
-            min-height: 48px;
-            z-index: 2;
-        }
-
-        /* Top Bar Element Rules */
         .header-top-area {
             position: absolute;
             top: calc(10px + env(safe-area-inset-top));
@@ -98,7 +82,6 @@
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
             transition: background 0.2s ease;
             flex-shrink: 0;
             border: none;
@@ -106,11 +89,8 @@
             text-decoration: none;
         }
 
-        .header-back-btn:active {
-            background: rgba(255, 255, 255, 0.3);
-        }
+        .header-back-btn:active { background: rgba(255, 255, 255, 0.3); }
 
-        /* Responsive Viewport Management Wrapper */
         .app-view {
             width: 100%;
             flex-grow: 1;
@@ -119,37 +99,15 @@
             padding: calc(90px + env(safe-area-inset-top)) 20px calc(65px + env(safe-area-inset-bottom)) 20px;
             position: relative;
             z-index: 1;
-            box-sizing: border-box;
             max-width: 850px;
             margin: 0 auto;
         }
 
-        /* Font Sizing Framework Aligned exactly with Register/Login screens */
-        .screen-header {
-            text-align: center;
-            margin-bottom: 3.5vh;
-            width: 100%;
-        }
+        .screen-header { text-align: center; margin-bottom: 3.5vh; width: 100%; }
+        .screen-header h1 { font-size: 26px; font-weight: 800; color: var(--text-dark); margin-bottom: 5px; letter-spacing: -0.5px; }
+        .screen-header h1 span { color: var(--primary-burgundy); }
+        .screen-header p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 
-        .screen-header h1 {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 5px;
-            letter-spacing: -0.5px;
-        }
-
-        .screen-header h1 span {
-            color: var(--primary-burgundy);
-        }
-
-        .screen-header p {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Support Grid Configuration */
         .support-layout {
             display: grid;
             grid-template-columns: 1fr 1.1fr;
@@ -159,13 +117,9 @@
         }
 
         @media (max-width: 768px) {
-            .support-layout {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
+            .support-layout { grid-template-columns: 1fr; gap: 16px; }
         }
 
-        /* Content Blocks */
         .content-card {
             background: #ffffff;
             border-radius: 16px;
@@ -175,32 +129,11 @@
             height: fit-content;
         }
 
-        h2 {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 12px;
-            letter-spacing: -0.3px;
-        }
+        h2 { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; }
+        h2 span { color: var(--primary-burgundy); }
+        .subtitle-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; font-weight: 500; }
 
-        h2 span {
-            color: var(--primary-burgundy);
-        }
-
-        .subtitle-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 18px;
-            line-height: 1.5;
-            font-weight: 500;
-        }
-
-        /* Interactive Action Channels */
-        .contact-channels {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .contact-channels { display: flex; flex-direction: column; gap: 10px; }
 
         .channel-item {
             display: flex;
@@ -234,35 +167,12 @@
             flex-shrink: 0;
         }
 
-        .channel-info h4 {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 1px;
-        }
+        .channel-info h4 { font-size: 13px; font-weight: 700; margin-bottom: 1px; }
+        .channel-info p { font-size: 12px; color: var(--text-muted); font-weight: 500; word-break: break-all; }
 
-        .channel-info p {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* FAQ Interactive Systems */
-        .faq-wrapper {
-            margin-top: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .faq-item {
-            border-bottom: 1px solid #e2e8f0;
-            padding: 12px 0;
-        }
-
-        .faq-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
+        .faq-wrapper { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+        .faq-item { border-bottom: 1px solid #e2e8f0; padding: 12px 0; }
+        .faq-item:last-child { border-bottom: none; padding-bottom: 0; }
 
         .faq-question {
             font-size: 13px;
@@ -285,42 +195,12 @@
             font-weight: 500;
         }
 
-        .faq-item.active .faq-answer {
-            max-height: 160px;
-            margin-top: 8px;
-            transition: max-height 0.25s cubic-bezier(1, 0, 1, 0);
-        }
+        .faq-item.active .faq-answer { max-height: 160px; margin-top: 8px; }
+        .faq-toggle-icon { color: var(--text-muted); transition: transform 0.2s ease; flex-shrink: 0; margin-left: 8px; }
+        .faq-item.active .faq-toggle-icon { transform: rotate(180deg); color: var(--primary-burgundy); }
 
-        .faq-toggle-icon {
-            color: var(--text-muted);
-            transition: transform 0.2s ease;
-            flex-shrink: 0;
-            margin-left: 8px;
-        }
-
-        .faq-item.active .faq-toggle-icon {
-            transform: rotate(180deg);
-            color: var(--primary-burgundy);
-        }
-
-        /* Form Ticket Input Modules matching exact site metrics */
-        .form-group {
-            position: relative;
-            width: 100%;
-            margin-bottom: 16px;
-        }
-
-        .form-label {
-            position: absolute;
-            top: -7px;
-            left: 12px;
-            background-color: #ffffff;
-            padding: 0 5px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-dark);
-            z-index: 2;
-        }
+        .form-group { position: relative; width: 100%; margin-bottom: 16px; }
+        .form-label { position: absolute; top: -7px; left: 12px; background-color: #ffffff; padding: 0 5px; font-size: 11px; font-weight: 700; color: var(--text-dark); z-index: 2; }
 
         .form-control {
             width: 100%;
@@ -336,20 +216,9 @@
             transition: all 0.2s ease;
         }
 
-        .form-control:focus {
-            border-color: var(--primary-burgundy);
-            background-color: #ffffff;
-            box-shadow: var(--focus-shadow);
-        }
+        .form-control:focus { border-color: var(--primary-burgundy); background-color: #ffffff; box-shadow: var(--focus-shadow); }
+        textarea.form-control { padding-top: 12px; padding-bottom: 12px; height: 105px; resize: none; }
 
-        textarea.form-control {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            height: 105px;
-            resize: none;
-        }
-
-        /* System Action Submission Nodes */
         .submit-btn {
             width: 100%;
             height: 48px;
@@ -361,48 +230,88 @@
             border-radius: 30px;
             cursor: pointer;
             box-shadow: 0 6px 16px rgba(128, 0, 32, 0.2);
-            transition: transform 0.15s ease, box-shadow 0.2s ease;
+            transition: transform 0.15s ease;
         }
 
         .submit-btn:active { transform: scale(0.98); }
         .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .action-container {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            margin-top: 8px;
-        }
+        .action-container { display: flex; justify-content: center; width: 100%; margin-top: 8px; }
 
         .back-btn {
-            width: 100%;
-            max-width: 360px;
-            height: 46px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 700;
+            width: 100%; max-width: 360px; height: 46px; border-radius: 30px;
+            font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+            gap: 8px; cursor: pointer; text-decoration: none; background: #ffffff; color: var(--text-dark);
+            border: 1.5px solid #e2e8f0; box-shadow: var(--card-shadow); transition: transform 0.15s ease;
+        }
+
+        .back-btn:active { transform: scale(0.98); background: #f8fafc; }
+
+        /* CUSTOM UI MODAL DIALOG CONTAINER */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: transform 0.15s ease;
-            text-decoration: none;
-            background: #ffffff;
-            color: var(--text-dark);
-            border: 1.5px solid #e2e8f0;
-            box-shadow: var(--card-shadow);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
         }
 
-        .back-btn:active {
-            transform: scale(0.98);
-            background: #f8fafc;
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-box {
+            background: #ffffff;
+            width: 90%;
+            max-width: 380px;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+            text-align: center;
         }
+
+        .modal-overlay.active .modal-box { transform: scale(1); }
+
+        .modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px auto;
+        }
+
+        .modal-icon.success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .modal-icon.danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+        .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 8px; color: var(--text-dark); }
+        .modal-message { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px; }
+
+        .modal-btn {
+            width: 100%;
+            height: 44px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            background: var(--primary-burgundy-gradient);
+            color: #ffffff;
+            transition: transform 0.15s ease;
+        }
+
+        .modal-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
-    <!-- Top Fluid Gradient Wave Background Asset -->
     <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M0 0H375V65C375 65 280 155 0 95V0Z" fill="url(#paint0_linear)"/>
         <defs>
@@ -413,12 +322,10 @@
         </defs>
     </svg>
 
-    <!-- Bottom Geometric Structural Wave Footer -->
     <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M375 90H0V70C120 62 250 55 375 65V90Z" fill="#2b000a"/>
     </svg>
 
-    <!-- Header Navigation Node -->
     <div class="header-top-area">
         <a href="index.html" class="header-back-btn" aria-label="Go back" title="Go back">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
@@ -428,7 +335,6 @@
         </a>
     </div>
 
-    <!-- App Main Portal Layer -->
     <main class="app-view">
         
         <header class="screen-header">
@@ -438,7 +344,6 @@
 
         <div class="support-layout">
             
-            <!-- Side Pane: Links and FAQ Engine -->
             <div style="display: flex; flex-direction: column; gap: 16px;">
                 
                 <section class="content-card">
@@ -446,7 +351,7 @@
                     <p class="subtitle-desc">Reach out directly to our verification and operations management specialists across our verified dashboards.</p>
                     
                     <div class="contact-channels">
-                        <a href="mailto:birrgo@gmail.com" class="channel-item">
+                        <a href="mailto:support@birrgo.com" id="chanEmailBtn" class="channel-item">
                             <div class="channel-icon">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -455,11 +360,11 @@
                             </div>
                             <div class="channel-info">
                                 <h4>Email Support</h4>
-                                <p>birrgo@gmail.com</p>
+                                <p id="chanEmailVal">Loading...</p>
                             </div>
                         </a>
 
-                        <a href="https://t.me/birrgo_online" target="_blank" class="channel-item">
+                        <a href="#" id="chanTelegramBtn" target="_blank" class="channel-item">
                             <div class="channel-icon">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -468,11 +373,11 @@
                             </div>
                             <div class="channel-info">
                                 <h4>Telegram Portal</h4>
-                                <p>@birrgo.online</p>
+                                <p id="chanTelegramVal">Loading...</p>
                             </div>
                         </a>
 
-                        <a href="https://instagram.com/birrgo.oline" target="_blank" class="channel-item">
+                        <a href="#" id="chanInstagramBtn" target="_blank" class="channel-item">
                             <div class="channel-icon">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -482,7 +387,7 @@
                             </div>
                             <div class="channel-info">
                                 <h4>Instagram Feed</h4>
-                                <p>@birrgo.oline</p>
+                                <p id="chanInstagramVal">Loading...</p>
                             </div>
                         </a>
                     </div>
@@ -509,7 +414,6 @@
                 </section>
             </div>
 
-            <!-- Main Interactive Help-Ticket Container Form -->
             <section class="content-card">
                 <h2>Open a <span>Support Ticket</span></h2>
                 <p class="subtitle-desc">Can't log into your dashboard? Drop your specific issue details below, and a specialist will respond via email shortly.</p>
@@ -541,7 +445,6 @@
 
         </div>
 
-        <!-- Exit Node Layout Footer -->
         <footer class="action-container">
             <a href="index.html" class="back-btn">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -554,42 +457,86 @@
 
     </main>
 
-    <!-- Firebase App & Realtime Database Client Engine Integration Framework Modules -->
+    <!-- CUSTOM USER POPUP MODAL -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal-box">
+            <div class="modal-icon success" id="modalIcon"></div>
+            <h3 class="modal-title" id="modalTitle">Success</h3>
+            <p class="modal-message" id="modalMessage">Your message has been received.</p>
+            <button class="modal-btn" onclick="closeUserModal()">Got it!</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // ⚠️ Inject your project variables securely inside this configuration frame
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
         };
 
-        // Initialize Native Database Clusters
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        // Accordion Interface Execution Logic
+        // CUSTOM UI MODAL DIALOG ENGINE
+        window.showUserModal = function(title, message, isSuccess = true) {
+            const overlay = document.getElementById('userModal');
+            const icon = document.getElementById('modalIcon');
+            
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+
+            icon.className = `modal-icon ${isSuccess ? 'success' : 'danger'}`;
+            icon.innerHTML = isSuccess
+                ? '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'
+                : '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+            overlay.classList.add('active');
+        };
+
+        window.closeUserModal = function() {
+            document.getElementById('userModal').classList.remove('active');
+        };
+
+        // READ LIVE CHANNELS
+        const linksRef = ref(database, 'settings/contact_links');
+        onValue(linksRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            
+            const emailVal = data.email || 'support@birrgo.com';
+            document.getElementById('chanEmailVal').innerText = emailVal;
+            document.getElementById('chanEmailBtn').href = `mailto:${emailVal}`;
+
+            const teleVal = data.telegram || 'https://t.me/birrgo';
+            document.getElementById('chanTelegramVal').innerText = teleVal.replace('https://', '');
+            document.getElementById('chanTelegramBtn').href = teleVal;
+
+            const instaVal = data.instagram || 'https://instagram.com/birrgo';
+            document.getElementById('chanInstagramVal').innerText = instaVal.replace('https://', '');
+            document.getElementById('chanInstagramBtn').href = instaVal;
+        });
+
+        // FAQ Toggle Logic
         document.querySelectorAll('.faq-question').forEach(item => {
             item.addEventListener('click', () => {
-                const parent = item.parentElement;
-                parent.classList.toggle('active');
+                item.parentElement.classList.toggle('active');
             });
         });
 
-        // Async Realtime Stream Pipeline Dispatch Configuration
+        // TICKET SUBMISSION HANDLER
         const ticketForm = document.getElementById('supportTicketForm');
         const submitBtn = document.getElementById('submitTicketBtn');
 
         ticketForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Set element node into processing lock phase
             submitBtn.disabled = true;
             submitBtn.innerText = "Sending Request...";
 
@@ -603,19 +550,17 @@
             };
 
             try {
-                // Generates an auto-increment unique ID node array inside 'support_tickets' path routing mapping
                 const ticketsRef = ref(database, 'support_tickets');
                 const newTicketRef = push(ticketsRef);
                 
                 await set(newTicketRef, payload);
                 
-                alert('Thank you! Your support ticket has been received securely.');
+                showUserModal('Ticket Received!', 'Thank you! Your support request has been submitted securely. An agent will follow up shortly via email.', true);
                 ticketForm.reset();
             } catch (error) {
-                console.error("Database Connection Failure Execution: ", error);
-                alert('Network cluster interaction delay. Please try again or reach out through Telegram.');
+                console.error("Database error: ", error);
+                showUserModal('Submission Error', 'Network response error. Please try sending your request again or contact us via Telegram.', false);
             } finally {
-                // Clear state mutations
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Submit Ticket Request";
             }
