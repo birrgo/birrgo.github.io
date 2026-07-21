@@ -1,4 +1,4 @@
-Const Express = require('express');
+const express = require('express');
 const cors = require('cors');
 const { BrevoClient } = require('@getbrevo/brevo');
 const Groq = require('groq-sdk'); 
@@ -6,7 +6,7 @@ const admin = require('firebase-admin');
 const { cert } = require('firebase-admin/app'); 
 const { getDatabase } = require('firebase-admin/database'); 
 
-const app = Express();
+const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Set Admin Authorization Secret Token (Default: '808080')
@@ -19,7 +19,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use(Express.json());
+app.use(express.json());
 
 // 2. Initialize Firebase Admin securely using Render Environment Variables
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
