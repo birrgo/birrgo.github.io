@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BirrGo - Firebase Secure Dashboard</title>
+    <title>BirrGo - Push Notification Dashboard</title>
     <style>
         body { font-family: -apple-system, sans-serif; background: #f4f6f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .top-nav { width: 100%; max-width: 400px; display: flex; justify-content: flex-start; margin-bottom: 15px; box-sizing: border-box; }
@@ -173,14 +173,14 @@
       }
 
       statusDiv.style.color = '#f59e0b';
-      statusDiv.innerText = 'Broadcasting message via Vercel serverless function...';
+      statusDiv.innerText = 'Broadcasting via Push Microservice...';
 
       try {
-          // Endpoint targets Vercel serverless handler (/api/send-push)
+          // Points directly to the push microservice endpoint (/api/send-push)
           const response = await fetch("/api/send-push", {
               method: "POST",
               headers: {
-                  "Content-Type": "application/json; charset=utf-8"
+                  "Content-Type": "application/json"
               },
               body: JSON.stringify({
                   title: title,
@@ -194,17 +194,17 @@
 
           if (response.ok && responseData.success) {
               statusDiv.style.color = '#10b981';
-              statusDiv.innerText = '🚀 Notification deployed successfully via Vercel!';
+              statusDiv.innerText = '🚀 Notification deployed successfully!';
               document.getElementById('title').value = '';
               document.getElementById('message').value = '';
               document.getElementById('imageUrl').value = '';
           } else {
               let errorMsg = responseData.error || `Status ${response.status} (${response.statusText})`;
               statusDiv.style.color = '#d9534f';
-              statusDiv.innerText = 'Backend Error: ' + errorMsg;
+              statusDiv.innerText = 'Push Microservice Error: ' + errorMsg;
           }
       } catch (error) {
-          console.error("Push Error:", error);
+          console.error("Push Microservice Error:", error);
           statusDiv.style.color = '#d9534f';
           statusDiv.innerText = 'Network error: ' + error.message;
       }
