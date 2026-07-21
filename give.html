@@ -32,7 +32,6 @@
             width: 100%; 
             height: 100%; 
             background-color: #f1f5f9; 
-            overflow: hidden; 
         }
 
         body { 
@@ -44,7 +43,6 @@
         /* Mobile App Container */
         .app-view {
             width: 100%; 
-            height: 100%; 
             height: 100dvh; 
             max-width: 450px;
             background-color: var(--bg-light); 
@@ -145,7 +143,6 @@
         }
         .back-btn:active { transform: translateY(1px) scale(0.94); }
 
-        /* Progressive Blur Loader for Slow Connections */
         .logo-image { height: 24px; width: auto; object-fit: contain; transition: filter 0.4s ease, opacity 0.4s ease; }
         .img-blur-loading { filter: blur(8px); opacity: 0.3; }
         .img-blur-loaded { filter: blur(0); opacity: 1; }
@@ -163,7 +160,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Compact Styled Cards */
         .giveaway-hero-card {
             border-radius: var(--border-radius-lg); 
             padding: 10px 12px; 
@@ -206,13 +202,14 @@
         .social-pool .btn-claim, .video-pool .btn-claim, .like-pool .btn-claim { color: #1d4ed8; }
         .btn-claim:active { transform: scale(0.92); }
 
-        /* Bottom Section Wrapper: Places Red Wave directly underneath the Ad Box */
+        /* Bottom Wrapper: Positioned above system bar with bottom margin space */
         .bottom-wrapper {
             position: relative;
             width: 100%;
+            margin-top: auto;
             flex-shrink: 0;
             z-index: 30;
-            padding: 6px 14px calc(6px + env(safe-area-inset-bottom, 6px));
+            padding: 8px 14px calc(12px + env(safe-area-inset-bottom, 0px));
         }
 
         .bottom-wave-svg {
@@ -231,7 +228,7 @@
             background: var(--card-tech-bg); 
             border: 1.2px dashed #cbd5e1;
             border-radius: 12px; 
-            padding: 6px 12px; 
+            padding: 8px 12px; 
             display: flex; 
             flex-direction: column;
             align-items: center; 
@@ -345,7 +342,7 @@
 
         </div>
 
-        <!-- Bottom Section: Red Curve SVG Positioned Below the Ad Container -->
+        <!-- Bottom Section: Placed Above the System Navigation Bar -->
         <div class="bottom-wrapper">
             <svg class="bottom-wave-svg" viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
@@ -383,7 +380,6 @@
                 return;
             }
 
-            /* Progressive Blur Image Loader for slow connections */
             const mainLogo = document.getElementById('mainLogo');
             if (mainLogo) {
                 if (mainLogo.complete && mainLogo.naturalHeight !== 0) {
@@ -400,7 +396,6 @@
                 }
             }
 
-            /* Full Page Blur Handling on Disconnection */
             const appView = document.getElementById('appView');
             const handleNetworkChange = () => {
                 if (!navigator.onLine) {
@@ -414,7 +409,6 @@
             window.addEventListener('online', handleNetworkChange);
             handleNetworkChange();
 
-            /* Modal Popup Handlers */
             const modal = document.getElementById('giveawayPopup');
             const popupTitle = document.getElementById('popupTitle');
             const popupDesc = document.getElementById('popupDesc');
