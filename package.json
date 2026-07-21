@@ -1,10 +1,13 @@
 {
   "name": "birrgo-otp-backend",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "aiserver.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "start": "node aiserver.js",
+    "start:ai": "node aiserver.js",
+    "start:push": "node pushserver.js",
+    "dev:ai": "node --watch aiserver.js",
+    "dev:push": "node --watch pushserver.js"
   },
   "dependencies": {
     "@getbrevo/brevo": "^6.0.0",
