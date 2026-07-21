@@ -13,448 +13,282 @@
             --primary-burgundy: #800020;
             --primary-gradient: linear-gradient(135deg, #800020 0%, #4a0000 100%);
             --social-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            
-            /* Modern Digital White & Tech Gradient Palette */
             --card-tech-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            --blue-glow-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.12), 0 0 12px rgba(56, 189, 248, 0.18);
-            
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
+            --blue-glow-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.1), 0 0 8px rgba(56, 189, 248, 0.12);
             --bg-light: #f8fafc;
-            --border-light: #e2e8f0;
-            --border-radius-lg: 16px;
+            --border-radius-lg: 14px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.2px;
-            -webkit-tap-highlight-color: transparent;
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            letter-spacing: -0.15px; 
+            -webkit-tap-highlight-color: transparent; 
         }
 
-        html {
-            width: 100%;
-            height: 100%;
-            background-color: #f1f5f9;
+        html, body { 
+            width: 100%; 
+            height: 100%; 
+            background-color: #f1f5f9; 
+            overflow: hidden; 
         }
 
-        body {
-            width: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
-            background-color: #f1f5f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            perspective: 1000px;
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
         }
 
-        /* 3D Page View Container */
+        /* Mobile App Container */
         .app-view {
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
+            width: 100%; 
+            height: 100%; 
+            height: 100dvh; 
             max-width: 450px;
-            background-color: var(--bg-light);
-            display: flex;
+            background-color: var(--bg-light); 
+            display: flex; 
             flex-direction: column;
-            position: relative;
-            box-shadow: 
-                0 25px 50px -12px rgba(0, 0, 0, 0.15),
-                0 0 40px rgba(128, 0, 32, 0.08);
-            overflow: hidden;
-            transition: filter 0.3s ease, transform 0.4s ease;
-            transform-style: preserve-3d;
+            position: relative; 
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            overflow: hidden; 
+            transition: filter 0.3s ease;
         }
 
-        /* Tech Circuit Pattern on Clean Background */
+        /* Network Disconnection Blur Effect */
+        .app-view.network-offline-blur { 
+            filter: blur(8px); 
+            pointer-events: none; 
+        }
+
         .tech-bg-pattern {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.6;
+            position: absolute; 
+            inset: 0; 
+            z-index: 0; 
+            pointer-events: none; 
+            opacity: 0.5;
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 20%),
                 radial-gradient(circle at 90% 80%, rgba(128, 0, 32, 0.05) 0%, transparent 20%),
                 radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 16px 16px;
+            background-size: 100% 100%, 100% 100%, 14px 14px;
         }
 
-        /* Network Blur State */
-        .app-view.network-offline-blur {
-            filter: blur(6px);
-            pointer-events: none;
+        /* Top Header Wrapper */
+        .header-wrapper {
+            position: relative;
+            width: 100%;
+            height: calc(68px + env(safe-area-inset-top, 0px));
+            flex-shrink: 0;
+            z-index: 20;
         }
 
-        /* Top Curved Wave Header */
-        .top-wave-header {
+        .top-wave-svg {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: calc(85px + env(safe-area-inset-top, 0px));
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .top-wave-header svg {
-            width: 100%;
             height: 100%;
-            display: block;
-            filter: drop-shadow(0 4px 10px rgba(128, 0, 32, 0.3));
-        }
-
-        /* Bottom Curved Wave Footer */
-        .bottom-wave-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: calc(75px + env(safe-area-inset-bottom, 0px));
             z-index: 1;
+            filter: drop-shadow(0 3px 6px rgba(128, 0, 32, 0.25));
+        }
+
+        .brand-header { 
+            position: relative; 
+            z-index: 2; 
+            padding-top: calc(8px + env(safe-area-inset-top, 0px)); 
+            padding-left: 14px; 
+            padding-right: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
+        
+        .top-curve-title {
+            position: absolute; 
+            top: calc(14px + env(safe-area-inset-top, 0px)); 
+            left: 50%; 
+            transform: translateX(-50%);
+            z-index: 3; 
+            color: #ffffff; 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 0.8px;
+            white-space: nowrap; 
             pointer-events: none;
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
         }
 
-        .bottom-wave-footer svg {
-            width: 100%;
-            height: 100%;
-            display: block;
+        .back-btn {
+            width: 32px; 
+            height: 32px; 
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.9); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 14px; 
+            font-weight: 900; 
+            color: var(--primary-burgundy); 
+            cursor: pointer; 
+            outline: none;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); 
+            transition: transform 0.15s ease;
         }
+        .back-btn:active { transform: translateY(1px) scale(0.94); }
 
-        /* Main Scrollable Content Area */
+        /* Progressive Blur Loader for Slow Connections */
+        .logo-image { height: 24px; width: auto; object-fit: contain; transition: filter 0.4s ease, opacity 0.4s ease; }
+        .img-blur-loading { filter: blur(8px); opacity: 0.3; }
+        .img-blur-loaded { filter: blur(0); opacity: 1; }
+
+        /* Main Scrollable Area */
         .app-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            padding-top: calc(78px + env(safe-area-inset-top, 0px));
-            padding-left: 16px;
-            padding-right: 16px;
-            padding-bottom: calc(100px + env(safe-area-inset-bottom, 16px));
-            position: relative;
-            z-index: 2;
-            gap: 12px;
-            overflow-y: auto;
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 12px 14px;
+            position: relative; 
+            z-index: 2; 
+            gap: 10px; 
+            overflow-y: auto; 
             -webkit-overflow-scrolling: touch;
         }
 
-        .brand-header {
-            position: absolute;
-            top: calc(10px + env(safe-area-inset-top, 0px));
-            left: 16px;
-            right: 16px;
-            z-index: 20;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* Title Directly Over the Red Curve */
-        .top-curve-title {
-            position: absolute;
-            top: calc(14px + env(safe-area-inset-top, 0px));
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 21;
-            text-align: center;
-            color: #ffffff;
-            font-size: 13.5px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            white-space: nowrap;
-            pointer-events: none;
-
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
-        }
-
-        /* 3D Glossy Back Button */
-        .back-btn {
-            position: relative;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            font-weight: 900;
-            color: var(--primary-burgundy);
-            cursor: pointer;
-            outline: none;
-            overflow: hidden;
-            
-            box-shadow: 
-                0 4px 12px rgba(0, 0, 0, 0.25),
-                inset 0 1px 2px rgba(255, 255, 255, 1);
-            
-            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
-        }
-
-        .back-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                rgba(255, 255, 255, 0) 30%,
-                rgba(255, 255, 255, 0.8) 50%,
-                rgba(255, 255, 255, 0) 70%
-            );
-            transform: rotate(30deg);
-            animation: gloss-shine 4s infinite;
-            pointer-events: none;
-        }
-
-        @keyframes gloss-shine {
-            0% { transform: translateX(-100%) rotate(30deg); }
-            20% { transform: translateX(100%) rotate(30deg); }
-            100% { transform: translateX(100%) rotate(30deg); }
-        }
-
-        .back-btn:active {
-            transform: translateY(2px) scale(0.94);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Logo Styling */
-        .logo-image {
-            height: 30px;
-            width: auto;
-            object-fit: contain;
-            transition: filter 0.3s ease, opacity 0.3s ease;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)) brightness(1.1);
-        }
-
-        .img-blur-loading {
-            filter: blur(8px);
-            opacity: 0.5;
-        }
-
-        .img-blur-loaded {
-            filter: blur(0);
-            opacity: 1;
-        }
-
-        /* Cards with Motion Effect */
+        /* Compact Styled Cards */
         .giveaway-hero-card {
-            border-radius: var(--border-radius-lg);
-            padding: 10px 14px;
+            border-radius: var(--border-radius-lg); 
+            padding: 10px 12px; 
             color: #ffffff;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            position: relative; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
             text-align: left;
-            min-height: 72px;
-            cursor: pointer;
-            
-            box-shadow: 
-                0 8px 20px -4px rgba(37, 99, 235, 0.12),
-                0 0 12px rgba(56, 189, 248, 0.18);
-            
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+            min-height: 58px; 
+            cursor: pointer; 
+            box-shadow: var(--blue-glow-shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
-        /* Light Sweeping Effect across Cards */
-        .giveaway-hero-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 70%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.6), transparent);
-            transform: skewX(-20deg);
-            animation: card-light-sweep 4.5s infinite;
-        }
-
-        @keyframes card-light-sweep {
-            0% { left: -100%; }
-            25% { left: 200%; }
-            100% { left: 200%; }
-        }
-
-        .giveaway-hero-card:active {
-            transform: translateY(2px) scale(0.98);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+        .giveaway-hero-card:active { transform: scale(0.98); }
 
         .premium-pool { background: var(--primary-gradient); }
         .social-pool, .video-pool, .like-pool { background: var(--social-gradient); }
 
-        .giveaway-icon {
-            font-size: 22px;
-            flex-shrink: 0;
-            display: inline-block;
-            animation: float-animation 3s ease-in-out infinite;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
-        }
+        .giveaway-icon { font-size: 18px; flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); }
 
-        .social-pool .giveaway-icon { animation-delay: 0.75s; }
-        .video-pool .giveaway-icon { animation-delay: 1.5s; }
-        .like-pool .giveaway-icon { animation-delay: 2.25s; }
+        .card-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .giveaway-title { font-size: 11.5px; font-weight: 700; margin-bottom: 1px; line-height: 1.15; }
+        .giveaway-desc { font-size: 9px; color: rgba(255, 255, 255, 0.88); line-height: 1.2; }
 
-        @keyframes float-animation {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
-        }
-
-        .card-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .giveaway-title {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 2px;
-            line-height: 1.2;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-        }
-
-        .giveaway-desc {
-            font-size: 10.5px;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.25;
-        }
-
-        /* Glossy Action Button Inside Cards */
         .btn-claim {
             background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.8); 
             border-radius: 100px;
-            padding: 7px 15px;
-            font-size: 11px;
-            font-weight: 800;
+            padding: 5px 12px; 
+            font-size: 10px; 
+            font-weight: 800; 
             cursor: pointer;
-            box-shadow: 
-                0 4px 10px rgba(0, 0, 0, 0.12),
-                inset 0 1px 0 rgba(255, 255, 255, 1);
-            flex-shrink: 0;
-            white-space: nowrap;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); 
+            flex-shrink: 0; 
+            transition: transform 0.15s ease;
         }
-
         .premium-pool .btn-claim { color: var(--primary-burgundy); }
-        .social-pool .btn-claim,
-        .video-pool .btn-claim,
-        .like-pool .btn-claim { color: #1d4ed8; }
+        .social-pool .btn-claim, .video-pool .btn-claim, .like-pool .btn-claim { color: #1d4ed8; }
+        .btn-claim:active { transform: scale(0.92); }
 
-        .btn-claim:active {
-            transform: scale(0.94);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        /* Bottom Section Wrapper: Places Red Wave directly underneath the Ad Box */
+        .bottom-wrapper {
+            position: relative;
+            width: 100%;
+            flex-shrink: 0;
+            z-index: 30;
+            padding: 6px 14px calc(6px + env(safe-area-inset-bottom, 6px));
         }
 
-        /* Advertisement Container Adjusted safely above Mobile Navigation Bar */
-        .ad-container {
+        .bottom-wave-svg {
             position: absolute;
-            bottom: calc(12px + env(safe-area-inset-bottom, 12px));
-            left: 16px;
-            right: 16px;
-            z-index: 10;
-            background: var(--card-tech-bg);
-            border: 1.5px dashed #cbd5e1;
-            border-radius: 18px;
-            padding: 10px 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 70px;
-            box-shadow: var(--blue-glow-shadow);
-            user-select: none;
-        }
-
-        .ad-badge {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            font-size: 10px;
-            font-weight: 800;
-            color: #94a3b8;
-            letter-spacing: 0.5px;
-        }
-
-        .ad-icon {
-            font-size: 20px;
-            margin-bottom: 2px;
-        }
-
-        .ad-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8;
-        }
-
-        /* Modal Overlay System */
-        .popup-backdrop {
-            position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .ad-container {
+            position: relative;
+            z-index: 2;
+            background: var(--card-tech-bg); 
+            border: 1.2px dashed #cbd5e1;
+            border-radius: 12px; 
+            padding: 6px 12px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            min-height: 52px;
+            box-shadow: var(--blue-glow-shadow); 
+            user-select: none;
+        }
+        .ad-badge { position: absolute; top: 4px; right: 8px; font-size: 8px; font-weight: 800; color: #94a3b8; }
+        .ad-icon { font-size: 15px; margin-bottom: 1px; }
+        .ad-label { font-size: 9.5px; font-weight: 700; color: #94a3b8; }
+
+        /* Modal Dialog */
+        .popup-backdrop {
+            position: absolute; 
+            inset: 0; 
+            background-color: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(6px); 
+            -webkit-backdrop-filter: blur(6px);
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
             z-index: 6000;
         }
-
         .popup-card {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 24px 20px;
-            width: 88%;
-            max-width: 320px;
+            background-color: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 16px;
+            padding: 20px 16px; 
+            width: 85%; 
+            max-width: 300px; 
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
         }
-
         .popup-btn {
-            width: 100%;
-            background: var(--primary-gradient);
+            width: 100%; 
+            background: var(--primary-gradient); 
             border: none;
-            border-radius: 100px;
-            padding: 12px;
-            font-size: 13px;
+            border-radius: 100px; 
+            padding: 10px; 
+            font-size: 11px; 
             font-weight: 700;
-            color: white;
-            cursor: pointer;
-            margin-top: 16px;
-            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+            color: white; 
+            cursor: pointer; 
+            margin-top: 12px; 
+            box-shadow: 0 3px 8px rgba(128, 0, 32, 0.25);
         }
     </style>
 </head>
 <body>
 
     <div class="app-view" id="appView">
-        
-        <!-- Tech Circuit Background Pattern -->
         <div class="tech-bg-pattern"></div>
 
-        <!-- Scaled Top Curve Layer -->
-        <div class="top-wave-header">
-            <svg viewBox="0 0 375 85" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Top Header Area -->
+        <div class="header-wrapper">
+            <svg class="top-wave-svg" viewBox="0 0 375 85" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 0H375V55C250 75 125 45 0 65V0Z" fill="url(#brandGradientTop)"/>
                 <defs>
                     <linearGradient id="brandGradientTop" x1="0" y1="0" x2="375" y2="85" gradientUnits="userSpaceOnUse">
@@ -463,53 +297,47 @@
                     </linearGradient>
                 </defs>
             </svg>
-        </div>
-        
-        <!-- Header Controls -->
-        <div class="brand-header">
-            <button class="back-btn" id="backToWalletBtn" aria-label="Back to Wallet">←</button>
-            <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
+            <div class="brand-header">
+                <button class="back-btn" id="backToWalletBtn" aria-label="Back to Wallet">←</button>
+                <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
+            </div>
+            <h1 class="top-curve-title">Social Media Giveaway</h1>
         </div>
 
-        <!-- Title Over Top Red Curve -->
-        <h1 class="top-curve-title">Social Media Giveaway</h1>
-
+        <!-- Scrollable Cards Body -->
         <div class="app-content">
             
             <div class="giveaway-hero-card premium-pool">
                 <div class="giveaway-icon">🎁</div>
                 <div class="card-body">
-                    <h3 class="giveaway-title">Premium Pool</h3>
+                    <h2 class="giveaway-title">Premium Pool</h2>
                     <p class="giveaway-desc">Instant system matrix drops.</p>
                 </div>
                 <button class="btn-claim" id="claimRewardBtn">Claim</button>
             </div>
 
-            <!-- Social Media Pool Card -->
             <div class="giveaway-hero-card social-pool" id="socialGiveawayCard">
                 <div class="giveaway-icon">📢</div>
                 <div class="card-body">
-                    <h3 class="giveaway-title">Social Media</h3>
+                    <h2 class="giveaway-title">Social Media</h2>
                     <p class="giveaway-desc">Complete simple community tasks.</p>
                 </div>
                 <button class="btn-claim" id="socialGiveawayBtn">Open</button>
             </div>
 
-            <!-- Video Pool Card -->
             <div class="giveaway-hero-card video-pool">
                 <div class="giveaway-icon">🎬</div>
                 <div class="card-body">
-                    <h3 class="giveaway-title">Watch Video and Fill Key</h3>
+                    <h2 class="giveaway-title">Watch Video & Fill Key</h2>
                     <p class="giveaway-desc">Watch clips and enter secret keys.</p>
                 </div>
                 <button class="btn-claim" id="videoGiveawayBtn">Watch</button>
             </div>
 
-            <!-- Like Video & Get Bonus Card -->
             <div class="giveaway-hero-card like-pool">
                 <div class="giveaway-icon">👍</div>
                 <div class="card-body">
-                    <h3 class="giveaway-title">Like Video & Get Bonus</h3>
+                    <h2 class="giveaway-title">Like Video & Get Bonus</h2>
                     <p class="giveaway-desc">Like video tasks to earn extra bonus.</p>
                 </div>
                 <button class="btn-claim" id="likeGiveawayBtn">Like</button>
@@ -517,9 +345,9 @@
 
         </div>
 
-        <!-- Bottom Curved Wave Footer -->
-        <div class="bottom-wave-footer">
-            <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Bottom Section: Red Curve SVG Positioned Below the Ad Container -->
+        <div class="bottom-wrapper">
+            <svg class="bottom-wave-svg" viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
                 <defs>
                     <linearGradient id="brandGradientBottom" x1="0" y1="80" x2="375" y2="0" gradientUnits="userSpaceOnUse">
@@ -528,19 +356,19 @@
                     </linearGradient>
                 </defs>
             </svg>
+
+            <div class="ad-container">
+                <span class="ad-badge">AD</span>
+                <div class="ad-icon">📢</div>
+                <span class="ad-label">Advertisement Space</span>
+            </div>
         </div>
 
-        <!-- Advertisement Container Layered Over Bottom Curve -->
-        <div class="ad-container">
-            <span class="ad-badge">AD</span>
-            <div class="ad-icon">📢</div>
-            <span class="ad-label">Advertisement Space</span>
-        </div>
-
+        <!-- Modal Popup Dialog -->
         <div class="popup-backdrop" id="giveawayPopup">
             <div class="popup-card">
-                <h3 id="popupTitle" style="font-size:17px; font-weight:800; color:#111827; margin-bottom:6px;">Matrix Dynamic Lock</h3>
-                <p id="popupDesc" style="font-size:12px; color:#6b7280; font-weight:500; line-height:1.4;">Daily promo metrics are currently distributed via active Task modules. complete tasks to unlock premium balance multipliers.</p>
+                <h3 id="popupTitle" style="font-size:14px; font-weight:800; color:#111827; margin-bottom:4px;">Matrix Dynamic Lock</h3>
+                <p id="popupDesc" style="font-size:10.5px; color:#6b7280; font-weight:500; line-height:1.35;">Daily promo metrics are currently distributed via active Task modules. Complete tasks to unlock premium balance multipliers.</p>
                 <button class="popup-btn" id="popupCloseBtn">Acknowledge</button>
             </div>
         </div>
@@ -555,9 +383,10 @@
                 return;
             }
 
+            /* Progressive Blur Image Loader for slow connections */
             const mainLogo = document.getElementById('mainLogo');
             if (mainLogo) {
-                if (mainLogo.complete) {
+                if (mainLogo.complete && mainLogo.naturalHeight !== 0) {
                     mainLogo.classList.remove('img-blur-loading');
                     mainLogo.classList.add('img-blur-loaded');
                 } else {
@@ -565,9 +394,13 @@
                         mainLogo.classList.remove('img-blur-loading');
                         mainLogo.classList.add('img-blur-loaded');
                     });
+                    mainLogo.addEventListener('error', () => {
+                        mainLogo.classList.add('img-blur-loading');
+                    });
                 }
             }
 
+            /* Full Page Blur Handling on Disconnection */
             const appView = document.getElementById('appView');
             const handleNetworkChange = () => {
                 if (!navigator.onLine) {
@@ -581,6 +414,7 @@
             window.addEventListener('online', handleNetworkChange);
             handleNetworkChange();
 
+            /* Modal Popup Handlers */
             const modal = document.getElementById('giveawayPopup');
             const popupTitle = document.getElementById('popupTitle');
             const popupDesc = document.getElementById('popupDesc');
@@ -596,13 +430,10 @@
             });
 
             document.getElementById('claimRewardBtn').addEventListener('click', () => {
-                openPopup('Matrix Dynamic Lock', 'Daily promo metrics are currently distributed via active Task modules. complete tasks to unlock premium balance multipliers.');
+                openPopup('Matrix Dynamic Lock', 'Daily promo metrics are currently distributed via active Task modules. Complete tasks to unlock premium balance multipliers.');
             });
 
-            const navigateToSocial = () => {
-                window.location.replace('social.html');
-            };
-
+            const navigateToSocial = () => { window.location.replace('social.html'); };
             document.getElementById('socialGiveawayCard').addEventListener('click', navigateToSocial);
             document.getElementById('socialGiveawayBtn').addEventListener('click', (e) => {
                 e.stopPropagation();
