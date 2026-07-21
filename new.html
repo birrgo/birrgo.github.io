@@ -75,6 +75,12 @@
         .btn-support {
             background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%);
         }
+        .btn-likes {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+        }
+        .btn-keys {
+            background: linear-gradient(135deg, #d97706 0%, #78350f 100%);
+        }
         
         /* Modernized split actions for notifications & AI settings portal */
         .btn-push-action {
@@ -130,12 +136,20 @@
                 </button>
             </a>
 
-            <!-- NEW KEYS PORTAL LINK -->
-            <a href="keys.html" style="text-decoration: none;">
-                <button class="role-nav-btn" style="background: linear-gradient(135deg, #d97706 0%, #78350f 100%); color: white; width: 100%;">
-                    <span class="icon">🗝️</span> Keys Manager
-                </button>
-            </a>
+            <!-- COMBINED LIKES & KEYS CONTAINER -->
+            <div class="nested-box-container">
+                <div class="nested-title-header">
+                    <span>🗝️</span> Likes & Keys Manager
+                </div>
+                <div class="nested-btn-split">
+                    <a href="likes.html">
+                        <button class="sub-nav-btn btn-likes">❤️ Likes</button>
+                    </a>
+                    <a href="keys.html">
+                        <button class="sub-nav-btn btn-keys">🗝️ Keys</button>
+                    </a>
+                </div>
+            </div>
 
             <!-- INTEGRATED LOTTERY CONTROL BOX WITH TWO BUTTONS -->
             <div class="nested-box-container">

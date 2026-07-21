@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>BirrGo - Tier Selection & Game</title>
+  <link rel="stylesheet" href="qu.css">
+</head>
+<body>
+
+  <!-- Header with Top Curve & Glowing BirrGo Logo -->
+  <div class="wavy-header">
+    <a href="lottery.html" class="back-btn" id="nav-back-btn">← Back</a>
+    <div class="header-content">
+      <div class="header-logo-badge">
+        <img src="birrgo-logo.png" alt="BirrGo Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23580016\'><path d=\'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\'/></svg>'">
+      </div>
+      <h1>BirrGo Challenge Arena</h1>
+      <p id="header-sub">Choose a category to start playing</p>
+    </div>
+  </div>
+
+  <!-- Top Ad Banner -->
+  <div class="ad-banner ad-top">
+    📢 ADVERTISEMENT: Premium Sponsor Banner Space
+  </div>
+
+  <!-- Main Workspace -->
+  <div class="main-container">
+
+    <!-- 4 MAIN CATEGORIES GRID -->
+    <div id="dashboard-screen" class="categories-grid">
+      
+      <div class="category-box" onclick="openCategory('easy')">
+        <div class="logo-emblem-wrapper">
+          <img src="birrgo-logo.png" alt="BirrGo Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'><circle cx=\'12\' cy=\'12\' r=\'10\'/></svg>'">
+        </div>
+        <div class="category-title">EASY</div>
+        <div class="category-sub">40 Sec • Up to 100 Birr</div>
+      </div>
+
+      <div class="category-box" onclick="openCategory('medium')">
+        <div class="logo-emblem-wrapper">
+          <img src="birrgo-logo.png" alt="BirrGo Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23eab308\'><circle cx=\'12\' cy=\'12\' r=\'10\'/></svg>'">
+        </div>
+        <div class="category-title">MEDIUM</div>
+        <div class="category-sub">30 Sec • Up to 600 Birr</div>
+      </div>
+
+      <div class="category-box" onclick="openCategory('hard')">
+        <div class="logo-emblem-wrapper">
+          <img src="birrgo-logo.png" alt="BirrGo Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23dc2626\'><circle cx=\'12\' cy=\'12\' r=\'10\'/></svg>'">
+        </div>
+        <div class="category-title">HARD</div>
+        <div class="category-sub">20 Sec • Up to 5000 Birr</div>
+      </div>
+
+      <div class="category-box" onclick="openCategory('super_hard')">
+        <div class="logo-emblem-wrapper">
+          <img src="birrgo-logo.png" alt="BirrGo Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23a30d30\'><circle cx=\'12\' cy=\'12\' r=\'10\'/></svg>'">
+        </div>
+        <div class="category-title">SUPER HARD</div>
+        <div class="category-sub">10 Sec • Win 10,000 Birr</div>
+      </div>
+
+    </div>
+
+    <!-- SUB-CHOICE MODAL OVERLAY -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="sub-choice-card">
+        <div class="modal-header">
+          <span class="modal-title" id="modal-title">Select Sub Choice</span>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="tier-list" id="sub-tier-container"></div>
+      </div>
+    </div>
+
+    <!-- SECURITY PIN VERIFICATION MODAL -->
+    <div id="pin-modal-overlay" class="modal-overlay hidden">
+      <div class="pin-modal-card">
+        <h3 class="pin-modal-title">Security Verification</h3>
+        <p class="pin-modal-subtitle">Enter your 6-digit PIN to confirm entry fee transaction.</p>
+        <input type="password" id="quizVerifyPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="pin-input-box" placeholder="••••••">
+        <div class="pin-btn-group">
+          <button type="button" class="btn-pin-cancel" onclick="closePinModal()">Cancel</button>
+          <button type="button" class="btn-pin-confirm" id="confirmQuizPinBtn">Authorize & Play</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOM STYLED UI ALERT MODAL OVERLAY -->
+    <div id="custom-alert-overlay" class="modal-overlay hidden">
+      <div class="alert-modal-card">
+        <div class="alert-icon-badge">ℹ️</div>
+        <h3 id="custom-alert-title" class="alert-modal-title">Notification</h3>
+        <p id="custom-alert-message" class="alert-msg-text">Something happened.</p>
+        <button type="button" class="btn-alert-ok" id="customAlertOkBtn" onclick="closeCustomAlert()">OK</button>
+      </div>
+    </div>
+
+    <!-- ACTIVE GAME CARD -->
+    <div id="game-screen" class="question-card hidden">
+      <div class="game-status-bar">
+        <span class="progress-badge" id="question-progress">Q 1/10</span>
+        <span class="timer-badge" id="timer">⏱️ 40s</span>
+      </div>
+      
+      <div class="question-text" id="question-text">Loading...</div>
+      
+      <div class="options-grid">
+        <button class="option-btn" onclick="selectAnswer(0)"><span class="opt-prefix">A</span><span id="opt0"></span></button>
+        <button class="option-btn" onclick="selectAnswer(1)"><span class="opt-prefix">B</span><span id="opt1"></span></button>
+        <button class="option-btn" onclick="selectAnswer(2)"><span class="opt-prefix">C</span><span id="opt2"></span></button>
+        <button class="option-btn" onclick="selectAnswer(3)"><span class="opt-prefix">D</span><span id="opt3"></span></button>
+      </div>
+    </div>
+
+    <!-- RESULT CARD -->
+    <div id="result-screen" class="result-screen hidden">
+      <h2 id="result-title" class="result-title"></h2>
+      <p id="result-desc" class="result-desc"></p>
+      <button class="action-btn" onclick="showDashboard()">Back to Tier Selection</button>
+    </div>
+
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <div class="ad-banner ad-bottom">
+    📢 ADVERTISEMENT: Special Offer Banner Space
+  </div>
+
+  <!-- Footer with Bottom Curve -->
+  <div class="wavy-footer">
+    BirrGo Premium Rewards &copy; 2026
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, get, push, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+      authDomain: "birrgo-fdf7e.firebaseapp.com",
+      databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+      projectId: "birrgo-fdf7e",
+      storageBucket: "birrgo-fdf7e.firebasestorage.app",
+      messagingSenderId: "2317445154",
+      appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    /* SESSION & LEDGER USER RESOLUTION */
+    let activeUserPhone = "";
+    let completeRawCardSequence = "";
+    let houseWalletKey = "510000000000000";
+
+    function normalizePhoneNumber(phoneStr) {
+      if (!phoneStr) return "";
+      return phoneStr.replace(/\D/g, '');
+    }
+
+    async function initUserSessionLedger() {
+      activeUserPhone = localStorage.getItem('auth_session_phone');
+      if (!activeUserPhone) {
+        showCustomAlert("No active login session found. Please log in first.", "Session Error", () => {
+          window.location.href = "new2.html";
+        });
+        return false;
+      }
+
+      const cleanPhone = normalizePhoneNumber(activeUserPhone);
+
+      try {
+        const usersSnapshot = await get(ref(db, 'users'));
+        if (usersSnapshot.exists()) {
+          const allUsers = usersSnapshot.val();
+          let userFound = false;
+
+          Object.keys(allUsers).forEach((key) => {
+            const profile = allUsers[key];
+            const storedCard = profile.cardNumber ? normalizePhoneNumber(profile.cardNumber) : "";
+            const dbPhone1 = profile.phoneNumber ? normalizePhoneNumber(profile.phoneNumber) : "";
+            const dbPhone2 = profile.phone ? normalizePhoneNumber(profile.phone) : "";
+
+            if (key.includes("000000") || storedCard.includes("000000")) {
+              houseWalletKey = key;
+            }
+
+            if (!userFound && (
+              key === cleanPhone || 
+              storedCard === cleanPhone || 
+              (dbPhone1 && dbPhone1.includes(cleanPhone)) || 
+              (dbPhone2 && dbPhone2.includes(cleanPhone))
+            )) {
+              completeRawCardSequence = key;
+              userFound = true;
+            }
+          });
+
+          if (!userFound) {
+            completeRawCardSequence = cleanPhone;
+          }
+        } else {
+          completeRawCardSequence = cleanPhone;
+        }
+        return true;
+      } catch (err) {
+        console.error("User initialization scanner error:", err);
+        completeRawCardSequence = cleanPhone;
+        return true;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initUserSessionLedger();
+    });
+
+    /* CUSTOM UI ALERT POPUP LOGIC */
+    let alertCallback = null;
+
+    window.showCustomAlert = function(message, title = "Notification", callback = null) {
+      document.getElementById('custom-alert-title').textContent = title;
+      document.getElementById('custom-alert-message').textContent = message;
+      document.getElementById('custom-alert-overlay').classList.remove('hidden');
+      alertCallback = callback;
+    };
+
+    window.closeCustomAlert = function() {
+      document.getElementById('custom-alert-overlay').classList.add('hidden');
+      if (alertCallback) {
+        alertCallback();
+        alertCallback = null;
+      }
+    };
+
+    /* 1. CATEGORY TIERS WITH SPECIFIED TIMERS */
+    const CATEGORY_TIERS = {
+      easy: [
+        { id: 'e1', name: "Easy Easy", entry: 5, win: 20, time: 40, difficulty: "easy" },
+        { id: 'e2', name: "Easy Medium", entry: 10, win: 50, time: 40, difficulty: "easy" },
+        { id: 'e3', name: "Easy Hard", entry: 15, win: 100, time: 40, difficulty: "easy" }
+      ],
+      medium: [
+        { id: 'm1', name: "Medium Easy", entry: 20, win: 200, time: 30, difficulty: "medium" },
+        { id: 'm2', name: "Medium Medium", entry: 25, win: 400, time: 30, difficulty: "medium" },
+        { id: 'm3', name: "Medium Hard", entry: 30, win: 600, time: 30, difficulty: "medium" }
+      ],
+      hard: [
+        { id: 'h1', name: "Hard Easy", entry: 50, win: 1000, time: 20, difficulty: "hard" },
+        { id: 'h2', name: "Hard Medium", entry: 70, win: 3000, time: 20, difficulty: "hard" },
+        { id: 'h3', name: "Hard Hard", entry: 100, win: 5000, time: 20, difficulty: "hard" }
+      ],
+      super_hard: [
+        { id: 'sh', name: "Super Hard", entry: 150, win: 10000, time: 10, difficulty: "super_hard" }
+      ]
+    };
+
+    /* 2. QUESTION BANKS (SEPARATED GENERAL AND IQ) */
+    const GeneralQuestionBank = {
+      easy: [
+        { id: "e_g1", q: "What is the capital city of Ethiopia?", options: ["Addis Ababa", "Hawassa", "Gondar", "Adama"], correct: 0 },
+        { id: "e_g2", q: "Which traditional flatbread is central to Ethiopian cuisine?", options: ["Naan", "Injera", "Roti", "Pita"], correct: 1 },
+        { id: "e_g3", q: "How many months are in the Ethiopian calendar year?", options: ["12", "13", "10", "14"], correct: 1 },
+        { id: "e_g4", q: "What is the primary currency earned in BirrGo rewards?", options: ["Dollar", "Birr", "Euro", "Coins"], correct: 1 },
+        { id: "e_g5", q: "Which famous beverage originated in Kaffa, Ethiopia?", options: ["Tea", "Coffee", "Cocoa", "Lemonade"], correct: 1 },
+        { id: "e_g6", q: "How does BirrGo verify new account registrations?", options: ["OTP via SMS", "Postal Mail", "In-Person", "Fax"], correct: 0 },
+        { id: "e_g7", q: "Which color is at the top of the Ethiopian national flag?", options: ["Green", "Yellow", "Red", "Blue"], correct: 0 },
+        { id: "e_g8", q: "What unit is used to measure electrical current?", options: ["Volt", "Ampere", "Watt", "Ohm"], correct: 1 }
+      ],
+      medium: [
+        { id: "m_g1", q: "In which year did the historic Battle of Adwa take place?", options: ["1888", "1896", "1935", "1902"], correct: 1 },
+        { id: "m_g2", q: "Which ancient empire was centered in northern Ethiopia?", options: ["Mali", "Axum", "Kush", "Songhai"], correct: 1 },
+        { id: "m_g3", q: "What ancient script is still used in Ethiopian religious texts?", options: ["Arabic", "Ge'ez", "Latin", "Coptic"], correct: 1 },
+        { id: "m_g4", q: "What is the democratic indigenous governance system of the Oromo?", options: ["Gadaa", "Fetha", "Zemene", "Abugida"], correct: 0 },
+        { id: "m_g5", q: "What is the main purpose of the BirrGo mobile app?", options: ["E-Commerce", "Daily Tech Tips & Rewards", "Music Streaming", "Taxi Booking"], correct: 1 },
+        { id: "m_g6", q: "Which lake is the source of the Blue Nile River in Ethiopia?", options: ["Lake Ziway", "Lake Tana", "Lake Hawassa", "Lake Chamo"], correct: 1 }
+      ],
+      hard: [
+        { id: "h_g1", q: "Which Ethiopian Emperor led the victory at the Battle of Adwa?", options: ["Tewodros II", "Menelik II", "Yohannes IV", "Haile Selassie"], correct: 1 },
+        { id: "h_g2", q: "Who was the first black African to win an Olympic Gold Medal?", options: ["Haile Gebrselassie", "Abebe Bikila", "Kenenisa Bekele", "Derartu Tulu"], correct: 1 },
+        { id: "h_g3", q: "What is the local Ethiopian name for the 3.2 million year old fossil 'Lucy'?", options: ["Dinkenesh", "Ardi", "Selam", "Saba"], correct: 0 },
+        { id: "h_g4", q: "Which river basin generates the majority of hydroelectricity in Ethiopia?", options: ["Awash", "Abbay (Blue Nile)", "Omo", "Genale"], correct: 1 }
+      ],
+      super_hard: [
+        { id: "sh_g1", q: "In which year was the first written Constitution of Ethiopia enacted?", options: ["1916", "1931", "1955", "1987"], correct: 1 },
+        { id: "sh_g2", q: "What is the exact height of Ras Dejen, Ethiopia's highest peak?", options: ["4,550m", "4,533m", "4,620m", "4,300m"], correct: 1 },
+        { id: "sh_g3", q: "Which treaty was signed between Italy and Ethiopia in May 1889?", options: ["Treaty of Wuchale", "Treaty of Addis Ababa", "Treaty of London", "Treaty of Paris"], correct: 0 }
+      ]
+    };
+
+    const StaticIQBank = {
+      easy: [
+        { id: "iq_e1", q: "IQ Pattern: 2, 4, 6, 8, __?", options: ["9", "10", "11", "12"], correct: 1 },
+        { id: "iq_e2", q: "IQ Logic: Which word does NOT belong?", options: ["Apple", "Banana", "Carrot", "Mango"], correct: 2 },
+        { id: "iq_e3", q: "IQ Pattern: 5, 10, 15, 20, __?", options: ["22", "25", "30", "35"], correct: 1 },
+        { id: "iq_e4", q: "IQ Logic: If ALL cats meow, and Tom is a cat, Tom...?", options: ["Barks", "Meows", "Roars", "Sings"], correct: 1 },
+        { id: "iq_e5", q: "IQ Analogy: HAND is to GLOVE as FOOT is to...?", options: ["Hat", "Sock", "Ring", "Belt"], correct: 1 },
+        { id: "iq_e6", q: "IQ Pattern: 100, 90, 80, 70, __?", options: ["65", "60", "50", "55"], correct: 1 }
+      ],
+      medium: [
+        { id: "iq_m1", q: "IQ Series: 3, 6, 12, 24, __?", options: ["36", "48", "52", "60"], correct: 1 },
+        { id: "iq_m2", q: "IQ Logic: BIRD is to FLY as FISH is to...?", options: ["Walk", "Swim", "Run", "Crawl"], correct: 1 },
+        { id: "iq_m3", q: "IQ Pattern: 1, 3, 7, 15, 31, __?", options: ["45", "63", "55", "60"], correct: 1 },
+        { id: "iq_m4", q: "IQ Logic: Which number is missing? 2, 6, 12, 20, 30, __?", options: ["40", "42", "44", "48"], correct: 1 }
+      ],
+      hard: [
+        { id: "iq_h1", q: "IQ Series: 1, 4, 9, 16, 25, __?", options: ["30", "36", "42", "49"], correct: 1 },
+        { id: "iq_h2", q: "IQ Logic: 81, 27, 9, 3, __?", options: ["1", "0", "1/3", "2"], correct: 0 },
+        { id: "iq_h3", q: "IQ Pattern: 2, 3, 5, 8, 13, 21, __?", options: ["29", "34", "38", "42"], correct: 1 }
+      ],
+      super_hard: [
+        { id: "iq_sh1", q: "IQ Series: 2, 3, 5, 8, 12, 17, __?", options: ["21", "23", "25", "27"], correct: 1 },
+        { id: "iq_sh2", q: "IQ Logic: 1, 2, 6, 24, 120, __?", options: ["240", "720", "600", "480"], correct: 1 },
+        { id: "iq_sh3", q: "IQ Pattern: 3, 5, 9, 17, 33, __?", options: ["65", "66", "58", "72"], correct: 0 }
+      ]
+    };
+
+    function generateMathQuestion(difficulty, usedIdsSet) {
+      let num1, num2, ans, text, qId;
+      let attempts = 0;
+
+      do {
+        attempts++;
+        if (difficulty === 'easy') {
+          num1 = Math.floor(Math.random() * 30) + 5;
+          num2 = Math.floor(Math.random() * 30) + 5;
+          ans = num1 + num2;
+          text = `IQ Speed Math: What is ${num1} + ${num2}?`;
+        } else {
+          num1 = Math.floor(Math.random() * 12) + 3;
+          num2 = Math.floor(Math.random() * 12) + 3;
+          ans = num1 * num2;
+          text = `IQ Speed Math: What is ${num1} × ${num2}?`;
+        }
+        qId = `math_${num1}_${num2}_${ans}`;
+      } while (usedIdsSet.has(qId) && attempts < 20);
+
+      usedIdsSet.add(qId);
+
+      let options = [ans];
+      while (options.length < 4) {
+        let wrong = ans + (Math.floor(Math.random() * 14) - 7);
+        if (wrong !== ans && !options.includes(wrong) && wrong >= 0) options.push(wrong);
+      }
+      options.sort(() => Math.random() - 0.5);
+
+      return { id: qId, q: text, options: options.map(String), correct: options.indexOf(ans) };
+    }
+
+    /* GENERATE EXACTLY 10 UNIQUE QUESTIONS (5 GENERAL + 5 IQ) */
+    function generate10UniqueQuestions(difficulty) {
+      const uniqueSet = new Set();
+      const questionList = [];
+
+      // 1. Fetch 5 General Questions
+      const genPool = GeneralQuestionBank[difficulty] || GeneralQuestionBank.easy;
+      const shuffledGen = [...genPool].sort(() => Math.random() - 0.5);
+
+      for (let q of shuffledGen) {
+        if (!uniqueSet.has(q.id) && questionList.length < 5) {
+          uniqueSet.add(q.id);
+          questionList.push(q);
+        }
+      }
+
+      // If pool run short, fill with math general
+      while (questionList.length < 5) {
+        let extraMath = generateMathQuestion(difficulty, uniqueSet);
+        questionList.push(extraMath);
+      }
+
+      // 2. Fetch 5 IQ Questions
+      const iqPool = StaticIQBank[difficulty] || StaticIQBank.easy;
+      const shuffledIQ = [...iqPool].sort(() => Math.random() - 0.5);
+
+      let iqCount = 0;
+      for (let q of shuffledIQ) {
+        if (!uniqueSet.has(q.id) && iqCount < 5) {
+          uniqueSet.add(q.id);
+          questionList.push(q);
+          iqCount++;
+        }
+      }
+
+      // Fill remaining IQ questions with generated IQ speed math
+      while (iqCount < 5) {
+        let iqMath = generateMathQuestion(difficulty, uniqueSet);
+        questionList.push(iqMath);
+        iqCount++;
+      }
+
+      // Final shuffle so IQ and General questions are mixed evenly
+      return questionList.sort(() => Math.random() - 0.5);
+    }
+
+    /* 24-HOUR COOLDOWN CHECK HELPER */
+    async function getTierLockStatus(tierId) {
+      if (!completeRawCardSequence) {
+        await initUserSessionLedger();
+      }
+      try {
+        const lockSnap = await get(ref(db, `users/${completeRawCardSequence}/playedTiers/${tierId}`));
+        if (lockSnap.exists()) {
+          const lastPlayedTime = lockSnap.val();
+          const now = Date.now();
+          const twentyFourHours = 24 * 60 * 60 * 1000;
+          const elapsed = now - lastPlayedTime;
+
+          if (elapsed < twentyFourHours) {
+            const remainingMs = twentyFourHours - elapsed;
+            const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+            const minutes = Math.ceil((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+            return { isLocked: true, hours, minutes };
+          }
+        }
+      } catch (err) {
+        console.error("Lock status fetch error:", err);
+      }
+      return { isLocked: false, hours: 0, minutes: 0 };
+    }
+
+    /* NAVIGATION & PIN MODAL LOGIC */
+    let selectedTierForPin = null;
+
+    window.openCategory = async function(catKey) {
+      const tiers = CATEGORY_TIERS[catKey];
+      const container = document.getElementById('sub-tier-container');
+      container.innerHTML = '<div style="text-align:center; padding: 20px;">Checking card availability...</div>';
+
+      document.getElementById('modal-title').textContent = `${catKey.replace('_', ' ').toUpperCase()} CHOICES`;
+      document.getElementById('modal-overlay').classList.remove('hidden');
+
+      let userPlayedTiers = {};
+      try {
+        if (!completeRawCardSequence) await initUserSessionLedger();
+        const playedSnap = await get(ref(db, `users/${completeRawCardSequence}/playedTiers`));
+        if (playedSnap.exists()) {
+          userPlayedTiers = playedSnap.val();
+        }
+      } catch (e) {
+        console.warn("Could not pre-fetch played tiers:", e);
+      }
+
+      container.innerHTML = '';
+
+      const now = Date.now();
+      const twentyFourHours = 24 * 60 * 60 * 1000;
+
+      tiers.forEach(tier => {
+        const item = document.createElement('div');
+        item.className = 'tier-item';
+
+        const lastPlayed = userPlayedTiers[tier.id];
+        let isLocked = false;
+        let hoursLeft = 0;
+        let minsLeft = 0;
+
+        if (lastPlayed && (now - lastPlayed) < twentyFourHours) {
+          isLocked = true;
+          const remainingMs = twentyFourHours - (now - lastPlayed);
+          hoursLeft = Math.floor(remainingMs / (1000 * 60 * 60));
+          minsLeft = Math.ceil((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+        }
+
+        item.onclick = () => { closeModal(); promptPinForTier(tier); };
+        
+        if (isLocked) {
+          item.innerHTML = `
+            <div class="tier-info">
+              <span class="tier-name">${tier.name} <span style="color: #dc2626; font-size: 0.8rem;">🔒 Locked</span></span>
+              <span class="tier-details">Available in <strong>${hoursLeft}h ${minsLeft}m</strong></span>
+            </div>
+            <button class="tier-btn" style="background:#6b7280; cursor:not-allowed;">Locked (24h)</button>
+          `;
+        } else {
+          item.innerHTML = `
+            <div class="tier-info">
+              <span class="tier-name">${tier.name}</span>
+              <span class="tier-details">Win: <strong>${tier.win} Birr</strong> | Time: ${tier.time}s</span>
+            </div>
+            <button class="tier-btn">Pay ${tier.entry} Birr</button>
+          `;
+        }
+
+        container.appendChild(item);
+      });
+    };
+
+    window.closeModal = function() {
+      document.getElementById('modal-overlay').classList.add('hidden');
+    };
+
+    async function promptPinForTier(tier) {
+      // 24-Hour Cooldown Verification Check
+      const lockStatus = await getTierLockStatus(tier.id);
+      if (lockStatus.isLocked) {
+        showCustomAlert(
+          `You have already played this card. It is locked for 24 hours.\n\nYou can play it again in ${lockStatus.hours} hours and ${lockStatus.minutes} minutes. Please select another card!`,
+          "Card Locked (24h Cooldown)"
+        );
+        return;
+      }
+
+      selectedTierForPin = tier;
+      document.getElementById('quizVerifyPin').value = "";
+      document.getElementById('pin-modal-overlay').classList.remove('hidden');
+      document.getElementById('quizVerifyPin').focus();
+    }
+
+    window.closePinModal = function() {
+      document.getElementById('pin-modal-overlay').classList.add('hidden');
+      selectedTierForPin = null;
+    };
+
+    /* ATOMIC PAYMENT PIPELINE EXECUTION */
+    document.getElementById('confirmQuizPinBtn').addEventListener('click', async () => {
+      const enteredPin = document.getElementById('quizVerifyPin').value.trim();
+      const confirmBtn = document.getElementById('confirmQuizPinBtn');
+
+      if (enteredPin.length !== 6 || !/^\d+$/.test(enteredPin)) {
+        showCustomAlert("Please enter a valid 6-digit PIN.", "Invalid PIN");
+        return;
+      }
+
+      confirmBtn.disabled = true;
+      confirmBtn.innerText = "VERIFYING...";
+
+      try {
+        if (!completeRawCardSequence) {
+          await initUserSessionLedger();
+        }
+
+        // DOUBLE-CHECK LOCK AGAIN BEFORE DEDUCTING
+        const lockCheck = await getTierLockStatus(selectedTierForPin.id);
+        if (lockCheck.isLocked) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerText = "Authorize & Play";
+          closePinModal();
+          showCustomAlert(`This card is locked for 24 hours. Retry in ${lockCheck.hours}h ${lockCheck.minutes}m.`, "Card Locked");
+          return;
+        }
+
+        const userRef = ref(db, `users/${completeRawCardSequence}`);
+        const userSnapshot = await get(userRef);
+
+        if (!userSnapshot.exists()) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerText = "Authorize & Play";
+          showCustomAlert(`Account profile node [${completeRawCardSequence}] not found.`, "Account Error");
+          return;
+        }
+
+        const userData = userSnapshot.val();
+        const storedPin = userData.securityPin || userData.pin;
+
+        if (storedPin !== enteredPin) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerText = "Authorize & Play";
+          showCustomAlert("Incorrect Security PIN. Please try again.", "Verification Failed");
+          return;
+        }
+
+        // STEP 2: CHECK BALANCE
+        let userBalance = parseFloat(userData.walletBalance);
+        if (isNaN(userBalance)) userBalance = 0.00;
+
+        const entryFee = selectedTierForPin.entry;
+        if (userBalance < entryFee) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerText = "Authorize & Play";
+          showCustomAlert(`Insufficient balance (${userBalance} Birr). You need ${entryFee} Birr to enter.`, "Transaction Terminated");
+          return;
+        }
+
+        // STEP 3: DEDUCT ENTRY FEE & SET 24-HOUR CARD LOCK
+        confirmBtn.innerText = "PROCESSING...";
+        
+        const calculatedUserRemainder = parseFloat((userBalance - entryFee).toFixed(2));
+        const timestampStr = new Date().toLocaleString();
+        const currentTimeMs = Date.now();
+
+        const userTxListRef = ref(db, `users/${completeRawCardSequence}/transactions`);
+        const newTxKey = push(userTxListRef).key;
+
+        const userUpdates = {};
+        userUpdates[`walletBalance`] = calculatedUserRemainder;
+        // Lock card/tier for 24 hours from entry time
+        userUpdates[`playedTiers/${selectedTierForPin.id}`] = currentTimeMs;
+        userUpdates[`transactions/${newTxKey}`] = {
+          title: `CHALLENGE ARENA ENTRY: ${selectedTierForPin.name.toUpperCase()}`,
+          amount: -entryFee,
+          type: "expense",
+          timestamp: timestampStr
+        };
+
+        await update(ref(db, `users/${completeRawCardSequence}`), userUpdates);
+
+        // STEP 4: HOUSE WALLET CREDIT (SAFELY ISOLATED)
+        try {
+          if (houseWalletKey && houseWalletKey !== completeRawCardSequence) {
+            const adminSnap = await get(ref(db, `users/${houseWalletKey}/walletBalance`));
+            let adminBal = parseFloat(adminSnap.val()) || 0.00;
+            const newAdminBal = parseFloat((adminBal + entryFee).toFixed(2));
+            const adminTxKey = push(ref(db, `users/${houseWalletKey}/transactions`)).key;
+
+            const adminUpdates = {};
+            adminUpdates[`walletBalance`] = newAdminBal;
+            adminUpdates[`transactions/${adminTxKey}`] = {
+              title: `QUIZ FEE INCOME: ${selectedTierForPin.name.toUpperCase()}`,
+              amount: entryFee,
+              type: "income",
+              timestamp: timestampStr
+            };
+            await update(ref(db, `users/${houseWalletKey}`), adminUpdates);
+          }
+        } catch (adminErr) {
+          console.warn("House wallet credit skipped due to security permissions:", adminErr);
+        }
+
+        // Preserve selected tier reference before closing modal
+        const targetTier = selectedTierForPin;
+
+        // Launch Challenge
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = "Authorize & Play";
+        closePinModal();
+        startChallenge(targetTier);
+
+      } catch (err) {
+        console.error("Firebase Operation Error:", err);
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = "Authorize & Play";
+
+        let errorMsg = "Database connection error. Please check network connection.";
+        if (err.message && err.message.includes("PERMISSION_DENIED")) {
+          errorMsg = "Database permission denied. Check database rules.";
+        } else if (err.message) {
+          errorMsg = err.message;
+        }
+
+        showCustomAlert(errorMsg, "Database Error");
+      }
+    });
+
+    window.showDashboard = function() {
+      clearInterval(timerInterval);
+      document.getElementById('dashboard-screen').classList.remove('hidden');
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.add('hidden');
+      
+      const navBtn = document.getElementById('nav-back-btn');
+      navBtn.textContent = "← Back";
+      navBtn.setAttribute("href", "lottery.html");
+      navBtn.onclick = null;
+      
+      closeModal();
+      closePinModal();
+      document.getElementById('header-sub').textContent = "Choose a category to start playing";
+    };
+
+    /* GAME PLAY LOGIC */
+    let currentTier = null;
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let timeLeft = 0;
+    let timerInterval = null;
+
+    function startChallenge(tier) {
+      currentTier = tier;
+      currentIndex = 0;
+      timeLeft = tier.time;
+
+      // Generate 10 unique non-repeating questions (5 General + 5 IQ)
+      currentQuestions = generate10UniqueQuestions(tier.difficulty);
+
+      document.getElementById('dashboard-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.remove('hidden');
+      
+      const navBtn = document.getElementById('nav-back-btn');
+      navBtn.textContent = "← Dashboard";
+      navBtn.removeAttribute("href");
+      navBtn.onclick = showDashboard;
+
+      document.getElementById('header-sub').textContent = `${tier.name} • Win: ${tier.win} Birr`;
+
+      startTimer();
+      renderCurrentQuestion();
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      document.getElementById('timer').textContent = `⏱️ ${timeLeft}s`;
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = `⏱️ ${timeLeft}s`;
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          endGame(false, `Time ran out! You couldn't answer 10 questions in ${currentTier.time} seconds. This card is now locked for 24 hours.`);
+        }
+      }, 1000);
+    }
+
+    function renderCurrentQuestion() {
+      const q = currentQuestions[currentIndex];
+      document.getElementById('question-progress').textContent = `Q ${currentIndex + 1}/10`;
+      document.getElementById('question-text').innerHTML = q.q;
+      
+      document.getElementById('opt0').textContent = q.options[0];
+      document.getElementById('opt1').textContent = q.options[1];
+      document.getElementById('opt2').textContent = q.options[2];
+      document.getElementById('opt3').textContent = q.options[3];
+    }
+
+    window.selectAnswer = function(selectedIndex) {
+      const q = currentQuestions[currentIndex];
+
+      if (selectedIndex !== q.correct) {
+        clearInterval(timerInterval);
+        endGame(false, `Wrong answer! You lost your ${currentTier.entry} Birr entry fee. This card is now locked for 24 hours.`);
+        return;
+      }
+
+      currentIndex++;
+
+      if (currentIndex >= 10) {
+        clearInterval(timerInterval);
+        processWinPayout(currentTier);
+      } else {
+        renderCurrentQuestion();
+      }
+    };
+
+    /* WIN PAYOUT AUTOMATION PIPELINE */
+    async function processWinPayout(tier) {
+      try {
+        const userBalanceSnapshot = await get(ref(db, `users/${completeRawCardSequence}/walletBalance`));
+        let userBalance = parseFloat(userBalanceSnapshot.val());
+        if (isNaN(userBalance)) userBalance = 0.00;
+
+        const calculatedRewardBalance = parseFloat((userBalance + tier.win).toFixed(2));
+        const userTxListRef = ref(db, `users/${completeRawCardSequence}/transactions`);
+        const newTxKey = push(userTxListRef).key;
+        const timestampStr = new Date().toLocaleString();
+
+        const rewardUpdates = {};
+        rewardUpdates[`walletBalance`] = calculatedRewardBalance;
+        rewardUpdates[`transactions/${newTxKey}`] = {
+          title: `CHALLENGE PRIZE WIN: ${tier.name.toUpperCase()}`,
+          amount: tier.win,
+          type: "income",
+          timestamp: timestampStr
+        };
+
+        await update(ref(db, `users/${completeRawCardSequence}`), rewardUpdates);
+        endGame(true, `🎉 Outstanding! You passed ${tier.name} and won ${tier.win} Birr! The amount has been credited to your balance. Note: This card is now locked for 24 hours.`);
+
+      } catch (err) {
+        console.error("Payout reward error:", err);
+        endGame(true, `🎉 You passed ${tier.name}! Please contact support to collect your ${tier.win} Birr prize.`);
+      }
+    }
+
+    function endGame(won, message) {
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('hidden');
+
+      document.getElementById('result-title').textContent = won ? `🏆 WON ${currentTier.win} BIRR!` : "❌ CHALLENGE FAILED";
+      document.getElementById('result-title').style.color = won ? "#16a34a" : "#dc2626";
+      document.getElementById('result-desc').textContent = message;
+    }
+  </script>
+</body>
+</html>

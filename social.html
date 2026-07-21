@@ -127,6 +127,19 @@
             justify-content: space-between;
         }
 
+        /* Centered Header Title in Red Wave */
+        .header-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffffff;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 8px;
+        }
+
         /* 3D Glossy White Glass Back Button directly on Red Wave */
         .back-btn {
             position: relative;
@@ -148,6 +161,7 @@
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 1);
             transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+            flex-shrink: 0;
         }
 
         .back-btn::after {
@@ -181,6 +195,7 @@
             object-fit: contain;
             transition: filter 0.3s ease, opacity 0.3s ease;
             filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)) brightness(1.1);
+            flex-shrink: 0;
         }
 
         .img-blur-loading {
@@ -193,32 +208,22 @@
             opacity: 1;
         }
 
-        /* Adjusted padding & moved section upward */
+        /* Adjusted padding & scrollable area */
         .app-content {
             flex: 1;
             overflow-y: auto;
-            padding: calc(78px + env(safe-area-inset-top)) 16px calc(70px + env(safe-area-inset-bottom)) 16px;
+            padding: calc(78px + env(safe-area-inset-top)) 16px calc(130px + env(safe-area-inset-bottom)) 16px;
             scrollbar-width: none;
             position: relative;
             z-index: 2;
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        .section-heading {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-top: 4px;
-            margin-bottom: 10px;
-            letter-spacing: -0.3px;
-        }
-
-        /* Moved container higher up with refined compact layout */
+        /* Compact Task Container Layout */
         .task-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 16px;
         }
 
         /* High Visibility Modern Tech White Boxes with Motion */
@@ -256,7 +261,6 @@
             100% { left: 200%; }
         }
 
-        /* Subtle Floating Hover Effect */
         .task-card:hover {
             border-color: #38bdf8;
             box-shadow: 0 10px 24px -4px rgba(37, 99, 235, 0.18), 0 0 16px rgba(56, 189, 248, 0.25);
@@ -363,6 +367,50 @@
             display: inline-block;
         }
 
+        /* Fixed Unmovable Advertisement Container over Bottom Curve */
+        .ad-container {
+            position: absolute;
+            bottom: calc(14px + env(safe-area-inset-bottom));
+            left: 16px;
+            right: 16px;
+            z-index: 15;
+            background: #ffffff;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: var(--border-radius-lg);
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+        }
+
+        .ad-badge {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 10px;
+            font-weight: 800;
+            color: #94a3b8;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .ad-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .ad-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+        }
+
         .popup-backdrop {
             position: absolute;
             top: 0;
@@ -412,6 +460,7 @@
 
         <div class="brand-header">
             <button class="back-btn" id="backToGiveBtn" aria-label="Back">←</button>
+            <span class="header-title">BirrGo - Social Challenge</span>
             <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
         </div>
         
@@ -427,13 +476,17 @@
             </svg>
         </div>
 
+        <!-- Scrollable Content Area -->
         <div class="app-content">
-
-            <h2 class="section-heading">Social Media Follow Challenge</h2>
-            
             <div class="task-container" id="socialTasksContainer">
             </div>
+        </div>
 
+        <!-- Fixed Advertisement Space Over Bottom Wave -->
+        <div class="ad-container">
+            <span class="ad-badge">AD</span>
+            <div class="ad-icon">📢</div>
+            <div class="ad-text">Advertisement Space</div>
         </div>
 
         <div class="bottom-wave-footer">

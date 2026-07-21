@@ -6,20 +6,22 @@
     <title>BirrGo - Today Giveaway</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary-burgundy: #800020;
             --primary-gradient: linear-gradient(135deg, #800020 0%, #4a0000 100%);
             --social-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            --video-gradient: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-            --quiz-gradient: linear-gradient(135deg, #0d9488 0%, #115e59 100%);
+            
+            /* Modern Digital White & Tech Gradient Palette */
+            --card-tech-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            --blue-glow-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.12), 0 0 12px rgba(56, 189, 248, 0.18);
+            
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --bg-light: #f8fafc;
             --border-light: #e2e8f0;
-            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             --border-radius-lg: 16px;
         }
 
@@ -35,7 +37,7 @@
         html, body {
             width: 100%;
             height: 100dvh;
-            background-color: #0f172a;
+            background-color: #f1f5f9;
         }
 
         body {
@@ -55,12 +57,26 @@
             flex-direction: column;
             position: relative;
             box-shadow: 
-                0 25px 50px -12px rgba(0, 0, 0, 0.35),
-                0 0 40px rgba(128, 0, 32, 0.15);
+                0 25px 50px -12px rgba(0, 0, 0, 0.15),
+                0 0 40px rgba(128, 0, 32, 0.08);
             overflow-y: auto;
             overflow-x: hidden;
             transition: filter 0.3s ease, transform 0.4s ease;
             transform-style: preserve-3d;
+        }
+
+        /* Tech Circuit Pattern on Clean Background */
+        .tech-bg-pattern {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(128, 0, 32, 0.05) 0%, transparent 20%),
+                radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 16px 16px;
         }
 
         /* Network Blur State */
@@ -75,8 +91,8 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 65px;
-            z-index: 1;
+            height: 85px;
+            z-index: 10;
             pointer-events: none;
         }
 
@@ -84,6 +100,7 @@
             width: 100%;
             height: 100%;
             display: block;
+            filter: drop-shadow(0 4px 10px rgba(128, 0, 32, 0.3));
         }
 
         /* Bottom Curved Wave Footer */
@@ -103,61 +120,78 @@
             display: block;
         }
 
-        /* Main Scrollable Content area above Navigation Bar */
+        /* Main Scrollable Content Area */
         .app-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            padding: calc(55px + env(safe-area-inset-top)) 16px calc(75px + env(safe-area-inset-bottom)) 16px;
+            padding: calc(78px + env(safe-area-inset-top)) 16px calc(115px + env(safe-area-inset-bottom)) 16px;
             position: relative;
             z-index: 2;
             gap: 12px;
         }
 
         .brand-header {
-            position: relative;
-            z-index: 5;
+            position: absolute;
+            top: calc(10px + env(safe-area-inset-top));
+            left: 16px;
+            right: 16px;
+            z-index: 20;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-top: calc(8px + env(safe-area-inset-top));
-            padding-left: 16px;
-            padding-right: 16px;
-            margin-bottom: 6px;
         }
 
-        /* 3D Realistic Glossy & Transparent Back Button */
+        /* Title Directly Over the Red Curve */
+        .top-curve-title {
+            position: absolute;
+            top: calc(14px + env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 21;
+            text-align: center;
+            color: #ffffff;
+            font-size: 13.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            white-space: nowrap;
+            pointer-events: none;
+
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+        }
+
+        /* 3D Glossy Back Button */
         .back-btn {
             position: relative;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.15) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.9);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 17px;
             font-weight: 900;
             color: var(--primary-burgundy);
             cursor: pointer;
             outline: none;
             overflow: hidden;
             
-            /* Realistic 3D Elevation & Press Depth */
             box-shadow: 
-                0 8px 18px rgba(0, 0, 0, 0.18),
-                0 3px 0 rgba(255, 255, 255, 0.9),
-                inset 0 1px 2px rgba(255, 255, 255, 0.9),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+                0 4px 12px rgba(0, 0, 0, 0.25),
+                inset 0 1px 2px rgba(255, 255, 255, 1);
             
             transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
         }
 
-        /* Realistic Glass Shine Sweep */
         .back-btn::after {
             content: '';
             position: absolute;
@@ -184,18 +218,16 @@
 
         .back-btn:active {
             transform: translateY(2px) scale(0.94);
-            box-shadow: 
-                0 3px 8px rgba(0, 0, 0, 0.2),
-                inset 0 1px 3px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
 
         /* Logo Styling */
         .logo-image {
-            height: 28px;
+            height: 30px;
             width: auto;
             object-fit: contain;
             transition: filter 0.3s ease, opacity 0.3s ease;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)) brightness(1.1);
         }
 
         .img-blur-loading {
@@ -208,7 +240,7 @@
             opacity: 1;
         }
 
-        /* 3D Elevated Card Components */
+        /* Cards with Motion Effect */
         .giveaway-hero-card {
             border-radius: var(--border-radius-lg);
             padding: 10px 14px;
@@ -220,14 +252,32 @@
             gap: 12px;
             text-align: left;
             height: 72px;
+            cursor: pointer;
             
-            /* Realistic Card 3D Depth */
             box-shadow: 
-                0 10px 20px -5px rgba(0, 0, 0, 0.12),
-                0 2px 4px -1px rgba(0, 0, 0, 0.06),
-                inset 0 1px 1px rgba(255, 255, 255, 0.3);
+                0 8px 20px -4px rgba(37, 99, 235, 0.12),
+                0 0 12px rgba(56, 189, 248, 0.18);
             
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+        }
+
+        /* Light Sweeping Effect across Cards */
+        .giveaway-hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 70%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.6), transparent);
+            transform: skewX(-20deg);
+            animation: card-light-sweep 4.5s infinite;
+        }
+
+        @keyframes card-light-sweep {
+            0% { left: -100%; }
+            25% { left: 200%; }
+            100% { left: 200%; }
         }
 
         .giveaway-hero-card:active {
@@ -236,9 +286,7 @@
         }
 
         .premium-pool { background: var(--primary-gradient); }
-        .social-pool { background: var(--social-gradient); }
-        .video-pool { background: var(--video-gradient); }
-        .quiz-pool { background: var(--quiz-gradient); }
+        .social-pool, .video-pool, .like-pool { background: var(--social-gradient); }
 
         .giveaway-icon {
             font-size: 22px;
@@ -250,7 +298,7 @@
 
         .social-pool .giveaway-icon { animation-delay: 0.75s; }
         .video-pool .giveaway-icon { animation-delay: 1.5s; }
-        .quiz-pool .giveaway-icon { animation-delay: 2.25s; }
+        .like-pool .giveaway-icon { animation-delay: 2.25s; }
 
         @keyframes float-animation {
             0%, 100% { transform: translateY(0); }
@@ -278,7 +326,7 @@
             line-height: 1.25;
         }
 
-        /* 3D Modern Gloss Button Inside Cards */
+        /* Glossy Action Button Inside Cards */
         .btn-claim {
             background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
             border: 1px solid rgba(255, 255, 255, 0.8);
@@ -296,13 +344,54 @@
         }
 
         .premium-pool .btn-claim { color: var(--primary-burgundy); }
-        .social-pool .btn-claim { color: #1d4ed8; }
-        .video-pool .btn-claim { color: #991b1b; }
-        .quiz-pool .btn-claim { color: #115e59; }
+        .social-pool .btn-claim,
+        .video-pool .btn-claim,
+        .like-pool .btn-claim { color: #1d4ed8; }
 
         .btn-claim:active {
             transform: scale(0.94);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Advertisement Container */
+        .ad-container {
+            position: absolute;
+            bottom: calc(12px + env(safe-area-inset-bottom));
+            left: 16px;
+            right: 16px;
+            z-index: 10;
+            background: var(--card-tech-bg);
+            border: 1.5px dashed #cbd5e1;
+            border-radius: 18px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+            box-shadow: var(--blue-glow-shadow);
+            user-select: none;
+        }
+
+        .ad-badge {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 10px;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+        }
+
+        .ad-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .ad-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
         }
 
         /* Modal Overlay System */
@@ -312,7 +401,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             display: none;
@@ -323,12 +412,13 @@
 
         .popup-card {
             background-color: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 20px;
             padding: 24px 20px;
             width: 88%;
             max-width: 320px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
         .popup-btn {
@@ -350,11 +440,15 @@
 
     <div class="app-view" id="appView">
         
+        <!-- Tech Circuit Background Pattern -->
+        <div class="tech-bg-pattern"></div>
+
+        <!-- Scaled Top Curve Layer -->
         <div class="top-wave-header">
-            <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0H375V45C250 75 125 30 0 55V0Z" fill="url(#brandGradientTop)"/>
+            <svg viewBox="0 0 375 85" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0H375V55C250 75 125 45 0 65V0Z" fill="url(#brandGradientTop)"/>
                 <defs>
-                    <linearGradient id="brandGradientTop" x1="0" y1="0" x2="375" y2="80" gradientUnits="userSpaceOnUse">
+                    <linearGradient id="brandGradientTop" x1="0" y1="0" x2="375" y2="85" gradientUnits="userSpaceOnUse">
                         <stop stop-color="#800020"/>
                         <stop offset="1" stop-color="#5a0016"/>
                     </linearGradient>
@@ -362,10 +456,14 @@
             </svg>
         </div>
         
+        <!-- Header Controls -->
         <div class="brand-header">
             <button class="back-btn" id="backToWalletBtn" aria-label="Back to Wallet">←</button>
             <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
         </div>
+
+        <!-- Title Over Top Red Curve -->
+        <h1 class="top-curve-title">Social Media Giveaway</h1>
 
         <div class="app-content">
             
@@ -378,7 +476,8 @@
                 <button class="btn-claim" id="claimRewardBtn">Claim</button>
             </div>
 
-            <div class="giveaway-hero-card social-pool">
+            <!-- Social Media Pool Card -->
+            <div class="giveaway-hero-card social-pool" id="socialGiveawayCard">
                 <div class="giveaway-icon">📢</div>
                 <div class="card-body">
                     <h3 class="giveaway-title">Social Media</h3>
@@ -387,6 +486,7 @@
                 <button class="btn-claim" id="socialGiveawayBtn">Open</button>
             </div>
 
+            <!-- Video Pool Card -->
             <div class="giveaway-hero-card video-pool">
                 <div class="giveaway-icon">🎬</div>
                 <div class="card-body">
@@ -396,17 +496,19 @@
                 <button class="btn-claim" id="videoGiveawayBtn">Watch</button>
             </div>
 
-            <div class="giveaway-hero-card quiz-pool">
-                <div class="giveaway-icon">🧠</div>
+            <!-- Like Video & Get Bonus Card -->
+            <div class="giveaway-hero-card like-pool">
+                <div class="giveaway-icon">👍</div>
                 <div class="card-body">
-                    <h3 class="giveaway-title">Question Pool</h3>
-                    <p class="giveaway-desc">Test trivia ledger knowledge.</p>
+                    <h3 class="giveaway-title">Like Video & Get Bonus</h3>
+                    <p class="giveaway-desc">Like video tasks to earn extra bonus.</p>
                 </div>
-                <button class="btn-claim" id="quizGiveawayBtn">Start</button>
+                <button class="btn-claim" id="likeGiveawayBtn">Like</button>
             </div>
 
         </div>
 
+        <!-- Bottom Curved Wave Footer -->
         <div class="bottom-wave-footer">
             <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
@@ -417,6 +519,13 @@
                     </linearGradient>
                 </defs>
             </svg>
+        </div>
+
+        <!-- Advertisement Container Layered Over Bottom Curve -->
+        <div class="ad-container">
+            <span class="ad-badge">AD</span>
+            <div class="ad-icon">📢</div>
+            <span class="ad-label">Advertisement Space</span>
         </div>
 
         <div class="popup-backdrop" id="giveawayPopup">
@@ -481,17 +590,22 @@
                 openPopup('Matrix Dynamic Lock', 'Daily promo metrics are currently distributed via active Task modules. complete tasks to unlock premium balance multipliers.');
             });
 
-            document.getElementById('socialGiveawayBtn').addEventListener('click', () => {
+            const navigateToSocial = () => {
                 window.location.replace('social.html');
+            };
+
+            document.getElementById('socialGiveawayCard').addEventListener('click', navigateToSocial);
+            document.getElementById('socialGiveawayBtn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                navigateToSocial();
             });
 
-            // Redirects directly to key.html
             document.getElementById('videoGiveawayBtn').addEventListener('click', () => {
                 window.location.replace('key.html');
             });
 
-            document.getElementById('quizGiveawayBtn').addEventListener('click', () => {
-                openPopup('Knowledge Pool Locked', 'Today\'s trivia questionnaire pool is updating. Active trivia challenges refresh every 24 hours.');
+            document.getElementById('likeGiveawayBtn').addEventListener('click', () => {
+                window.location.replace('like.html');
             });
 
             document.getElementById('popupCloseBtn').addEventListener('click', () => {

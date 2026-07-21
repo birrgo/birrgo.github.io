@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Like Video Task Manager - Win 10 Birr</title>
+    <link rel="stylesheet" href="new.css">
+    <style>
+        body { padding: 30px; } 
+        .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-burgundy); font-weight: bold; text-decoration: none; }
+        
+        /* Category Section Styles */
+        .platform-group {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #fafafa;
+        }
+        .platform-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .btn-yt { background-color: #ff0000; }
+        .btn-tt { background-color: #000000; }
+        .btn-fb { background-color: #1877f2; }
+        .btn-ig { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        
+        .sub-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .input-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .sub-inputs input {
+            font-size: 13px;
+            flex: 1;
+        }
+        .btn-clear-single {
+            background: #fee2e2;
+            color: #ef4444;
+            border: 1px solid #fca5a5;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-clear-single:hover {
+            background: #fecaca;
+        }
+    </style>
+</head>
+<body>
+    <a href="new.html" class="back-link">← Back to Dashboard</a>
+    <div class="toast-banner" id="adminToast">Action Completed Successfully</div>
+
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitleDisplay">Confirm Operations</h3>
+            <p id="modalDescriptionDisplay" style="font-size:14px; color:var(--text-muted); margin-top:-8px;"></p>
+            <div class="modal-content-details" id="modalDynamicDetails"></div>
+            <div class="btn-row" style="margin-top: 10px;">
+                <button class="btn-admin-action btn-modal-close" id="modalCancelBtn">Cancel</button>
+                <button class="btn-admin-action" id="modalConfirmBtn">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace-card" style="margin: 0 auto; max-width: 500px; display: block; opacity: 1; pointer-events: auto;">
+        <h3 class="section-title title-burgundy">Like Video Task Manager</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:-10px;">Add or remove video links (1 to 5 per platform). Empty inputs are ignored when published.</p>
+
+        <div class="task-input-group">
+            
+            <!-- YouTube Category -->
+            <div class="platform-group">
+                <button type="button" class="platform-btn btn-yt" id="btnToggleYt">
+                    ▶ YouTube Tasks (Up to 5) <span>▼</span>
+                </button>
+                <div class="sub-inputs" id="ytSubInputs">
+                    <div class="input-row"><input type="text" class="admin-input yt-link" placeholder="YouTube Link 1"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input yt-link" placeholder="YouTube Link 2"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input yt-link" placeholder="YouTube Link 3"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input yt-link" placeholder="YouTube Link 4"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input yt-link" placeholder="YouTube Link 5"><button class="btn-clear-single" type="button">✕</button></div>
+                </div>
+            </div>
+
+            <!-- TikTok Category -->
+            <div class="platform-group">
+                <button type="button" class="platform-btn btn-tt" id="btnToggleTt">
+                    🎵 TikTok Tasks (Up to 5) <span>▼</span>
+                </button>
+                <div class="sub-inputs" id="ttSubInputs">
+                    <div class="input-row"><input type="text" class="admin-input tt-link" placeholder="TikTok Link 1"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input tt-link" placeholder="TikTok Link 2"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input tt-link" placeholder="TikTok Link 3"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input tt-link" placeholder="TikTok Link 4"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input tt-link" placeholder="TikTok Link 5"><button class="btn-clear-single" type="button">✕</button></div>
+                </div>
+            </div>
+
+            <!-- Facebook Category -->
+            <div class="platform-group">
+                <button type="button" class="platform-btn btn-fb" id="btnToggleFb">
+                    👍 Facebook Tasks (Up to 5) <span>▼</span>
+                </button>
+                <div class="sub-inputs" id="fbSubInputs">
+                    <div class="input-row"><input type="text" class="admin-input fb-link" placeholder="Facebook Link 1"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input fb-link" placeholder="Facebook Link 2"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input fb-link" placeholder="Facebook Link 3"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input fb-link" placeholder="Facebook Link 4"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input fb-link" placeholder="Facebook Link 5"><button class="btn-clear-single" type="button">✕</button></div>
+                </div>
+            </div>
+
+            <!-- Instagram Category -->
+            <div class="platform-group">
+                <button type="button" class="platform-btn btn-ig" id="btnToggleIg">
+                    📸 Instagram Tasks (Up to 5) <span>▼</span>
+                </button>
+                <div class="sub-inputs" id="igSubInputs">
+                    <div class="input-row"><input type="text" class="admin-input ig-link" placeholder="Instagram Link 1"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input ig-link" placeholder="Instagram Link 2"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input ig-link" placeholder="Instagram Link 3"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input ig-link" placeholder="Instagram Link 4"><button class="btn-clear-single" type="button">✕</button></div>
+                    <div class="input-row"><input type="text" class="admin-input ig-link" placeholder="Instagram Link 5"><button class="btn-clear-single" type="button">✕</button></div>
+                </div>
+            </div>
+
+            <div class="input-field-wrapper" style="margin-top: 10px;">
+                <label>Verification Delay (Seconds)</label>
+                <input type="number" id="checkTime" class="admin-input" value="60" readonly style="background:#f3f4f6; cursor:not-allowed;">
+            </div>
+        </div>
+        
+        <button class="btn-admin-action btn-broadcast" id="updateLikeTasksBtn" style="margin-top:15px; width:100%;">Push & Reset Tasks</button>
+    </div>
+
+    <script type="module">
+        import { db, ref, get, set } from "./db.js";
+        let resolver = null;
+
+        function openModal(title, desc, data, cl, txt) {
+            document.getElementById('modalTitleDisplay').innerText = title; 
+            document.getElementById('modalDescriptionDisplay').innerText = desc;
+            document.getElementById('modalDynamicDetails').innerHTML = `<div class="modal-data-row"><span class="modal-data-label">${data[0].label}</span><span class="modal-data-value">${data[0].value}</span></div>`;
+            document.getElementById('modalConfirmBtn').className = "btn-admin-action " + cl; 
+            document.getElementById('modalConfirmBtn').innerText = txt;
+            document.getElementById('customConfirmModal').classList.add('active'); 
+            return new Promise(r => resolver = r);
+        }
+
+        document.getElementById('modalConfirmBtn').addEventListener('click', () => { if(resolver) resolver(true); document.getElementById('customConfirmModal').classList.remove('active'); });
+        document.getElementById('modalCancelBtn').addEventListener('click', () => { if(resolver) resolver(false); document.getElementById('customConfirmModal').classList.remove('active'); });
+
+        function triggerAdminAlert(msg, isSuccess=true) {
+            const t = document.getElementById('adminToast'); 
+            t.innerText = msg;
+            t.style.background = isSuccess ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            t.style.display = 'block'; 
+            setTimeout(() => t.style.display='none', 3500);
+        }
+
+        // Accordion Toggle
+        function setupToggle(btnId, containerId) {
+            document.getElementById(btnId).addEventListener('click', () => {
+                const el = document.getElementById(containerId);
+                const currentDisplay = window.getComputedStyle(el).display;
+                el.style.display = (currentDisplay === 'none') ? 'flex' : 'none';
+            });
+        }
+        setupToggle('btnToggleYt', 'ytSubInputs');
+        setupToggle('btnToggleTt', 'ttSubInputs');
+        setupToggle('btnToggleFb', 'fbSubInputs');
+        setupToggle('btnToggleIg', 'igSubInputs');
+
+        // Individual Clear Button Handler
+        document.querySelectorAll('.btn-clear-single').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const input = e.target.parentElement.querySelector('input');
+                if (input) input.value = '';
+            });
+        });
+
+        // Populate Existing Tasks
+        function populateInputs(selector, data) {
+            const inputs = document.querySelectorAll(selector);
+            // Clear all inputs first so old links don't linger
+            inputs.forEach(input => input.value = '');
+
+            if (!data) return;
+
+            if (Array.isArray(data)) {
+                data.forEach((url, i) => { 
+                    if (inputs[i]) inputs[i].value = url; 
+                });
+            } else if (typeof data === 'string') {
+                if (inputs[0]) inputs[0].value = data;
+            }
+        }
+
+        // Fetch Current Tasks from Firebase
+        get(ref(db, 'new/like_tasks')).then(snap => {
+            if (snap.exists()) {
+                const d = snap.val();
+                populateInputs('.yt-link', d.yt);
+                populateInputs('.tt-link', d.tt);
+                populateInputs('.fb-link', d.fb);
+                populateInputs('.ig-link', d.ig);
+            }
+        }).catch(err => {
+            console.error("Error fetching tasks:", err);
+            triggerAdminAlert("Error loading existing tasks", false);
+        });
+
+        // Filter and return only valid, non-empty links
+        function getCategoryLinks(selector) {
+            const values = [];
+            document.querySelectorAll(selector).forEach(input => {
+                const val = input.value.trim();
+                if (val) values.push(val);
+            });
+            return values;
+        }
+
+        // Push Changes & Sync with Database
+        document.getElementById('updateLikeTasksBtn').addEventListener('click', async () => {
+            const ytLinks = getCategoryLinks('.yt-link');
+            const ttLinks = getCategoryLinks('.tt-link');
+            const fbLinks = getCategoryLinks('.fb-link');
+            const igLinks = getCategoryLinks('.ig-link');
+
+            const totalActiveTasks = ytLinks.length + ttLinks.length + fbLinks.length + igLinks.length;
+
+            if (totalActiveTasks === 0) {
+                if (!await openModal("Clear All Tasks?", "You are pushing 0 video tasks. This will remove all active tasks for users.", [{label:"Active Links:", value:"0 Links"}], "btn-update", "Clear All")) return;
+            } else {
+                if (!await openModal("Confirm Task Push", `Publishing ${totalActiveTasks} active task(s). Users can claim active tasks once per update.`, [{label:"Total Tasks:", value:`${totalActiveTasks} Active`}], "btn-update", "Push Tasks")) return;
+            }
+
+            try {
+                let v = 1; 
+                const vs = await get(ref(db, 'new/like_tasks/version')); 
+                if (vs.exists()) v = (parseInt(vs.val()) || 1) + 1;
+
+                await set(ref(db, 'new/like_tasks'), {
+                    yt: ytLinks,
+                    tt: ttLinks,
+                    fb: fbLinks,
+                    ig: igLinks,
+                    reward: 10,
+                    checkTimeSeconds: 60,
+                    version: v
+                }); 
+
+                triggerAdminAlert(`Published [${totalActiveTasks}] tasks. Version: [${v}]`, true);
+            } catch(e) { 
+                console.error("Push Error:", e);
+                triggerAdminAlert("Failed to Push Tasks", false); 
+            }
+        });
+    </script>
+</body>
+</html>

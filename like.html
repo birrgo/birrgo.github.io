@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Like Video & Win 10 Birr</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-gradient: linear-gradient(135deg, #800020 0%, #4a0000 100%);
+            --card-tech-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            --blue-glow-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.12), 0 0 12px rgba(56, 189, 248, 0.18);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh;
+            background-color: #f1f5f9;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px;
+            background-color: var(--bg-light);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        /* Fixed Top Section - Height Slightly Reduced */
+        .top-wave-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(70px + env(safe-area-inset-top));
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .top-wave-header svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .brand-header {
+            position: absolute;
+            top: calc(10px + env(safe-area-inset-top));
+            left: 16px;
+            right: 16px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--primary-burgundy);
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        /* Title Inside Top Red Curve */
+        .top-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 800;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .logo-image {
+            height: 30px;
+            width: auto;
+            z-index: 2;
+        }
+
+        /* Fixed Bottom Curves & Ad Area */
+        .bottom-wave-header {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: calc(80px + env(safe-area-inset-bottom));
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .bottom-wave-header svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .ad-container {
+            position: absolute;
+            bottom: calc(16px + env(safe-area-inset-bottom));
+            left: 16px;
+            right: 16px;
+            z-index: 20;
+            background: #ffffff;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+        }
+
+        .ad-tag {
+            position: absolute;
+            top: 6px;
+            right: 10px;
+            font-size: 9px;
+            font-weight: 800;
+            color: #94a3b8;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .ad-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .ad-text {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        /* Main Content Container - Adjusted Padding for Reduced Header */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: calc(75px + env(safe-area-inset-top)) 16px calc(115px + env(safe-area-inset-bottom)) 16px;
+            z-index: 2;
+        }
+
+        .task-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .task-card {
+            background: var(--card-tech-bg);
+            border: 1.5px solid #e2e8f0;
+            border-radius: var(--border-radius-md);
+            padding: 12px;
+            box-shadow: var(--blue-glow-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .task-card.completed {
+            border-color: #a7f3d0;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .task-icon-badge {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .task-icon-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .task-details h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .task-details p {
+            font-size: 11px;
+            color: #2563eb;
+            font-weight: 800;
+        }
+
+        .task-btn {
+            border: none;
+            border-radius: 100px;
+            padding: 6px 14px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-follow {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+        }
+
+        .btn-verify {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            color: #ffffff;
+        }
+
+        .status-checking {
+            color: #d97706;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-verified {
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            padding: 5px 12px;
+            border-radius: 100px;
+        }
+
+        .popup-backdrop {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 6000;
+        }
+
+        .popup-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px 20px;
+            width: 88%;
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .popup-btn {
+            width: 100%;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 100px;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-view">
+        <!-- Top Fixed Bar -->
+        <div class="brand-header">
+            <button class="back-btn" id="backToGiveBtn">←</button>
+            <h2 class="top-title">Like Video & Win 10 Birr</h2>
+            <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
+        </div>
+        
+        <!-- Slightly Reduced Top Curve Height -->
+        <div class="top-wave-header">
+            <svg viewBox="0 0 375 75" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0H375V48C250 72 125 35 0 55V0Z" fill="#800020"/>
+            </svg>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="app-content">
+            <div class="task-container" id="socialTasksContainer"></div>
+        </div>
+
+        <!-- Bottom Fixed Ad Space Container -->
+        <div class="ad-container">
+            <span class="ad-tag">AD</span>
+            <div class="ad-icon">📢</div>
+            <div class="ad-text">Advertisement Space</div>
+        </div>
+
+        <!-- Bottom Fixed Wave Curve -->
+        <div class="bottom-wave-header">
+            <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 30C125 10 250 50 375 25V80H0V30Z" fill="#800020"/>
+            </svg>
+        </div>
+
+        <!-- Popup Container -->
+        <div class="popup-backdrop" id="completionPopup">
+            <div class="popup-card">
+                <h3 style="font-size:18px; font-weight:800; color:#059669; margin-bottom:8px;">Congratulations!</h3>
+                <p style="font-size:13px; color:#334155; font-weight:600;">10 Birr has been credited to your balance.</p>
+                <button class="popup-btn" id="popupCloseBtn">Claimed</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, runTransaction, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const activeUserPhone = localStorage.getItem('auth_session_phone');
+            if (!activeUserPhone) {
+                window.location.replace("new2.html");
+                return;
+            }
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+                authDomain: "birrgo-fdf7e.firebaseapp.com",
+                databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+                projectId: "birrgo-fdf7e",
+                storageBucket: "birrgo-fdf7e.firebasestorage.app",
+                messagingSenderId: "2317445154",
+                appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+                measurementId: "G-24X13TZ43D"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app);
+
+            let activeTasks = [];
+            let matrixVersion = "1";
+            let userDbClaimedTasks = {};
+            let checkTimeSeconds = 60;
+
+            function identifyPlatform(type) {
+                if (type === 'yt') return { name: 'YouTube', image: 'y.jpg' };
+                if (type === 'tt') return { name: 'TikTok', image: 't.jpg' };
+                if (type === 'fb') return { name: 'Facebook', image: 'f.jpg' };
+                if (type === 'ig') return { name: 'Instagram', image: 'i.jpg' };
+                return { name: 'Video', image: 'birrgo-logo.png' };
+            }
+
+            try {
+                const linksSnapshot = await get(ref(db, 'new/like_tasks'));
+                if (linksSnapshot.exists()) {
+                    const data = linksSnapshot.val();
+                    if (data.version) matrixVersion = String(data.version);
+                    if (data.checkTimeSeconds) checkTimeSeconds = parseInt(data.checkTimeSeconds) || 60;
+
+                    ['yt', 'tt', 'fb', 'ig'].forEach(type => {
+                        const rawData = data[type];
+                        const platform = identifyPlatform(type);
+
+                        if (Array.isArray(rawData)) {
+                            rawData.forEach((url, index) => {
+                                if (url && url.trim() !== '') {
+                                    activeTasks.push({
+                                        id: `${type}_${index}`,
+                                        name: `Like ${platform.name} #${index + 1}`,
+                                        image: platform.image,
+                                        link: url.trim(),
+                                        prize: data.reward || 10
+                                    });
+                                }
+                            });
+                        } else if (typeof rawData === 'string' && rawData.trim() !== '') {
+                            activeTasks.push({
+                                id: `${type}_0`,
+                                name: `Like ${platform.name} Video`,
+                                image: platform.image,
+                                link: rawData.trim(),
+                                prize: data.reward || 10
+                            });
+                        }
+                    });
+                }
+
+                const claimedSnapshot = await get(ref(db, `users/${activeUserPhone}/claimed_like_tasks_v${matrixVersion}`));
+                if (claimedSnapshot.exists()) {
+                    userDbClaimedTasks = claimedSnapshot.val() || {};
+                }
+            } catch (err) {
+                console.error("Task fetch error:", err);
+            }
+
+            const container = document.getElementById('socialTasksContainer');
+
+            function renderTasks() {
+                container.innerHTML = '';
+                if (activeTasks.length === 0) {
+                    container.innerHTML = '<p style="font-size:13px; color:#64748b; text-align:center;">No active video tasks right now. Please check back later!</p>';
+                    return;
+                }
+
+                activeTasks.forEach(item => {
+                    const storageKey = `claimed_like_task_${activeUserPhone}_${item.id}_v${matrixVersion}`;
+                    const isClaimedLocally = localStorage.getItem(storageKey) === 'true';
+                    const isClaimedInDb = userDbClaimedTasks[item.id] === true;
+                    const isAlreadyClaimed = isClaimedLocally || isClaimedInDb;
+
+                    const card = document.createElement('div');
+                    card.className = 'task-card';
+                    card.id = `card-${item.id}`;
+
+                    if (isAlreadyClaimed) {
+                        card.classList.add('completed');
+                        card.innerHTML = `
+                            <div class="task-left">
+                                <div class="task-icon-badge">
+                                    <img src="${item.image}" alt="${item.name}" onerror="this.src='birrgo-logo.png'">
+                                </div>
+                                <div class="task-details">
+                                    <h4>${item.name}</h4>
+                                    <p style="color:#64748b;">Completed & Claimed</p>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="status-verified">Claimed</span>
+                            </div>
+                        `;
+                    } else {
+                        card.innerHTML = `
+                            <div class="task-left">
+                                <div class="task-icon-badge">
+                                    <img src="${item.image}" alt="${item.name}" onerror="this.src='birrgo-logo.png'">
+                                </div>
+                                <div class="task-details">
+                                    <h4>${item.name}</h4>
+                                    <p>+${item.prize} ETB</p>
+                                </div>
+                            </div>
+                            <div id="control-${item.id}">
+                                <a href="${item.link}" target="_blank" class="task-btn btn-follow" id="link-click-${item.id}">Like Video</a>
+                            </div>
+                        `;
+                    }
+
+                    container.appendChild(card);
+
+                    if (!isAlreadyClaimed) {
+                        document.getElementById(`link-click-${item.id}`).addEventListener('click', () => {
+                            setupVerificationBtn(item.id, item.prize);
+                        });
+                    }
+                });
+            }
+
+            function setupVerificationBtn(id, prize) {
+                const node = document.getElementById('control-' + id);
+                if (!node) return;
+
+                setTimeout(() => {
+                    node.innerHTML = `<button class="task-btn btn-verify" id="verify-action-${id}">Verify</button>`;
+                    document.getElementById(`verify-action-${id}`).addEventListener('click', () => {
+                        startTimerCountdown(id, prize);
+                    });
+                }, 1000);
+            }
+
+            function startTimerCountdown(id, prize) {
+                const node = document.getElementById('control-' + id);
+                let secondsRemaining = checkTimeSeconds;
+
+                const countdownInterval = setInterval(async () => {
+                    secondsRemaining--;
+
+                    if (secondsRemaining <= 0) {
+                        clearInterval(countdownInterval);
+                        node.innerHTML = `<span class="status-checking">Crediting...</span>`;
+
+                        try {
+                            const walletBalanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
+                            await runTransaction(walletBalanceRef, (currentBalance) => {
+                                return (parseFloat(currentBalance) || 0) + prize;
+                            });
+
+                            const now = new Date();
+                            const timeStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + 
+                                            now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+                            await set(push(ref(db, `users/${activeUserPhone}/transactions`)), {
+                                title: `Video Like Reward (${id.toUpperCase()})`,
+                                amount: prize,
+                                type: "income",
+                                timestamp: timeStr
+                            });
+
+                            await set(ref(db, `users/${activeUserPhone}/claimed_like_tasks_v${matrixVersion}/${id}`), true);
+                            localStorage.setItem(`claimed_like_task_${activeUserPhone}_${id}_v${matrixVersion}`, 'true');
+
+                            document.getElementById(`card-${id}`).classList.add('completed');
+                            const detailsP = document.querySelector(`#card-${id} .task-details p`);
+                            if (detailsP) {
+                                detailsP.style.color = '#64748b';
+                                detailsP.innerText = 'Completed & Claimed';
+                            }
+                            node.innerHTML = `<span class="status-verified">Claimed</span>`;
+                            document.getElementById('completionPopup').style.display = 'flex';
+
+                        } catch (err) {
+                            console.error("Reward transaction error:", err);
+                            node.innerHTML = `<button class="task-btn btn-verify" id="verify-action-${id}">Retry</button>`;
+                            document.getElementById(`verify-action-${id}`).addEventListener('click', () => startTimerCountdown(id, prize));
+                        }
+                    } else {
+                        const m = Math.floor(secondsRemaining / 60);
+                        const s = secondsRemaining % 60;
+                        const formatted = s < 10 ? '0' + s : s;
+                        node.innerHTML = `<span class="status-checking">Checking (${m}:${formatted})...</span>`;
+                    }
+                }, 1000);
+
+                const initialM = Math.floor(checkTimeSeconds / 60);
+                const initialS = checkTimeSeconds % 60;
+                const formattedS = initialS < 10 ? '0' + initialS : initialS;
+                node.innerHTML = `<span class="status-checking">Checking (${initialM}:${formattedS})...</span>`;
+            }
+
+            document.getElementById('backToGiveBtn').addEventListener('click', () => window.location.replace('give.html'));
+            document.getElementById('popupCloseBtn').addEventListener('click', () => document.getElementById('completionPopup').style.display = 'none');
+
+            renderTasks();
+        });
+    </script>
+</body>
+</html>
