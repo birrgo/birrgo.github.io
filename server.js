@@ -21,14 +21,28 @@ app.use(cors({
 
 app.use(express.json());
 
-// 2. Initialize Firebase Admin securely using Render Environment Variables
+// 2. Initialize Firebase Admin securely using Environment Variables
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    admin.initializeApp({
-      credential: cert(serviceAccount), 
-      databaseURL: process.env.FIREBASE_DATABASE_URL
-    });
+    let serviceAccount;
+    const rawServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT;
+    
+    if (typeof rawServiceAccount === 'string') {
+      serviceAccount = JSON.parse(
+        rawServiceAccount.startsWith('{') 
+          ? rawServiceAccount 
+          : Buffer.from(rawServiceAccount, 'base64').toString('utf8')
+      );
+    } else {
+      serviceAccount = rawServiceAccount;
+    }
+
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: cert(serviceAccount), 
+        databaseURL: process.env.FIREBASE_DATABASE_URL
+      });
+    }
     console.log("Firebase Admin securely connected!");
   } catch (error) {
     console.error("Firebase Admin initialization failed:", error);
@@ -47,9 +61,9 @@ if (BREVO_API_KEY) {
   console.warn("WARNING: BREVO_API_KEY env variable is missing!");
 }
 
-// Simple health-check endpoint
+// Health-check endpoint
 app.get('/', (req, res) => {
-  res.send('BirrGo Backend is live and running!');
+  res.send('BirrGo Backend (OTP & AI) is live and running!');
 });
 
 // Helper function to generate a secure 6-digit OTP
@@ -57,7 +71,7 @@ function generateSecureOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// Helper to sanitize emails for Firebase paths (replacing '.' with '_')
+// Helper to sanitize emails for Firebase paths
 function sanitizeEmail(email) {
   return email.toLowerCase().replace(/\./g, '_').replace(/@/g, '_at_');
 }
@@ -158,98 +172,7 @@ app.post('/verify-otp', async (req, res) => {
 });
 
 // ==========================================
-// 5. ONESIGNAL PUSH NOTIFICATION ENDPOINT 
-// ==========================================
-
-app.post('/send-push', async (req, res) => {
-  console.log("Push dispatch triggered from domain request:", req.body); 
-
-  const { title, message, segments, url, imageUrl } = req.body;
-
-  if (!title || !message) {
-    return res.status(400).json({ error: 'Notification title and message are required.' });
-  }
-
-  try {
-    const db = getDatabase();
-    
-    // Read credentials from Firebase or process environment variables
-    const configSnapshot = await db.ref('config/onesignal').once('value');
-    const configData = configSnapshot.val();
-
-    const appId = (configData && configData.appId) ? configData.appId : process.env.ONESIGNAL_APP_ID;
-    const restApiKey = (configData && configData.restApiKey) ? configData.restApiKey : process.env.ONESIGNAL_REST_API_KEY;
-
-    if (!appId || !restApiKey) {
-      console.error("Missing OneSignal Credentials");
-      return res.status(500).json({ error: 'OneSignal credentials are missing on server.' });
-    }
-
-    // Target segments setup
-    const targetSegments = (segments && Array.isArray(segments) && segments.length > 0) 
-      ? segments 
-      : ['All', 'Subscribed Users', 'Total Subscriptions'];
-
-    const notificationPayload = {
-      app_id: appId,
-      target_channel: "push",
-      headings: { en: title },
-      contents: { en: message },
-      included_segments: targetSegments,
-      url: url || 'https://birrgo.online',
-      
-      // Keep notification active for 24 Hours (86,400 seconds) in push queue for offline devices
-      ttl: 86400,
-      priority: 10,
-
-      // Long push notification support (banner images & expandable view)
-      big_picture: imageUrl || undefined,
-      chrome_web_image: imageUrl || undefined,
-      firefox_icon: imageUrl || undefined
-    };
-
-    const response = await fetch('https://onesignal.com/api/v1/notifications', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${restApiKey}`
-      },
-      body: JSON.stringify(notificationPayload)
-    });
-
-    const responseData = await response.json();
-
-    if (response.ok && responseData.id) {
-      console.log("OneSignal push accepted successfully. ID:", responseData.id); 
-
-      // Log dispatch history to Firebase
-      await db.ref('logs/notifications').push({
-        id: responseData.id,
-        title: title,
-        message: message,
-        recipientsCount: responseData.recipients || 0,
-        domain: 'birrgo.online',
-        ttlSeconds: 86400,
-        sentAt: Date.now()
-      });
-
-      return res.status(200).json({ success: true, active: true, ttl: "24 Hours", data: responseData });
-    } else {
-      console.error("OneSignal API rejected request:", responseData);
-      return res.status(400).json({ 
-        error: responseData.errors ? responseData.errors[0] : 'OneSignal push delivery failed.', 
-        details: responseData 
-      });
-    }
-
-  } catch (error) {
-    console.error("Push Notification Delivery Error:", error);
-    return res.status(500).json({ error: 'Internal server error processing push request.' });
-  }
-});
-
-// ==========================================
-// 6. GROQ AI CHAT & MANAGEMENT ENDPOINTS
+// 5. GROQ AI CHAT & MANAGEMENT ENDPOINTS
 // ==========================================
 
 // Endpoint for admin dashboard to securely update key inside the closed 'secrets' node
