@@ -5,9 +5,8 @@ const { cert } = require('firebase-admin/app');
 const { getDatabase } = require('firebase-admin/database');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
-// 1. Enable CORS securely for birrgo.online and all origins
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'OPTIONS'],
@@ -16,79 +15,73 @@ app.use(cors({
 
 app.use(express.json());
 
-// 2. Initialize Firebase Admin securely using Environment Variables
+// Initialize Firebase Admin
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    admin.initializeApp({
-      credential: cert(serviceAccount),
-      databaseURL: process.env.FIREBASE_DATABASE_URL
-    });
-    console.log("Firebase Admin securely connected!");
+    let serviceAccount;
+    const rawServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT;
+    
+    if (typeof rawServiceAccount === 'string') {
+      serviceAccount = JSON.parse(
+        rawServiceAccount.startsWith('{') 
+          ? rawServiceAccount 
+          : Buffer.from(rawServiceAccount, 'base64').toString('utf8')
+      );
+    } else {
+      serviceAccount = rawServiceAccount;
+    }
+
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: cert(serviceAccount), 
+        databaseURL: process.env.FIREBASE_DATABASE_URL
+      });
+    }
+    console.log("Push Service: Firebase Admin Connected!");
   } catch (error) {
-    console.error("Firebase Admin initialization failed:", error);
+    console.error("Push Service: Firebase init error:", error);
   }
-} else {
-  console.warn("WARNING: FIREBASE_SERVICE_ACCOUNT env variable is missing!");
 }
 
-// Health check endpoint for Koyeb
+// Health Check Endpoint
 app.get('/', (req, res) => {
-  res.send('BirrGo Push Notification Service is live!');
+  res.send('BirrGo Push Notification Microservice is Running!');
 });
 
-// ==========================================
-// ONESIGNAL PUSH NOTIFICATION ENDPOINT 
-// ==========================================
-
-app.post('/send-push', async (req, res) => {
-  console.log("Push dispatch triggered:", req.body);
-
-  const { title, message, segments, url, imageUrl } = req.body;
+// Broadcast Endpoint
+app.post('/api/send-push', async (req, res) => {
+  const { title, message, imageUrl, url, segments } = req.body;
 
   if (!title || !message) {
-    return res.status(400).json({ error: 'Notification title and message are required.' });
+    return res.status(400).json({ error: 'Title and message body are required.' });
   }
 
   try {
     const db = getDatabase();
-
-    // Read credentials from Firebase or environment variables
+    
+    // Fetch live OneSignal credentials from Firebase 'config/onesignal' path
     const configSnapshot = await db.ref('config/onesignal').once('value');
-    const configData = configSnapshot.val();
+    const configData = configSnapshot.val() || {};
 
-    const appId = (configData && configData.appId) ? configData.appId : process.env.ONESIGNAL_APP_ID;
-    const restApiKey = (configData && configData.restApiKey) ? configData.restApiKey : process.env.ONESIGNAL_REST_API_KEY;
+    const appId = configData.appId || process.env.ONESIGNAL_APP_ID;
+    const restApiKey = configData.restApiKey || process.env.ONESIGNAL_REST_API_KEY;
 
     if (!appId || !restApiKey) {
-      console.error("Missing OneSignal Credentials");
-      return res.status(500).json({ error: 'OneSignal credentials are missing on server.' });
+      return res.status(500).json({ error: 'OneSignal API credentials not configured in Firebase.' });
     }
 
-    // Target segments setup
-    const targetSegments = (segments && Array.isArray(segments) && segments.length > 0)
-      ? segments
-      : ['All', 'Subscribed Users', 'Total Subscriptions'];
-
-    // Construct notification payload
-    const notificationPayload = {
+    const payload = {
       app_id: appId,
       target_channel: "push",
       headings: { en: title },
       contents: { en: message },
-      included_segments: targetSegments,
+      included_segments: (segments && segments.length) ? segments : ['All', 'Subscribed Users', 'Total Subscriptions'],
       url: url || 'https://birrgo.online',
-      ttl: 86400, // 24 Hours active window
-      priority: 10
+      ttl: 86400,
+      priority: 10,
+      big_picture: imageUrl || undefined,
+      chrome_web_image: imageUrl || undefined
     };
-
-    // Safely append big picture image parameters if provided
-    if (imageUrl && typeof imageUrl === 'string' && imageUrl.trim() !== '') {
-      const cleanImg = imageUrl.trim();
-      notificationPayload.big_picture = cleanImg;
-      notificationPayload.chrome_web_image = cleanImg;
-      notificationPayload.firefox_icon = cleanImg;
-    }
 
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
       method: 'POST',
@@ -96,43 +89,32 @@ app.post('/send-push', async (req, res) => {
         'Content-Type': 'application/json',
         'Authorization': `Basic ${restApiKey}`
       },
-      body: JSON.stringify(notificationPayload)
+      body: JSON.stringify(payload)
     });
 
     const responseData = await response.json();
 
     if (response.ok && responseData.id) {
-      console.log("OneSignal push accepted successfully. ID:", responseData.id);
-
-      // Async write to Firebase logs
-      db.ref('logs/notifications').push({
+      // Log broadcast to Firebase
+      await db.ref('logs/notifications').push({
         id: responseData.id,
         title: title,
         message: message,
         recipientsCount: responseData.recipients || 0,
-        domain: 'birrgo.online',
-        ttlSeconds: 86400,
         sentAt: Date.now()
-      }).catch(err => console.error("Firebase log error:", err));
-
-      return res.status(200).json({ success: true, active: true, ttl: "24 Hours", data: responseData });
-    } else {
-      console.error("OneSignal API rejected request:", responseData);
-      return res.status(400).json({
-        error: responseData.errors ? responseData.errors[0] : 'OneSignal push delivery failed.',
-        details: responseData
       });
-    }
 
+      return res.status(200).json({ success: true, id: responseData.id });
+    } else {
+      const errorMsg = responseData.errors ? responseData.errors[0] : 'OneSignal delivery failed.';
+      return res.status(400).json({ error: errorMsg });
+    }
   } catch (error) {
-    console.error("Push Notification Delivery Error:", error);
-    return res.status(500).json({ error: 'Internal server error processing push request.' });
+    console.error("Push Broadcast Error:", error);
+    return res.status(500).json({ error: 'Server error processing push request.' });
   }
 });
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Push Server running on port ${PORT}`);
+  console.log(`🚀 Push microservice active on port ${PORT}`);
 });
-
-
