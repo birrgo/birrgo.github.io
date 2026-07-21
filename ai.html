@@ -229,11 +229,11 @@
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
       </a>
-      <div class="header-title">BirrGo AI Support</div>
+      <div class="header-title">BirrGo AI Assistant</div>
       <a href="support.html" class="support-btn">Manual Support</a>
     </div>
     <div class="chat-messages" id="chat-messages">
-      <div class="message ai-message">👋 Hello! How can I assist you with BirrGo today?</div>
+      <div class="message ai-message">👋 Hello! I am BirrGo AI. How can I assist you today?</div>
     </div>
     <div class="input-area">
       <input type="text" id="user-input" placeholder="Ask AI something..." autocomplete="off">
@@ -280,11 +280,11 @@
         if (response.ok && data.reply) {
           loadingMessage.textContent = data.reply;
         } else {
-          loadingMessage.textContent = 'Error: ' + (data.error || 'Failed generating feedback');
+          loadingMessage.textContent = 'Error: ' + (data.error || 'Failed generating response.');
           loadingMessage.style.color = '#dc2626';
         }
       } catch (error) {
-        loadingMessage.textContent = 'Network error. Check your server connection.';
+        loadingMessage.textContent = 'Network error. Could not connect to OpenRouter AI assistant.';
         loadingMessage.style.color = '#dc2626';
       } finally {
         inputField.disabled = false;

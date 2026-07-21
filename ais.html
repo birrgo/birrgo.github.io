@@ -179,12 +179,12 @@
 
         <hr>
 
-        <!-- Section 1: Update Groq Key -->
+        <!-- Section 1: Update OpenRouter Key -->
         <div class="form-group">
-            <label class="form-label">New Groq API Key</label>
-            <input type="password" id="groqKey" class="form-input" autocomplete="new-password" placeholder="gsk_...">
+            <label class="form-label">New OpenRouter API Key</label>
+            <input type="password" id="openRouterKey" class="form-input" autocomplete="new-password" placeholder="sk-or-v1-...">
         </div>
-        <button class="btn-submit" id="saveKeyBtn">Update Groq API Key</button>
+        <button class="btn-submit" id="saveKeyBtn">Update OpenRouter API Key</button>
         
         <div class="security-note">
             💡 <strong>Security Note:</strong> This form sends your API key straight to your backend server, saving it into the locked <code>secrets/groq_api_key</code> path via Admin privileges!
@@ -195,14 +195,12 @@
 
     <script>
         const tokenInput = document.getElementById('adminToken');
-        const keyInput = document.getElementById('groqKey');
+        const keyInput = document.getElementById('openRouterKey');
         const saveKeyBtn = document.getElementById('saveKeyBtn');
         const statusMessage = document.getElementById('statusMessage');
 
-        // ⚠️ REPLACE THIS WITH YOUR ACTUAL DEPLOYED BACKEND URL (e.g. Render, Railway, etc.)
         const BACKEND_BASE_URL = 'https://birrgo-otp-backend.onrender.com';
 
-        // Connects to local port when developing locally, or production backend when live
         const API_ENDPOINT = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
             ? 'http://localhost:3000/api/admin/apikey'
             : `${BACKEND_BASE_URL}/api/admin/apikey`;
@@ -215,11 +213,11 @@
 
         saveKeyBtn.addEventListener('click', async () => {
             const adminToken = tokenInput.value.trim();
-            const groqKey = keyInput.value.trim();
+            const openRouterKey = keyInput.value.trim();
             statusMessage.style.display = "none";
 
-            if (!adminToken || !groqKey) {
-                showMessage("Please enter both the secret token and the new Groq key.", true);
+            if (!adminToken || !openRouterKey) {
+                showMessage("Please enter both the secret token and the new OpenRouter key.", true);
                 return;
             }
 
@@ -232,13 +230,13 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${adminToken}`
                     },
-                    body: JSON.stringify({ apiKey: groqKey })
+                    body: JSON.stringify({ apiKey: openRouterKey })
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    showMessage(data.message || "Groq API Key updated successfully!", false);
+                    showMessage(data.message || "OpenRouter API Key updated successfully!", false);
                     keyInput.value = "";
                 } else {
                     showMessage(data.error || "Failed to save API Key.", true);
