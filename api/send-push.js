@@ -45,11 +45,15 @@ module.exports = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Notification title and message are required.' });
     }
 
+    // Default hardcoded fallbacks if environment variables or DB configs are omitted
+    const fallbackIcon = 'https://birrgo.online/icon.png';
+    const fallbackBadge = 'https://birrgo.online/badge-icon.png';
+
     // Check environment variables first
     let appId = process.env.ONESIGNAL_APP_ID;
     let restApiKey = process.env.ONESIGNAL_REST_KEY || process.env.ONESIGNAL_REST_API_KEY;
-    let defaultBadge = process.env.ONESIGNAL_DEFAULT_BADGE;
-    let defaultIcon = process.env.ONESIGNAL_DEFAULT_ICON;
+    let defaultBadge = process.env.ONESIGNAL_DEFAULT_BADGE || fallbackBadge;
+    let defaultIcon = process.env.ONESIGNAL_DEFAULT_ICON || fallbackIcon;
 
     // Fetch dynamic config from Firebase Realtime DB if missing or to augment defaults
     if (admin.apps.length) {
@@ -85,6 +89,7 @@ module.exports = async (req, res) => {
     // Construct OneSignal Payload
     const notificationPayload = {
       app_id: appId,
+      target_channel: "push",
       headings: { en: title },
       contents: { en: message },
       included_segments: targetSegments,
