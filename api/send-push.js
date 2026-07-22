@@ -101,7 +101,15 @@ module.exports = async (req, res) => {
     // Attach status bar badge icon (Monochrome White PNG)
     const activeBadge = badgeUrl || badge || defaultBadge;
     if (activeBadge && typeof activeBadge === 'string' && activeBadge.trim() !== '') {
-      notificationPayload.chrome_web_badge = activeBadge.trim();
+      const cleanBadge = activeBadge.trim();
+      
+      // Web / Chrome status bar badge
+      notificationPayload.chrome_web_badge = cleanBadge;
+      notificationPayload.badge = cleanBadge;
+
+      // Android Native / Cordova Status Bar Icon reference (defined in config.xml)
+      notificationPayload.small_icon = 'ic_stat_notification'; 
+      notificationPayload.android_accent_color = 'FF800000'; // Burgundy accent color
     }
 
     // Attach large panel icon / images if valid URL provided
@@ -114,6 +122,7 @@ module.exports = async (req, res) => {
       notificationPayload.chrome_web_image = activeImage;
       notificationPayload.chrome_web_icon = activeImage;
       notificationPayload.firefox_icon = activeImage;
+      notificationPayload.large_icon = activeImage; // Drawer icon for Android
     }
 
     // Call OneSignal API
