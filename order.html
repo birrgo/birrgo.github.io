@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo | Complete Payment</title>
+    
+    <!-- Fonts and Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="order.css">
+    
+    <style>
+        /* CANCELLATION REASON MODAL STYLES */
+        .cancel-modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .cancel-modal-header {
+            font-size: 15px;
+            font-weight: 800;
+            color: #4d0511;
+            text-align: center;
+        }
+
+        .cancel-modal-sub {
+            font-size: 11.5px;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .cancel-reasons-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .reason-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 11.5px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .reason-option:hover, .reason-option.selected {
+            border-color: #881337;
+            background: #ffe4e6;
+            color: #881337;
+        }
+
+        .reason-option input[type="radio"] {
+            accent-color: #881337;
+        }
+
+        .cancel-actions-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-confirm-cancel {
+            flex: 1;
+            background: #dc2626;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-keep-order {
+            flex: 1;
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Alert Modal -->
+    <div class="modal-overlay" id="appAlertModal">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <div class="modal-title" id="alertModalTitle">Unavailable</div>
+            <div class="modal-text" id="alertModalText">This payment is not available for now.</div>
+            <button class="modal-btn" onclick="closeCustomAlert()">Understood</button>
+        </div>
+    </div>
+
+    <!-- Cancellation Confirmation & Reason Modal -->
+    <div class="modal-overlay" id="cancelReasonModal" style="display:none;">
+        <div class="cancel-modal-card">
+            <div class="cancel-modal-header">Cancel Deposit Order?</div>
+            <div class="cancel-modal-sub">Please tell us why you wish to cancel this request:</div>
+            
+            <div class="cancel-reasons-list">
+                <label class="reason-option">
+                    <input type="radio" name="cancel_reason" value="Changed my mind / Selected wrong amount" checked>
+                    <span>Changed my mind / Selected wrong amount</span>
+                </label>
+                <label class="reason-option">
+                    <input type="radio" name="cancel_reason" value="Selected wrong payment method">
+                    <span>Selected wrong payment method</span>
+                </label>
+                <label class="reason-option">
+                    <input type="radio" name="cancel_reason" value="Merchant details not responding">
+                    <span>Merchant account details issue</span>
+                </label>
+                <label class="reason-option">
+                    <input type="radio" name="cancel_reason" value="Payment app error / Transfer issue">
+                    <span>Payment app error / Transfer issue</span>
+                </label>
+                <label class="reason-option">
+                    <input type="radio" name="cancel_reason" value="Other / Testing gateway">
+                    <span>Other / Just testing payment system</span>
+                </label>
+            </div>
+
+            <div class="cancel-actions-group">
+                <button class="btn-keep-order" onclick="closeCancelModal()">Keep Order</button>
+                <button class="btn-confirm-cancel" onclick="executeOrderCancellation()">Confirm Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low-Height Wave Header Area -->
+    <div class="top-wave-header-wrapper">
+        <div class="top-header-content">
+            <button id="topBackBtn" class="btn-circle-back" onclick="triggerBackAction()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+
+            <!-- Centered Header Title -->
+            <div class="header-center-title">COMPLETE PAYMENT</div>
+
+            <!-- Right Column: Activity Button + Gateway Status -->
+            <div class="header-right-col">
+                <button class="btn-top-activity" onclick="window.location.href='usera.html'">
+                    Activity <span id="activity-order-count" class="activity-badge-count" style="display: none;">0</span>
+                </button>
+                <div class="admin-status-3d-glass">
+                    <span id="admin-status-indicator-dot"></span>
+                    <span>Gateway: <strong id="admin-status-label">Online</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Low-Height Wave Bottom SVG -->
+        <svg class="header-wave-svg" viewBox="0 0 375 16" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 H375 V8 Q 280 16, 187.5 10 T 0 8 Z" fill="#4d0511"/>
+        </svg>
+    </div>
+
+    <div class="app-view">
+
+        <!-- Support Live Chat Bar -->
+        <div class="top-chat-bar" id="integrated-chat-bar" onclick="toggleChatWindow(event)">
+            <div class="merchant-badge-group">
+                <div class="status-pulse-dot" id="top-status-indicator"></div>
+                <div>
+                    <div class="merchant-status-title">BirrGo Live Support</div>
+                    <div class="merchant-status-sub" id="top-status-text">Checking Status...</div>
+                </div>
+            </div>
+            <div class="support-action-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Chat
+            </div>
+        </div>
+
+        <div class="main-body-content">
+
+            <!-- Payment Screen -->
+            <div class="step-view active" id="screen-pay">
+                <div class="screen-title">Transfer <span>Funds</span></div>
+                <div class="screen-subtitle">Pay exact amount to details below and upload receipt</div>
+                
+                <div class="unified-pay-card">
+                    <div class="bank-details-box">
+                        <div class="detail-row">
+                            <span class="detail-label">Order Ref:</span>
+                            <div class="detail-val-group">
+                                <span class="detail-val" id="disp-ref" style="font-family: monospace;">BG-XXXXXX</span>
+                                <span class="copy-badge" onclick="copyText('disp-ref')">COPY</span>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Payment Method:</span>
+                            <span class="detail-val" id="disp-method">telebirr</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Merchant Name:</span>
+                            <div class="detail-val-group">
+                                <span class="detail-val" id="disp-merchant" style="font-weight: 600;">Pending...</span>
+                                <span class="copy-badge" onclick="copyText('disp-merchant')">COPY</span>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Account / Number:</span>
+                            <div class="detail-val-group">
+                                <span class="detail-val" id="disp-account" style="font-family: monospace;">Pending...</span>
+                                <span class="copy-badge" onclick="copyText('disp-account')">COPY</span>
+                            </div>
+                        </div>
+                        <div class="detail-row" style="border-bottom: none; padding-bottom: 0;">
+                            <span class="detail-label" style="color:var(--primary-burgundy);">Amount to Send:</span>
+                            <div class="detail-val-group">
+                                <span class="detail-val" style="color:var(--primary-burgundy); font-weight:700;" id="disp-amount">0.00 Birr</span>
+                                <span class="copy-badge" onclick="copyText('disp-amount', true)">COPY</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-receipt-card" onclick="document.getElementById('receipt-file').click()">
+                    <img id="imagePreview" class="receipt-thumbnail" src="" alt="Receipt Preview">
+                    <span class="upload-receipt-title" id="receipt-title">Upload Payment Receipt</span>
+                    <p class="upload-receipt-sub" id="receipt-sub">Accepts screenshots or photo uploads</p>
+                    <input type="file" id="receipt-file" accept="image/*" style="display:none;">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="action-area">
+            <button id="primaryBtn" class="btn btn-primary">
+                <span>Submit Receipt</span>
+            </button>
+            
+            <button id="secondaryBtn" class="btn btn-secondary" onclick="promptCancelOrder()">Cancel Deposit</button>
+
+            <!-- Bottom Advertisement Space Container -->
+            <div class="bottom-ad-container">
+                <span class="ad-tag">AD</span>
+                <span class="ad-icon">📢</span>
+                <span class="ad-text">Advertisement Space</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Chat Modal Window -->
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <div class="chat-merchant-info">
+                <div class="chat-avatar">
+                    BG
+                    <div class="status-dot-inner" id="chat-header-dot"></div>
+                </div>
+                <div>
+                    <div class="chat-title">BirrGo Support</div>
+                    <div class="chat-status-text" id="chat-status-text">Online</div>
+                </div>
+            </div>
+            <button class="close-chat-btn" onclick="toggleChatWindow(event)">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Message support..." onkeydown="handleChatKey(event)">
+            <button class="chat-send-btn" onclick="sendUserMessage()">Send</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, onChildAdded, off, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let userId = localStorage.getItem("auth_session_phone") || localStorage.getItem("current_user_id") || "DEV_USER";
+        
+        let selectedMethodId = '';
+        let transactionAmount = 0;
+        let orderReferenceId = '';
+        let databaseOrderKey = '';
+        let isMerchantOnline = true; 
+        let isChatListenerAttached = false;
+        let dbStatusListenerRef = null;
+
+        const primaryBtn = document.getElementById('primaryBtn');
+        const receiptFileInput = document.getElementById('receipt-file');
+        const receiptTitle = document.getElementById('receipt-title');
+        const receiptSub = document.getElementById('receipt-sub');
+        const imagePreview = document.getElementById('imagePreview');
+
+        let paymentConfigs = {
+            cbe: { name: 'Commercial Bank of Ethiopia', account: '', holder_name: '' },
+            boa: { name: 'Bank of Abyssinia', account: '', holder_name: '' }, 
+            telebirr: { name: 'Telebirr wallet', account: '', holder_name: '' },
+            cbebirr: { name: 'CBE birr wallet', account: '', holder_name: '' },
+            mpesa: { name: 'M-Pesa wallet', account: '', holder_name: '' }
+        };
+
+        window.showCustomAlert = function(title, text) {
+            document.getElementById('alertModalTitle').innerText = title;
+            document.getElementById('alertModalText').innerText = text;
+            document.getElementById('appAlertModal').style.display = 'flex';
+        };
+
+        window.closeCustomAlert = function() {
+            document.getElementById('appAlertModal').style.display = 'none';
+        };
+
+        window.copyText = function(elementId, cleanValueOnly = false) {
+            let text = document.getElementById(elementId).innerText;
+            if (cleanValueOnly) {
+                text = text.replace(/ Birr/g, '').replace(/,/g, '');
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                showCustomAlert("Success", "Copied directly to clipboard!");
+            });
+        };
+
+        window.toggleChatWindow = function(e) {
+            if(e) e.preventDefault();
+            const win = document.getElementById('chatWindow');
+            if (win.style.display === 'flex') {
+                win.style.display = 'none';
+            } else {
+                win.style.display = 'flex';
+                initializeChatListener();
+            }
+        };
+
+        window.sendUserMessage = function() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+
+            const userChatRef = ref(db, `chats/${userId}/messages`);
+            push(userChatRef, {
+                sender: 'user',
+                text: text,
+                timestamp: Date.now()
+            });
+        };
+
+        window.handleChatKey = function(event) {
+            if (event.key === 'Enter') {
+                sendUserMessage();
+            }
+        };
+
+        function initializeChatListener() {
+            if (isChatListenerAttached) return; 
+            isChatListenerAttached = true;
+
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = ''; 
+
+            const messagesRef = ref(db, `chats/${userId}/messages`);
+            onChildAdded(messagesRef, (snapshot) => {
+                const message = snapshot.val();
+                if (message && message.text) {
+                    appendChatMessage(message.text, message.sender || 'merchant');
+                }
+            });
+        }
+
+        function appendChatMessage(text, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const bubble = document.createElement('div');
+            bubble.classList.add('chat-bubble', sender);
+            bubble.innerText = text;
+            chatMessages.appendChild(bubble);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        window.triggerBackAction = function() {
+            window.location.href = "deposit.html";
+        }
+
+        primaryBtn.addEventListener('click', () => {
+            if (receiptFileInput.files.length === 0) {
+                showCustomAlert("Receipt Missing", "Please upload your transfer receipt to complete the transaction.");
+                return;
+            }
+            submitDepositReceipt();
+        });
+
+        function setupPaymentDetails() {
+            const currentGateway = paymentConfigs[selectedMethodId];
+            if (currentGateway) {
+                document.getElementById('disp-ref').innerText = orderReferenceId;
+                document.getElementById('disp-method').innerText = currentGateway.name;
+                document.getElementById('disp-merchant').innerText = currentGateway.holder_name || 'BirrGo Trading PLC';
+                document.getElementById('disp-account').innerText = currentGateway.account;
+                document.getElementById('disp-amount').innerText = `${transactionAmount.toLocaleString()} Birr`;
+            }
+        }
+
+        receiptFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                receiptTitle.innerText = "Processing File...";
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const max_width = 400;
+                        const scaleFactor = max_width / img.width;
+                        const canvas = document.createElement('canvas');
+                        canvas.width = max_width;
+                        canvas.height = img.height * scaleFactor;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                        
+                        imagePreview.src = compressedBase64;
+                        imagePreview.style.display = "block";
+                        receiptTitle.innerText = "File Selected";
+                        receiptSub.innerText = file.name;
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // CANCELLATION MODAL LOGIC
+        window.promptCancelOrder = function() {
+            document.getElementById('cancelReasonModal').style.display = 'flex';
+        };
+
+        window.closeCancelModal = function() {
+            document.getElementById('cancelReasonModal').style.display = 'none';
+        };
+
+        window.executeOrderCancellation = function() {
+            const selectedReasonEl = document.querySelector('input[name="cancel_reason"]:checked');
+            const cancelReason = selectedReasonEl ? selectedReasonEl.value : 'User Cancelled';
+
+            if (dbStatusListenerRef) off(dbStatusListenerRef);
+
+            if (databaseOrderKey) {
+                const updates = {};
+                updates[`deposits/${databaseOrderKey}`] = null;
+                updates[`users/${userId}/transactions/${databaseOrderKey}/status`] = 'cancelled';
+                updates[`users/${userId}/transactions/${databaseOrderKey}/title`] = `❌ Deposit Cancelled [${paymentConfigs[selectedMethodId]?.name || 'P2P'}]`;
+                updates[`users/${userId}/transactions/${databaseOrderKey}/cancelReason`] = cancelReason;
+
+                update(ref(db), updates)
+                    .then(() => {
+                        window.location.href = "usera.html";
+                    })
+                    .catch((err) => {
+                        console.error("Cancellation database log update failed:", err);
+                        window.location.href = "usera.html";
+                    });
+            } else {
+                window.location.href = "usera.html";
+            }
+        };
+
+        function submitDepositReceipt() {
+            if (!databaseOrderKey) {
+                const globalDepositsRef = ref(db, 'deposits');
+                databaseOrderKey = push(globalDepositsRef).key;
+            }
+
+            const timestampNow = Date.now();
+            const methodTitle = paymentConfigs[selectedMethodId] ? paymentConfigs[selectedMethodId].name : 'P2P';
+
+            const updates = {};
+            updates[`deposits/${databaseOrderKey}`] = {
+                ref: orderReferenceId,
+                method: methodTitle, 
+                userId: userId,                                
+                amount: transactionAmount,
+                status: 'Pending',                             
+                receiptUrl: imagePreview.src,                  
+                timestamp: timestampNow,
+                rejectReason: ''
+            };
+
+            updates[`users/${userId}/transactions/${databaseOrderKey}`] = {
+                title: `📥 Deposit Pending [${methodTitle}]`,
+                amount: transactionAmount,
+                type: 'income',
+                status: 'pending',
+                orderRef: orderReferenceId,
+                timestamp: new Date().toLocaleString()
+            };
+
+            update(ref(db), updates)
+                .then(() => {
+                    window.location.href = "usera.html";
+                })
+                .catch((error) => {
+                    console.error("Submission failed: ", error);
+                    showCustomAlert("Submission Error", "There was an error updating database logs.");
+                });
+        }
+
+        function fetchUserOpenOrderCountRealtime() {
+            const userHistoryRef = ref(db, `users/${userId}/transactions`);
+            onValue(userHistoryRef, (snapshot) => {
+                let openOrdersCount = 0;
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const data = childSnapshot.val();
+                        const status = (data.status || '').toLowerCase();
+                        if (status === 'unpaid' || status === 'open' || status === 'pending' || status === 'waiting approval') {
+                            openOrdersCount++;
+                        }
+                    });
+                }
+                
+                const badgeEl = document.getElementById('activity-order-count');
+                if (openOrdersCount > 0) {
+                    badgeEl.innerText = openOrdersCount;
+                    badgeEl.style.display = 'inline-block';
+                } else {
+                    badgeEl.style.display = 'none';
+                }
+            });
+        }
+
+        function initializeChatStatus() {
+            const topIndicator = document.getElementById('top-status-indicator');
+            const topText = document.getElementById('top-status-text');
+            const headerDot = document.getElementById('chat-header-dot');
+            const statusText = document.getElementById('chat-status-text');
+
+            if (isMerchantOnline) {
+                topIndicator.classList.remove('offline');
+                topText.innerText = "BirrGo Support Online";
+                headerDot.classList.remove('offline');
+                statusText.innerText = "Online";
+            } else {
+                topIndicator.classList.add('offline');
+                topText.innerText = "BirrGo Support Offline";
+                headerDot.classList.add('offline');
+                statusText.innerText = "Offline";
+            }
+        }
+
+        function runDatabaseIntegration() {
+            const globalStatusRef = ref(db, 'settings/gateway_online');
+            onValue(globalStatusRef, (snapshot) => {
+                isMerchantOnline = snapshot.exists() ? snapshot.val() : true;
+                const adminLabel = document.getElementById('admin-status-label');
+                const indicatorDot = document.getElementById('admin-status-indicator-dot');
+                if (isMerchantOnline) {
+                    adminLabel.innerText = "Online";
+                    adminLabel.style.color = "#10b981";
+                    indicatorDot.style.backgroundColor = "#10b981";
+                } else {
+                    adminLabel.innerText = "Offline";
+                    adminLabel.style.color = "#ef4444";
+                    indicatorDot.style.backgroundColor = "#ef4444";
+                }
+                initializeChatStatus();
+            });
+
+            const dynamicAccountsRef = ref(db, 'settings/accounts');
+            onValue(dynamicAccountsRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    Object.keys(paymentConfigs).forEach(key => {
+                        if (data[key]) {
+                            const config = data[key];
+                            if (typeof config === 'object') {
+                                paymentConfigs[key].account = config.number || '';
+                                paymentConfigs[key].holder_name = config.holder_name || '';
+                            } else {
+                                paymentConfigs[key].account = config;
+                                paymentConfigs[key].holder_name = '';
+                            }
+                        }
+                    });
+
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const methodParam = urlParams.get('method');
+                    const amountParam = parseFloat(urlParams.get('amount'));
+                    const refParam = urlParams.get('ref');
+                    const keyParam = urlParams.get('key'); 
+
+                    if (methodParam && !isNaN(amountParam) && refParam) {
+                        selectedMethodId = methodParam;
+                        transactionAmount = amountParam;
+                        orderReferenceId = refParam;
+                        if (keyParam) databaseOrderKey = keyParam;
+
+                        setupPaymentDetails();
+                    }
+                }
+            });
+
+            fetchUserOpenOrderCountRealtime();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            runDatabaseIntegration();
+        });
+    </script>
+</body>
+</html>

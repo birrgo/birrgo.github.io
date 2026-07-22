@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BirrGo Admin - System & Alerts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="deposits.css">
+    
+    <!-- EmailJS SDK v4 -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <style>
+        .btn-back-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 18px;
+            transition: background 0.2s ease, transform 0.1s ease;
+            margin-right: 12px;
+        }
+        .btn-back-icon:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .btn-back-icon:active {
+            transform: scale(0.95);
+        }
+
+        .custom-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e1e2d;
+            color: #ffffff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 4px solid var(--success-color, #10b981);
+        }
+        .custom-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .custom-toast .toast-icon {
+            font-size: 18px;
+        }
+
+        .dual-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 480px) {
+            .dual-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-nav">
+        <div class="brand-header">
+            <button class="btn-back-icon" onclick="window.history.back()" title="Go Back">
+                &#8592;
+            </button>
+            <div class="brand-logo">Birr<span>Go System & Alerts</span></div>
+        </div>
+        <div class="nav-tabs">
+            <button class="tab-btn active">System & Alerts</button>
+            <button class="tab-btn" onclick="window.location.href='deposits.html'">Go to Deposits Dashboard &rarr;</button>
+        </div>
+    </header>
+
+    <div class="content-body">
+        <div id="pane-stats" class="tab-panel active">
+            <div class="scrollable-content">
+                
+                <div class="status-toggle-row">
+                    <div>
+                        <h4 style="font-size: 13px; font-weight:800;">Global Platform Status</h4>
+                        <p style="font-size: 11px; color: var(--text-muted);" id="gateway-label">GATEWAY ONLINE</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="gateway-toggle" checked onchange="toggleGatewayMobile()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="mobile-metric-row">
+                    <div class="mini-stat-card" onclick="simulateIncomingAlerts()" style="cursor: pointer; border: 1.5px dashed var(--warning-color);">
+                        <div class="stat-label">Click to Mock Test ⚡</div>
+                        <div class="stat-value" style="color: var(--warning-color);" id="metric-pending">0</div>
+                    </div>
+                    <div class="mini-stat-card">
+                        <div class="stat-label">Verified Today</div>
+                        <div class="stat-value" style="color: var(--success-color);" id="metric-approved">0 ETB</div>
+                    </div>
+                </div>
+
+                <div class="card" style="border: 2.5px solid var(--primary-burgundy); background-color: #fdf2f4;">
+                    <h3 class="card-title" style="color: var(--primary-burgundy); display: flex; align-items: center; gap: 8px;">
+                        📧 Real-Time Email Dispatcher Config
+                    </h3>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                        When new transactions happen or support queries are sent, they are instantly redirected directly to your designated email address.
+                    </p>
+                    
+                    <div class="form-group">
+                        <label>Your Target Admin Email Address</label>
+                        <input type="email" class="form-control" id="target-email" placeholder="e.g. admin@yourdomain.com">
+                    </div>
+                    <div class="form-group">
+                        <label>EmailJS Public Key</label>
+                        <input type="text" class="form-control" id="emailjs-public-key" placeholder="e.g. user_A1b2C3d4...">
+                    </div>
+                    <div class="form-group">
+                        <label>EmailJS Service ID</label>
+                        <input type="text" class="form-control" id="emailjs-service-id" placeholder="e.g. service_gmail">
+                    </div>
+                    <div class="form-group">
+                        <label>EmailJS Template ID</label>
+                        <input type="text" class="form-control" id="emailjs-template-id" placeholder="e.g. template_alerts">
+                    </div>
+                    <button class="btn-primary" onclick="saveEmailSettings()">Save Settings & Test Dispatch</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" style="color: var(--primary-burgundy);">Commercial Bank of Ethiopia (CBE)</h3>
+                    <div class="dual-inputs">
+                        <div class="form-group">
+                            <label>Active Admin Account Number</label>
+                            <input type="text" class="form-control" id="cbe-num" placeholder="Account Number">
+                        </div>
+                        <div class="form-group">
+                            <label>Account Holder Full Name</label>
+                            <input type="text" class="form-control" id="cbe-name" placeholder="Full Name">
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="saveSettingWithDetails('cbe', 'cbe-num', 'cbe-name')">Save CBE Account</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" style="color: #10b981;">Telebirr Wallet</h3>
+                    <div class="dual-inputs">
+                        <div class="form-group">
+                            <label>Telebirr Registered Phone</label>
+                            <input type="text" class="form-control" id="tele-num" placeholder="Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <label>Registered Owner Full Name</label>
+                            <input type="text" class="form-control" id="tele-name" placeholder="Full Name">
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="background: linear-gradient(90deg, #059669 0%, #10b981 100%);" onclick="saveSettingWithDetails('telebirr', 'tele-num', 'tele-name')">Save Telebirr Info</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" style="color: #d97706;">Bank of Abyssinia (BoA)</h3>
+                    <div class="dual-inputs">
+                        <div class="form-group">
+                            <label>Active Admin Account</label>
+                            <input type="text" class="form-control" id="boa-num" placeholder="Account Number">
+                        </div>
+                        <div class="form-group">
+                            <label>Account Holder Full Name</label>
+                            <input type="text" class="form-control" id="boa-name" placeholder="Full Name">
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="background: linear-gradient(90deg, #b45309 0%, #d97706 100%);" onclick="saveSettingWithDetails('boa', 'boa-num', 'boa-name')">Save BoA Account</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" style="color: #ef4444;">M-Pesa Safaricom</h3>
+                    <div class="dual-inputs">
+                        <div class="form-group">
+                            <label>Admin Till / Phone</label>
+                            <input type="text" class="form-control" id="mpesa-num" placeholder="Till or Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <label>Merchant / Owner Full Name</label>
+                            <input type="text" class="form-control" id="mpesa-name" placeholder="Full Name">
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);" onclick="saveSettingWithDetails('mpesa', 'mpesa-num', 'mpesa-name')">Save M-Pesa Merchant</button>
+                </div>
+
+                <div class="card" style="margin-bottom: 32px;">
+                    <h3 class="card-title" style="color: #4f46e5;">CBE Birr</h3>
+                    <div class="dual-inputs">
+                        <div class="form-group">
+                            <label>Admin Wallet Number</label>
+                            <input type="text" class="form-control" id="cbebirr-num" placeholder="Wallet Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <label>Wallet Owner Full Name</label>
+                            <input type="text" class="form-control" id="cbebirr-name" placeholder="Full Name">
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="background: linear-gradient(90deg, #4338ca 0%, #4f46e5 100%);" onclick="saveSettingWithDetails('cbebirr', 'cbebirr-num', 'cbebirr-name')">Save CBE Birr Wallet</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-toast" id="system-toast">
+        <span class="toast-icon">🚀</span>
+        <span class="toast-text" id="toast-message">System updated successfully!</span>
+    </div>
+
+    <script type="module">
+        import { db, ref, set, get, onValue, push } from './db.js';
+
+        window.showToast = function(message, type = 'success') {
+            const toast = document.getElementById('system-toast');
+            const textEl = document.getElementById('toast-message');
+            
+            textEl.innerText = message;
+            if (type === 'success') {
+                toast.style.borderLeft = "4px solid #10b981";
+                toast.querySelector('.toast-icon').innerText = '✅';
+            } else if (type === 'error') {
+                toast.style.borderLeft = "4px solid #ef4444";
+                toast.querySelector('.toast-icon').innerText = '❌';
+            } else {
+                toast.style.borderLeft = "4px solid #f59e0b";
+                toast.querySelector('.toast-icon').innerText = '🔔';
+            }
+
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3500);
+        };
+
+        function sendEmailNotification(subjectText, txDetails = {}) {
+            get(ref(db, 'settings/email_config')).then((snapshot) => {
+                const config = snapshot.val();
+                if (!config) return;
+
+                const targetEmail = config.alert_email_target;
+                const publicKey = config.emailjs_public_key;
+                const serviceId = config.emailjs_service_id;
+                const templateId = config.emailjs_template_id;
+
+                const emailjsInstance = window.emailjs;
+
+                if (emailjsInstance && publicKey && serviceId && templateId && targetEmail) {
+                    emailjsInstance.init({ publicKey: publicKey });
+                    const templateParams = {
+                        name: txDetails.name || txDetails.userId || 'Guest Client',
+                        email: txDetails.email || txDetails.userId || 'N/A',
+                        amount: txDetails.amount || '0',
+                        subject: `⚠️ [BirrGo Alert] ${subjectText}`, 
+                        method: txDetails.method || 'Unknown Gateway',
+                        ref: txDetails.ref || 'N/A',
+                        status: txDetails.status || 'Pending',
+                        reason: txDetails.reason || 'None given'
+                    };
+                    emailjsInstance.send(serviceId, templateId, templateParams);
+                }
+            });
+        }
+
+        window.saveEmailSettings = function() {
+            const email = document.getElementById('target-email').value.trim();
+            const pubKey = document.getElementById('emailjs-public-key').value.trim();
+            const serviceId = document.getElementById('emailjs-service-id').value.trim();
+            const templateId = document.getElementById('emailjs-template-id').value.trim();
+
+            if (!email || !pubKey || !serviceId || !templateId) {
+                window.showToast("All configuration fields are required!", "error");
+                return;
+            }
+
+            set(ref(db, 'settings/email_config'), {
+                alert_email_target: email,
+                emailjs_public_key: pubKey,
+                emailjs_service_id: serviceId,
+                emailjs_template_id: templateId
+            })
+            .then(() => {
+                window.showToast("Cloud Email configurations updated successfully!");
+                sendEmailNotification("System Cloud Integration Verified", {
+                    name: "BirrGo Administrator",
+                    email: email,
+                    amount: "0",
+                    method: "Database Setup Check",
+                    ref: "SYS-DB-INIT",
+                    status: "Active"
+                });
+            })
+            .catch(err => {
+                window.showToast("Failed to write to Cloud DB: " + err.message, "error");
+            });
+        };
+
+        window.saveSettingWithDetails = function(gateway, numberInputId, nameInputId) {
+            const numberVal = document.getElementById(numberInputId).value.trim();
+            const nameVal = document.getElementById(nameInputId).value.trim();
+
+            if (!numberVal || !nameVal) {
+                window.showToast("Please fill out both details", "error");
+                return;
+            }
+
+            set(ref(db, `settings/accounts/${gateway}`), {
+                number: numberVal,
+                holder_name: nameVal
+            })
+            .then(() => {
+                window.showToast(`${gateway.toUpperCase()} config updated!`);
+            })
+            .catch(err => {
+                window.showToast("Cloud write failed: " + err.message, "error");
+            });
+        };
+
+        window.toggleGatewayMobile = function() {
+            const active = document.getElementById('gateway-toggle').checked;
+            set(ref(db, 'settings/gateway_online'), active)
+                .catch(err => {
+                    window.showToast("Error saving state: " + err.message, "error");
+                    document.getElementById('gateway-toggle').checked = !active;
+                });
+        };
+
+        window.simulateIncomingAlerts = function() {
+            const randomId = '0912345678';
+            const randomMethod = 'Telebirr wallet';
+            const randomAmount = 1000;
+            const randomRef = 'BG-' + Math.floor(100000 + Math.random() * 900000);
+            
+            const newOrderRef = push(ref(db, 'deposits'));
+            const payload = {
+                ref: randomRef,
+                method: randomMethod,
+                userId: randomId,
+                amount: randomAmount,
+                status: 'Pending',
+                timestamp: Date.now()
+            };
+
+            set(newOrderRef, payload).then(() => {
+                window.showToast("Simulation Event Executed!", "warning");
+            });
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            onValue(ref(db, 'settings/email_config'), (snapshot) => {
+                const config = snapshot.val();
+                if (config) {
+                    if (config.alert_email_target) document.getElementById('target-email').value = config.alert_email_target;
+                    if (config.emailjs_public_key) document.getElementById('emailjs-public-key').value = config.emailjs_public_key;
+                    if (config.emailjs_service_id) document.getElementById('emailjs-service-id').value = config.emailjs_service_id;
+                    if (config.emailjs_template_id) document.getElementById('emailjs-template-id').value = config.emailjs_template_id;
+                }
+            });
+
+            get(ref(db, 'settings/accounts')).then((snapshot) => {
+                const acc = snapshot.val() || {};
+                const loadDetails = (gatewayKey, numInputId, nameInputId) => {
+                    if (acc[gatewayKey]) {
+                        const details = acc[gatewayKey];
+                        if (typeof details === 'object') {
+                            document.getElementById(numInputId).value = details.number || '';
+                            document.getElementById(nameInputId).value = details.holder_name || '';
+                        } else {
+                            document.getElementById(numInputId).value = details;
+                        }
+                    }
+                };
+                loadDetails('cbe', 'cbe-num', 'cbe-name');
+                loadDetails('telebirr', 'tele-num', 'tele-name');
+                loadDetails('boa', 'boa-num', 'boa-name');
+                loadDetails('mpesa', 'mpesa-num', 'mpesa-name');
+                loadDetails('cbebirr', 'cbebirr-num', 'cbebirr-name');
+            });
+
+            onValue(ref(db, 'settings/gateway_online'), (snapshot) => {
+                const isOnline = snapshot.val() !== false; 
+                const toggleInput = document.getElementById('gateway-toggle');
+                const label = document.getElementById('gateway-label');
+                toggleInput.checked = isOnline;
+                if (isOnline) {
+                    label.innerText = "GATEWAY ONLINE";
+                    label.style.color = "var(--success-color)";
+                } else {
+                    label.innerText = "GATEWAY OFFLINE";
+                    label.style.color = "var(--danger-color)";
+                }
+            });
+
+            onValue(ref(db, 'deposits'), (snapshot) => {
+                const data = snapshot.val() || {};
+                let pendingCount = 0;
+                let approvedTotal = 0;
+                Object.values(data).forEach(dep => {
+                    if ((dep.status || '').toLowerCase() === 'pending') pendingCount++;
+                    if ((dep.status || '').toLowerCase() === 'approved') approvedTotal += parseFloat(dep.amount || 0);
+                });
+                document.getElementById('metric-pending').innerText = pendingCount;
+                document.getElementById('metric-approved').innerText = `${approvedTotal.toLocaleString()} ETB`;
+            });
+        });
+    </script>
+</body>
+</html>
