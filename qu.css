@@ -40,15 +40,15 @@ body {
   position: relative;
 }
 
-/* CURVED TOP HEADER WITH SHINE */
+/* CURVED TOP HEADER - LOWER HEIGHT CURVE & CENTERED TITLE */
 .wavy-header {
   background: linear-gradient(135deg, var(--burgundy-dark) 0%, var(--burgundy) 40%, var(--burgundy-vivid) 70%, var(--burgundy-light) 100%);
   color: #ffffff;
-  padding: 12px 16px 22px 16px;
+  padding: 10px 16px 14px 16px;
   text-align: center;
   position: relative;
-  clip-path: ellipse(120% 100% at 50% 0%);
-  box-shadow: 0 6px 20px rgba(88, 0, 22, 0.35);
+  clip-path: ellipse(200% 100% at 50% -35%);
+  box-shadow: 0 4px 12px rgba(88, 0, 22, 0.25);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -66,14 +66,14 @@ body {
 
 .back-btn {
   position: absolute;
-  top: 10px;
+  top: 8px;
   left: 12px;
   background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-decoration: none;
   display: flex;
@@ -89,61 +89,54 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-}
-
-.header-logo-badge {
-  width: 36px;
-  height: 36px;
-  background: #ffffff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 2px 6px rgba(0,0,0,0.3);
-  margin-bottom: 2px;
-}
-
-.header-logo-badge img {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
+  text-align: center;
+  width: 100%;
 }
 
 .wavy-header h1 { 
   font-size: 1.15rem; 
   font-weight: 800; 
   letter-spacing: 0.3px; 
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  margin: 0 auto;
 }
 
 .wavy-header p { 
-  font-size: 0.75rem; 
+  font-size: 0.72rem; 
   opacity: 0.95; 
   font-weight: 500; 
   text-shadow: 0 1px 2px rgba(0,0,0,0.2); 
+  margin-top: 1px;
 }
 
-/* AD BANNERS */
+/* EMPTY AD CONTAINER - DASHED BORDER */
 .ad-banner.ad-top { margin: 6px 16px 2px 16px; }
 .ad-banner.ad-bottom { margin: 2px 16px 6px 16px; }
 
 .ad-banner {
   background: #ffffff;
-  padding: 8px 12px;
+  padding: 0;
   border-radius: 12px;
-  border: 2px solid #cbd5e1;
-  border-bottom: 3.5px solid #94a3b8;
+  border: 1px dashed #cbd5e1;
   text-align: center;
-  font-size: 0.82rem;
-  color: var(--burgundy-vivid);
-  font-weight: 800;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  box-shadow: none;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 48px;
+  position: relative;
+}
+
+.ad-banner::after {
+  content: 'AD';
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font-size: 0.60rem;
+  color: #94a3b8;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 /* MAIN CONTAINER */
@@ -586,5 +579,3 @@ body {
 }
 
 .hidden { display: none !important; }
-
-
