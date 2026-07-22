@@ -6,284 +6,181 @@
     <title>BirrGo - Social Challenge</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(135deg, #800020 0%, #4a0000 100%);
-            
-            /* Modern Digital White & Tech Gradient Palette */
+            --primary-burgundy: #500614;
+            --primary-gradient: linear-gradient(135deg, #500614 0%, #2a0005 100%);
             --card-tech-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            --blue-glow-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.12), 0 0 12px rgba(56, 189, 248, 0.18);
-            
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --bg-light: #f8fafc;
-            --success-green: #059669;
-            --warning-amber: #d97706;
-            --border-radius-lg: 20px;
-            --border-radius-md: 16px;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+            --border-radius-lg: 12px;
+            --border-radius-md: 8px;
+            --nav-bar-height: 70px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.2px;
-            -webkit-tap-highlight-color: transparent;
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
+            letter-spacing: -0.15px; 
+            -webkit-tap-highlight-color: transparent; 
         }
 
-        html {
-            width: 100%;
-            height: 100%;
-            background-color: #f1f5f9;
+        html, body { 
+            width: 100%; 
+            height: 100%; 
+            min-height: 100vh; 
+            background-color: var(--bg-light); 
+            overflow: hidden; 
+            font-size: 12px; 
         }
 
-        body {
-            width: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
-            background-color: #f1f5f9;
-            display: flex;
+        /* PWA Shell Structure */
+        .app-view { 
+            width: 100%; 
+            height: 100vh; 
+            height: 100dvh; 
+            background-color: var(--bg-light); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden; 
+            transition: filter 0.3s ease; 
+        }
+        
+        .app-view.network-offline-blur { 
+            filter: blur(10px) grayscale(20%); 
+            pointer-events: none; 
+        }
+
+        /* Offline Banner */
+        .offline-banner { 
+            position: absolute; 
+            top: env(safe-area-inset-top, 10px); 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: rgba(15, 23, 42, 0.9); 
+            color: #fff; 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            font-size: 0.65rem; 
+            font-weight: 700; 
+            z-index: 1000; 
+            display: none; 
+            backdrop-filter: blur(8px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
+        }
+        .app-view.network-offline-blur .offline-banner { display: block; }
+
+        /* Liquid Wave Decorations */
+        .bg-wave { position: absolute; left: 0; right: 0; width: 100%; z-index: 0; pointer-events: none; }
+        .bg-wave-top { top: 0; height: 90px; }
+        .bg-wave-bottom { bottom: 0; height: 35px; }
+
+        /* Header Layout - Centered Title & Clear Icon-Only Back Button */
+        .brand-header { 
+            display: grid; 
+            grid-template-columns: 32px 1fr 32px; 
+            align-items: center; 
+            padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 6px 12px; 
+            position: relative; 
+            z-index: 5; 
+            flex-shrink: 0; 
+        }
+
+        .back-btn-icon {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: none; 
+            display: flex; 
+            align-items: center; 
             justify-content: center;
-            align-items: center;
-            perspective: 1000px;
+            cursor: pointer; 
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); 
+            transition: transform 0.15s ease, background-color 0.15s ease;
         }
+        .back-btn-icon:active { transform: scale(0.90); }
+        .back-btn-icon svg { width: 16px; height: 16px; stroke: var(--primary-burgundy); }
 
-        .app-view {
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            max-width: 450px;
-            background-color: var(--bg-light);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 40px rgba(128, 0, 32, 0.08);
-            overflow: hidden;
-            transition: filter 0.3s ease;
-            transform-style: preserve-3d;
-        }
-
-        /* Tech Circuit Pattern on Clean White Background */
-        .tech-bg-pattern {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.6;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(128, 0, 32, 0.05) 0%, transparent 20%),
-                radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 16px 16px;
-        }
-
-        .app-view.network-offline-blur {
-            filter: blur(6px);
-            pointer-events: none;
-        }
-
-        /* Top Red Wave Header Container */
-        .top-wave-header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: calc(82px + env(safe-area-inset-top, 0px));
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .top-wave-header svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-            filter: drop-shadow(0 4px 10px rgba(128, 0, 32, 0.3));
-        }
-
-        .bottom-wave-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: calc(75px + env(safe-area-inset-bottom, 0px));
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .bottom-wave-footer svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        /* Brand Header positioned strictly ON TOP of the Red Wave */
-        .brand-header {
-            position: absolute;
-            top: calc(10px + env(safe-area-inset-top, 0px));
-            left: 16px;
-            right: 16px;
-            z-index: 20;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* Centered Header Title in Red Wave */
-        .header-title {
-            font-size: 15px;
+        .header-center-title {
+            text-align: center;
+            font-size: 0.85rem;
             font-weight: 800;
             color: #ffffff;
-            text-align: center;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            padding: 0 8px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
-        /* 3D Glossy White Glass Back Button directly on Red Wave */
-        .back-btn {
-            position: relative;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            font-weight: 900;
-            color: var(--primary-burgundy);
-            cursor: pointer;
-            outline: none;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 1);
-            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
-            flex-shrink: 0;
-        }
-
-        .back-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 70%);
-            transform: rotate(30deg);
-            animation: gloss-shine 4s infinite;
-            pointer-events: none;
-        }
-
-        @keyframes gloss-shine {
-            0% { transform: translateX(-100%) rotate(30deg); }
-            20% { transform: translateX(100%) rotate(30deg); }
-            100% { transform: translateX(100%) rotate(30deg); }
-        }
-
-        .back-btn:active {
-            transform: translateY(2px) scale(0.94);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Logo positioned directly inside the Red Wave Header */
-        .logo-image {
-            height: 30px;
-            width: auto;
-            object-fit: contain;
+        .logo-image { 
+            height: 22px; 
+            width: auto; 
+            object-fit: contain; 
+            justify-self: end; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); 
             transition: filter 0.3s ease, opacity 0.3s ease;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)) brightness(1.1);
-            flex-shrink: 0;
         }
 
-        .img-blur-loading {
-            filter: blur(8px);
-            opacity: 0.5;
-        }
+        .img-blur-loading { filter: blur(8px); opacity: 0.5; }
+        .img-blur-loaded { filter: blur(0); opacity: 1; }
 
-        .img-blur-loaded {
-            filter: blur(0);
-            opacity: 1;
-        }
-
-        /* Adjusted padding & scrollable area */
-        .app-content {
-            flex: 1;
-            overflow-y: auto;
-            padding-top: calc(78px + env(safe-area-inset-top, 0px));
-            padding-left: 16px;
-            padding-right: 16px;
-            padding-bottom: calc(115px + env(safe-area-inset-bottom, 16px));
-            scrollbar-width: none;
-            position: relative;
-            z-index: 2;
-            -webkit-overflow-scrolling: touch;
+        /* Content Container with Navigation Safe Areas */
+        .app-content { 
+            flex: 1 1 auto; 
+            min-height: 0; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 12px 10px calc(var(--nav-bar-height) + env(safe-area-inset-bottom, 12px)) 10px; 
+            position: relative; 
+            z-index: 2; 
+            gap: 10px; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            scrollbar-width: none; 
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        /* Compact Task Container Layout */
         .task-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
-        /* High Visibility Modern Tech White Boxes with Motion */
+        /* Tech Light Cards with Burgundy Accents */
         .task-card {
             background: var(--card-tech-bg);
-            border: 1.5px solid #e2e8f0;
-            border-radius: var(--border-radius-md);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-lg);
             padding: 10px 12px;
-            box-shadow: var(--blue-glow-shadow);
+            box-shadow: var(--card-shadow);
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 10px;
             position: relative;
             overflow: hidden;
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
-        }
-
-        /* Smooth Light Sweeping Motion */
-        .task-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 70%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.25), rgba(255, 255, 255, 0.8), transparent);
-            transform: skewX(-20deg);
-            animation: card-light-sweep 4.5s infinite;
-        }
-
-        @keyframes card-light-sweep {
-            0% { left: -100%; }
-            25% { left: 200%; }
-            100% { left: 200%; }
-        }
-
-        .task-card:hover {
-            border-color: #38bdf8;
-            box-shadow: 0 10px 24px -4px rgba(37, 99, 235, 0.18), 0 0 16px rgba(56, 189, 248, 0.25);
-            transform: translateY(-2px);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
         }
 
         .task-card:active {
-            transform: translateY(2px) scale(0.98);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transform: scale(0.98);
         }
 
         .task-card.completed {
-            border-color: #a7f3d0;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: #cbd5e1;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         }
 
         .task-left {
@@ -294,228 +191,210 @@
 
         .task-icon-badge {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-light);
             width: 38px;
             height: 38px;
-            border-radius: 12px;
+            border-radius: var(--border-radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
         }
 
         .task-logo-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 6px;
             transition: filter 0.3s ease, opacity 0.3s ease;
         }
 
         .task-details h4 {
-            font-size: 12.5px;
-            font-weight: 700;
+            font-size: 0.78rem;
+            font-weight: 800;
             color: var(--text-dark);
             margin-bottom: 2px;
             line-height: 1.2;
         }
 
         .task-details p {
-            font-size: 11px;
-            color: #2563eb;
+            font-size: 0.68rem;
+            color: var(--primary-burgundy);
             font-weight: 800;
         }
 
-        /* Smooth Animated Action Buttons */
+        /* Standard Action Buttons */
         .task-btn {
             border: none;
-            border-radius: 100px;
-            padding: 6px 14px;
-            font-size: 11px;
+            border-radius: 16px;
+            padding: 5px 14px;
+            font-size: 0.65rem;
             font-weight: 800;
             cursor: pointer;
             text-decoration: none;
             text-align: center;
             white-space: nowrap;
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
         }
 
         .btn-follow {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            background: var(--primary-gradient);
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
-        .btn-follow:hover {
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
-            transform: translateY(-1px);
-        }
+        .btn-follow:active { transform: scale(0.95); }
 
         .btn-verify {
             background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
         }
 
         .status-checking {
             color: #d97706;
-            font-size: 11px;
+            font-size: 0.65rem;
             font-weight: 700;
         }
 
         .status-verified {
             color: #64748b;
-            font-size: 11px;
+            font-size: 0.65rem;
             font-weight: 800;
             background: #e2e8f0;
             border: 1px solid #cbd5e1;
-            padding: 5px 12px;
-            border-radius: 100px;
+            padding: 4px 10px;
+            border-radius: 16px;
             display: inline-block;
         }
 
-        /* Safe Advertisement Container above Mobile Navigation Bar */
-        .ad-container {
-            position: absolute;
-            bottom: calc(12px + env(safe-area-inset-bottom, 12px));
-            left: 16px;
-            right: 16px;
-            z-index: 15;
-            background: #ffffff;
-            border: 1.5px dashed #cbd5e1;
-            border-radius: var(--border-radius-lg);
-            padding: 10px 16px;
-            text-align: center;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 70px;
-            pointer-events: auto;
+        /* Fixed Bottom Ad Wrapper */
+        .bottom-wrapper { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            flex-shrink: 0; 
+            z-index: 30; 
+            padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; 
+            background: rgba(248, 250, 252, 0.94); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            border-top: 1px solid var(--border-light); 
         }
 
-        .ad-badge {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            font-size: 10px;
-            font-weight: 800;
-            color: #94a3b8;
-            background: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
+        .ad-container { 
+            position: relative; 
+            z-index: 2; 
+            background: var(--card-tech-bg); 
+            border: 1px dashed #cbd5e1; 
+            border-radius: 10px; 
+            padding: 5px 10px; 
+            display: flex; 
+            flex-direction: row; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+            min-height: 38px; 
+            box-shadow: var(--card-shadow); 
+            user-select: none; 
         }
 
-        .ad-icon {
-            font-size: 20px;
-            margin-bottom: 2px;
+        .ad-badge { position: absolute; top: 2px; right: 6px; font-size: 7px; font-weight: 800; color: #94a3b8; }
+        .ad-icon { font-size: 12px; }
+        .ad-label { font-size: 8.5px; font-weight: 700; color: #94a3b8; }
+
+        /* Modal Popup */
+        .popup-backdrop { 
+            position: fixed; 
+            inset: 0; 
+            background-color: rgba(15, 23, 42, 0.55); 
+            backdrop-filter: blur(6px); 
+            -webkit-backdrop-filter: blur(6px); 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 2000; 
+            opacity: 0; 
+            transition: opacity 0.2s ease; 
         }
 
-        .ad-text {
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8;
+        .popup-backdrop.active { display: flex; opacity: 1; }
+
+        .popup-card { 
+            background-color: #ffffff; 
+            border-radius: var(--border-radius-lg); 
+            padding: 16px 14px; 
+            width: 84%; 
+            max-width: 290px; 
+            text-align: center; 
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.16); 
         }
 
-        .popup-backdrop {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 6000;
-        }
-
-        .popup-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 24px 20px;
-            width: 88%;
-            max-width: 320px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .popup-btn {
-            width: 100%;
-            background: var(--primary-gradient);
-            border: none;
-            border-radius: 100px;
-            padding: 12px;
-            font-size: 13px;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-            margin-top: 16px;
-            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+        .popup-btn { 
+            width: 100%; 
+            background: var(--primary-gradient); 
+            border: none; 
+            border-radius: var(--border-radius-md); 
+            padding: 9px; 
+            font-size: 0.72rem; 
+            font-weight: 700; 
+            color: white; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            box-shadow: 0 3px 8px rgba(80, 6, 20, 0.22); 
         }
     </style>
 </head>
 <body>
 
     <div class="app-view" id="appView">
-        
-        <div class="tech-bg-pattern"></div>
+        <div class="offline-banner">📡 Weak Connection - Reconnecting...</div>
 
+        <!-- Top Wave Decoration -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 H375 V40 C 240 80, 130 30, 0 40 Z" fill="#500614"/>
+        </svg>
+
+        <!-- Bottom Wave Decoration -->
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 35" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 35 H0 V12 C 120 0, 260 20, 375 8 Z" fill="#500614"/>
+        </svg>
+
+        <!-- Header with Centered Title & Icon-Only Back Button -->
         <div class="brand-header">
-            <button class="back-btn" id="backToGiveBtn" aria-label="Back">←</button>
-            <span class="header-title">BirrGo - Social Challenge</span>
+            <button class="back-btn-icon" id="backToGiveBtn" aria-label="Back">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            
+            <h1 class="header-center-title">Social Challenge</h1>
+
             <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
-        </div>
-        
-        <div class="top-wave-header">
-            <svg viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0H375V55C250 85 125 40 0 65V0Z" fill="url(#brandGradientTop)"/>
-                <defs>
-                    <linearGradient id="brandGradientTop" x1="0" y1="0" x2="375" y2="90" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#800020"/>
-                        <stop offset="1" stop-color="#5a0016"/>
-                    </linearGradient>
-                </defs>
-            </svg>
         </div>
 
         <!-- Scrollable Content Area -->
         <div class="app-content">
-            <div class="task-container" id="socialTasksContainer">
+            <div class="task-container" id="socialTasksContainer"></div>
+        </div>
+
+        <!-- Bottom Fixed Ad Banner -->
+        <div class="bottom-wrapper">
+            <div class="ad-container">
+                <span class="ad-badge">AD</span>
+                <span class="ad-icon">📢</span>
+                <span class="ad-label">Advertisement Space</span>
             </div>
         </div>
 
-        <!-- Bottom Wave Graphic Background -->
-        <div class="bottom-wave-footer">
-            <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
-                <defs>
-                    <linearGradient id="brandGradientBottom" x1="0" y1="80" x2="375" y2="0" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#800020"/>
-                        <stop offset="1" stop-color="#5a0016"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
-
-        <!-- Fixed Advertisement Space Over Bottom Wave -->
-        <div class="ad-container">
-            <span class="ad-badge">AD</span>
-            <div class="ad-icon">📢</div>
-            <div class="ad-text">Advertisement Space</div>
-        </div>
-
+        <!-- Completion Modal -->
         <div class="popup-backdrop" id="completionPopup">
             <div class="popup-card">
-                <h3 style="font-size:18px; font-weight:800; color:#059669; margin-bottom:8px;">Congratulations!</h3>
-                <p style="font-size:13px; color:#334155; font-weight:600; line-height:1.4;"><span id="popupRewardDisplay">20</span> Birr is added to your wallet.</p>
+                <h3 style="font-size:0.88rem; font-weight:800; color:#059669; margin-bottom:5px;">Congratulations!</h3>
+                <p style="font-size:0.72rem; color:var(--text-muted); font-weight:500; line-height:1.4;"><span id="popupRewardDisplay" style="font-weight:800; color:var(--text-dark);">20</span> Birr has been credited to your wallet balance.</p>
                 <button class="popup-btn" id="popupCloseBtn">Great!</button>
             </div>
         </div>
@@ -547,7 +426,7 @@
             }
 
             const appView = document.getElementById('appView');
-            const handleNetworkChange = () => {
+            const handleNetworkStatus = () => {
                 if (!navigator.onLine) {
                     appView.classList.add('network-offline-blur');
                 } else {
@@ -555,9 +434,9 @@
                 }
             };
 
-            window.addEventListener('offline', handleNetworkChange);
-            window.addEventListener('online', handleNetworkChange);
-            handleNetworkChange();
+            window.addEventListener('offline', handleNetworkStatus);
+            window.addEventListener('online', handleNetworkStatus);
+            handleNetworkStatus();
 
             const firebaseConfig = {
                 apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -585,7 +464,6 @@
             let userDbClaimedTasks = {};
 
             try {
-                // Fetch links and campaign version from DB
                 const linksSnapshot = await get(ref(db, 'new/social_links'));
                 if (linksSnapshot.exists()) {
                     const data = linksSnapshot.val();
@@ -598,7 +476,6 @@
                     if (data.yt) adminSocialChannels[4].link = data.yt.startsWith('vnd.youtube://') ? 'https://youtube.com/' : data.yt;
                 }
 
-                // Fetch database records for user's claims under the current version
                 const claimedSnapshot = await get(ref(db, `users/${activeUserPhone}/claimed_social_tasks_v${matrixVersion}`));
                 if (claimedSnapshot.exists()) {
                     userDbClaimedTasks = claimedSnapshot.val() || {};
@@ -618,7 +495,6 @@
                     const isClaimedLocally = localStorage.getItem(storageKey) === 'true';
                     const isClaimedInDb = userDbClaimedTasks[item.id] === true;
 
-                    // Strictly lock task if claimed either in database or local storage
                     const isAlreadyClaimed = isClaimedLocally || isClaimedInDb;
 
                     const card = document.createElement('div');
@@ -731,10 +607,8 @@
                                 timestamp: timeStr
                             });
 
-                            // Save lock state to Firebase Realtime Database
                             await set(ref(db, `users/${activeUserPhone}/claimed_social_tasks_v${matrixVersion}/${id}`), true);
 
-                            // Save lock state locally
                             const storageKey = `claimed_task_${activeUserPhone}_${id}_v${matrixVersion}`;
                             localStorage.setItem(storageKey, 'true');
 
@@ -750,7 +624,8 @@
                             node.innerHTML = `<span class="status-verified">Claimed</span>`;
 
                             document.getElementById('popupRewardDisplay').innerText = operationalPrize;
-                            document.getElementById('completionPopup').style.display = 'flex';
+                            const popup = document.getElementById('completionPopup');
+                            popup.classList.add('active');
 
                         } catch (err) {
                             console.error("Pipeline Sync Error:", err);
@@ -772,7 +647,9 @@
             }
 
             document.getElementById('backToGiveBtn').addEventListener('click', () => window.location.replace('give.html'));
-            document.getElementById('popupCloseBtn').addEventListener('click', () => document.getElementById('completionPopup').style.display = 'none');
+            document.getElementById('popupCloseBtn').addEventListener('click', () => {
+                document.getElementById('completionPopup').classList.remove('active');
+            });
 
             initSocialCampaign();
         });

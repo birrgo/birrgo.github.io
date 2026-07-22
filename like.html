@@ -10,270 +10,177 @@
     
     <style>
         :root {
-            --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(135deg, #800020 0%, #4a0000 100%);
+            --primary-burgundy: #500614;
+            --primary-gradient: linear-gradient(135deg, #500614 0%, #2a0005 100%);
             --card-tech-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            --blue-glow-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.12), 0 0 12px rgba(56, 189, 248, 0.18);
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --bg-light: #f8fafc;
-            --border-radius-md: 16px;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+            --border-radius-lg: 12px;
+            --border-radius-md: 8px;
+            --nav-bar-height: 70px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.2px;
-            -webkit-tap-highlight-color: transparent;
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
+            letter-spacing: -0.15px; 
+            -webkit-tap-highlight-color: transparent; 
         }
 
-        html {
-            width: 100%;
-            height: 100%;
-            background-color: #f1f5f9;
+        html, body { 
+            width: 100%; 
+            height: 100%; 
+            min-height: 100vh; 
+            background-color: var(--bg-light); 
+            overflow: hidden; 
+            font-size: 12px; 
         }
 
-        body {
-            width: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
-            background-color: #f1f5f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            perspective: 1000px;
+        /* PWA Shell Structure */
+        .app-view { 
+            width: 100%; 
+            height: 100vh; 
+            height: 100dvh; 
+            background-color: var(--bg-light); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden; 
+            transition: filter 0.3s ease; 
+        }
+        
+        .app-view.network-offline-blur { 
+            filter: blur(10px) grayscale(20%); 
+            pointer-events: none; 
         }
 
-        .app-view {
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            max-width: 450px;
-            background-color: var(--bg-light);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 40px rgba(128, 0, 32, 0.08);
-            overflow: hidden;
-            transition: filter 0.3s ease;
-            transform-style: preserve-3d;
+        /* Offline Banner */
+        .offline-banner { 
+            position: absolute; 
+            top: env(safe-area-inset-top, 10px); 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: rgba(15, 23, 42, 0.9); 
+            color: #fff; 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            font-size: 0.65rem; 
+            font-weight: 700; 
+            z-index: 1000; 
+            display: none; 
+            backdrop-filter: blur(8px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
+        }
+        .app-view.network-offline-blur .offline-banner { display: block; }
+
+        /* Liquid Wave Decorations */
+        .bg-wave { position: absolute; left: 0; right: 0; width: 100%; z-index: 0; pointer-events: none; }
+        .bg-wave-top { top: 0; height: 90px; }
+        .bg-wave-bottom { bottom: 0; height: 35px; }
+
+        /* Header Layout - Centered Title & Clear Icon-Only Back Button */
+        .brand-header { 
+            display: grid; 
+            grid-template-columns: 32px 1fr 32px; 
+            align-items: center; 
+            padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 6px 12px; 
+            position: relative; 
+            z-index: 5; 
+            flex-shrink: 0; 
         }
 
-        .tech-bg-pattern {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.6;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(128, 0, 32, 0.05) 0%, transparent 20%),
-                radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 16px 16px;
-        }
-
-        .app-view.network-offline-blur {
-            filter: blur(6px);
-            pointer-events: none;
-        }
-
-        /* Fixed Top Section - Reduced Wave Curve Height */
-        .top-wave-header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: calc(60px + env(safe-area-inset-top, 0px));
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .top-wave-header svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-            filter: drop-shadow(0 4px 10px rgba(128, 0, 32, 0.3));
-        }
-
-        .brand-header {
-            position: absolute;
-            top: calc(8px + env(safe-area-inset-top, 0px));
-            left: 16px;
-            right: 16px;
-            z-index: 20;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .back-btn {
-            position: relative;
-            width: 34px;
-            height: 34px;
+        .back-btn-icon {
+            width: 30px; 
+            height: 30px; 
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            border: none; 
+            display: flex; 
+            align-items: center; 
             justify-content: center;
-            font-size: 16px;
-            font-weight: 900;
-            color: var(--primary-burgundy);
-            cursor: pointer;
+            cursor: pointer; 
             outline: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 1);
-            transition: transform 0.15s, box-shadow 0.15s ease;
-            z-index: 2;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); 
+            transition: transform 0.15s ease, background-color 0.15s ease;
         }
-        .back-btn:active {
-            transform: translateY(2px) scale(0.94);
-        }
+        .back-btn-icon:active { transform: scale(0.90); }
+        .back-btn-icon svg { width: 16px; height: 16px; stroke: var(--primary-burgundy); }
 
-        /* Title Inside Top Red Curve */
-        .top-title {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 800;
-            letter-spacing: 0.2px;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            white-space: nowrap;
+        .header-center-title {
             text-align: center;
-        }
-
-        .logo-image {
-            height: 28px;
-            width: auto;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)) brightness(1.1);
-            transition: filter 0.3s ease, opacity 0.3s ease;
-            z-index: 2;
-        }
-
-        .img-blur-loading {
-            filter: blur(8px);
-            opacity: 0.5;
-        }
-
-        .img-blur-loaded {
-            filter: blur(0);
-            opacity: 1;
-        }
-
-        /* Fixed Bottom Wave Curve & Ad Space Container */
-        .bottom-wave-header {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: calc(65px + env(safe-area-inset-bottom, 0px));
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .bottom-wave-header svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .ad-container {
-            position: absolute;
-            bottom: calc(12px + env(safe-area-inset-bottom, 12px));
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 360px;
-            height: 70px;
-            z-index: 15;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1.5px dashed #cbd5e1;
-            border-radius: var(--border-radius-md);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
-        }
-
-        .ad-tag {
-            position: absolute;
-            top: 4px;
-            right: 6px;
-            font-size: 9px;
+            font-size: 0.85rem;
             font-weight: 800;
-            color: #94a3b8;
-            background: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
+            color: #ffffff;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
-        .ad-icon {
-            font-size: 16px;
-            margin-bottom: 2px;
+        .logo-image { 
+            height: 22px; 
+            width: auto; 
+            object-fit: contain; 
+            justify-self: end; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); 
+            transition: filter 0.3s ease, opacity 0.3s ease;
         }
 
-        .ad-text {
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8;
-        }
+        .img-blur-loading { filter: blur(8px); opacity: 0.5; }
+        .img-blur-loaded { filter: blur(0); opacity: 1; }
 
-        /* Scrollable Content Area - Dynamic Inset Margins */
-        .app-content {
-            flex: 1;
-            overflow-y: auto;
-            padding-top: calc(68px + env(safe-area-inset-top, 0px));
-            padding-left: 16px;
-            padding-right: 16px;
-            padding-bottom: calc(115px + env(safe-area-inset-bottom, 16px));
-            scrollbar-width: none;
-            position: relative;
-            z-index: 2;
-            -webkit-overflow-scrolling: touch;
+        /* Content Container with Navigation Safe Areas */
+        .app-content { 
+            flex: 1 1 auto; 
+            min-height: 0; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 12px 10px calc(var(--nav-bar-height) + env(safe-area-inset-bottom, 12px)) 10px; 
+            position: relative; 
+            z-index: 2; 
+            gap: 10px; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            scrollbar-width: none; 
         }
         .app-content::-webkit-scrollbar { display: none; }
 
         .task-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            margin-top: 4px;
+            gap: 10px;
         }
 
+        /* Tech Light Cards with Burgundy Accents */
         .task-card {
-            width: 92%;
-            max-width: 360px;
             background: var(--card-tech-bg);
-            border: 1.5px solid #e2e8f0;
-            border-radius: var(--border-radius-md);
-            padding: 12px 14px;
-            box-shadow: var(--blue-glow-shadow);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-lg);
+            padding: 10px 12px;
+            box-shadow: var(--card-shadow);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: transform 0.25s, box-shadow 0.25s;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
         }
 
-        .task-card:hover {
-            border-color: #cbd5e1;
-            transform: translateY(-2px);
+        .task-card:active {
+            transform: scale(0.98);
         }
 
         .task-card.completed {
-            border-color: #a7f3d0;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: #cbd5e1;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         }
 
         .task-left {
@@ -284,199 +191,218 @@
 
         .task-icon-badge {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            width: 38px;
+            height: 38px;
+            border-radius: var(--border-radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
         }
 
-        .task-icon-badge img {
+        .task-logo-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: 6px;
+            transition: filter 0.3s ease, opacity 0.3s ease;
         }
 
         .task-details h4 {
-            font-size: 13px;
+            font-size: 0.78rem;
             font-weight: 800;
             color: var(--text-dark);
             margin-bottom: 2px;
+            line-height: 1.2;
         }
 
         .task-details p {
-            font-size: 11px;
-            color: #2563eb;
+            font-size: 0.68rem;
+            color: var(--primary-burgundy);
             font-weight: 800;
         }
 
+        /* Standard Action Buttons */
         .task-btn {
             border: none;
-            border-radius: 100px;
-            padding: 7px 14px;
-            font-size: 11px;
+            border-radius: 16px;
+            padding: 5px 14px;
+            font-size: 0.65rem;
             font-weight: 800;
             cursor: pointer;
             text-decoration: none;
             text-align: center;
-            display: inline-block;
-            transition: transform 0.15s ease, opacity 0.15s ease;
-        }
-
-        .task-btn:active {
-            transform: scale(0.95);
+            white-space: nowrap;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
         }
 
         .btn-follow {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            background: var(--primary-gradient);
             color: #ffffff;
-            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
         }
+
+        .btn-follow:active { transform: scale(0.95); }
 
         .btn-verify {
             background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
             color: #ffffff;
-            box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
         }
 
         .status-checking {
             color: #d97706;
-            font-size: 11px;
+            font-size: 0.65rem;
             font-weight: 700;
         }
 
         .status-verified {
-            color: #059669;
-            font-size: 11px;
+            color: #64748b;
+            font-size: 0.65rem;
             font-weight: 800;
-            background: #dcfce7;
-            border: 1px solid #a7f3d0;
-            padding: 5px 12px;
-            border-radius: 100px;
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 16px;
+            display: inline-block;
         }
 
-        .popup-backdrop {
-            position: absolute;
-            inset: 0;
-            background-color: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 6000;
-            animation: fadeIn 0.2s ease-out;
+        /* Fixed Bottom Ad Wrapper */
+        .bottom-wrapper { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            flex-shrink: 0; 
+            z-index: 30; 
+            padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; 
+            background: rgba(248, 250, 252, 0.94); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            border-top: 1px solid var(--border-light); 
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .ad-container { 
+            position: relative; 
+            z-index: 2; 
+            background: var(--card-tech-bg); 
+            border: 1px dashed #cbd5e1; 
+            border-radius: 10px; 
+            padding: 5px 10px; 
+            display: flex; 
+            flex-direction: row; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+            min-height: 38px; 
+            box-shadow: var(--card-shadow); 
+            user-select: none; 
         }
 
-        .popup-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 24px 20px;
-            width: 88%;
-            max-width: 320px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-            transform: scale(0.95);
-            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        .ad-badge { position: absolute; top: 2px; right: 6px; font-size: 7px; font-weight: 800; color: #94a3b8; }
+        .ad-icon { font-size: 12px; }
+        .ad-label { font-size: 8.5px; font-weight: 700; color: #94a3b8; }
+
+        /* Modal Popup */
+        .popup-backdrop { 
+            position: fixed; 
+            inset: 0; 
+            background-color: rgba(15, 23, 42, 0.55); 
+            backdrop-filter: blur(6px); 
+            -webkit-backdrop-filter: blur(6px); 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 2000; 
+            opacity: 0; 
+            transition: opacity 0.2s ease; 
         }
 
-        @keyframes popIn {
-            to { transform: scale(1); }
+        .popup-backdrop.active { display: flex; opacity: 1; }
+
+        .popup-card { 
+            background-color: #ffffff; 
+            border-radius: var(--border-radius-lg); 
+            padding: 16px 14px; 
+            width: 84%; 
+            max-width: 290px; 
+            text-align: center; 
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.16); 
         }
 
-        .popup-btn {
-            width: 100%;
-            background: var(--primary-gradient);
-            border: none;
-            border-radius: 100px;
-            padding: 12px;
-            font-size: 13px;
-            font-weight: 800;
-            color: white;
-            cursor: pointer;
-            margin-top: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: transform 0.10s ease;
-        }
-
-        .popup-btn:active {
-            transform: scale(0.97);
+        .popup-btn { 
+            width: 100%; 
+            background: var(--primary-gradient); 
+            border: none; 
+            border-radius: var(--border-radius-md); 
+            padding: 9px; 
+            font-size: 0.72rem; 
+            font-weight: 700; 
+            color: white; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            box-shadow: 0 3px 8px rgba(80, 6, 20, 0.22); 
         }
     </style>
 </head>
 <body>
 
     <div class="app-view" id="appView">
-        <div class="tech-bg-pattern"></div>
+        <div class="offline-banner">📡 Weak Connection - Reconnecting...</div>
 
-        <!-- Top Fixed Bar -->
+        <!-- Top Wave Decoration -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 H375 V40 C 240 80, 130 30, 0 40 Z" fill="#500614"/>
+        </svg>
+
+        <!-- Bottom Wave Decoration -->
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 35" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 35 H0 V12 C 120 0, 260 20, 375 8 Z" fill="#500614"/>
+        </svg>
+
+        <!-- Header with Centered Title & Icon-Only Back Button -->
         <div class="brand-header">
-            <button class="back-btn" id="backToGiveBtn" aria-label="Back">←</button>
-            <h2 class="top-title">Like Video & Win 10 Birr</h2>
+            <button class="back-btn-icon" id="backToGiveBtn" aria-label="Back">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            
+            <h1 class="header-center-title">Like Video & Win</h1>
+
             <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
         </div>
-        
-        <!-- Reduced Top Curve Height -->
-        <div class="top-wave-header">
-            <svg viewBox="0 0 375 60" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0H375V38C250 58 125 28 0 45V0Z" fill="url(#brandGradientTop)"/>
-                <defs>
-                    <linearGradient id="brandGradientTop" x1="0" y1="0" x2="375" y2="60" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#800020"/>
-                        <stop offset="1" stop-color="#5a0016"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
 
-        <!-- Scrollable Content -->
+        <!-- Scrollable Content Area -->
         <div class="app-content">
             <div class="task-container" id="socialTasksContainer">
-                <div style="text-align: center; padding: 20px; color: #64748b; font-size: 13px;">
+                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.72rem;">
                     Loading video tasks...
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Fixed Ad Space Container -->
-        <div class="ad-container">
-            <span class="ad-tag">AD</span>
-            <div class="ad-icon">📢</div>
-            <div class="ad-text">Advertisement Space</div>
-        </div>
-
-        <!-- Bottom Fixed Wave Curve -->
-        <div class="bottom-wave-header">
-            <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
-                <defs>
-                    <linearGradient id="brandGradientBottom" x1="0" y1="80" x2="375" y2="0" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#800020"/>
-                        <stop offset="1" stop-color="#5a0016"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
-
-        <!-- Popup Container -->
-        <div class="popup-backdrop" id="completionPopup">
-            <div class="popup-card">
-                <h3 style="font-size:18px; font-weight:800; color:#059669; margin-bottom:8px;">Congratulations!</h3>
-                <p style="font-size:13px; color:#334155; font-weight:600;">10 Birr has been credited to your balance.</p>
-                <button class="popup-btn" id="popupCloseBtn">Claimed</button>
+        <!-- Bottom Fixed Ad Banner -->
+        <div class="bottom-wrapper">
+            <div class="ad-container">
+                <span class="ad-badge">AD</span>
+                <span class="ad-icon">📢</span>
+                <span class="ad-label">Advertisement Space</span>
             </div>
         </div>
+
+        <!-- Completion Modal -->
+        <div class="popup-backdrop" id="completionPopup">
+            <div class="popup-card">
+                <h3 style="font-size:0.88rem; font-weight:800; color:#059669; margin-bottom:5px;">Congratulations!</h3>
+                <p style="font-size:0.72rem; color:var(--text-muted); font-weight:500; line-height:1.4;"><span id="popupRewardDisplay" style="font-weight:800; color:var(--text-dark);">10</span> Birr has been credited to your wallet balance.</p>
+                <button class="popup-btn" id="popupCloseBtn">Great!</button>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -589,7 +515,7 @@
             function renderTasks() {
                 container.innerHTML = '';
                 if (activeTasks.length === 0) {
-                    container.innerHTML = '<p style="font-size:13px; color:#64748b; text-align:center;">No active video tasks right now. Please check back later!</p>';
+                    container.innerHTML = '<p style="font-size:0.72rem; color:var(--text-muted); text-align:center;">No active video tasks right now. Please check back later!</p>';
                     return;
                 }
 
@@ -608,26 +534,26 @@
                         card.innerHTML = `
                             <div class="task-left">
                                 <div class="task-icon-badge">
-                                    <img src="${item.image}" alt="${item.name}" onerror="this.src='birrgo-logo.png'">
+                                    <img class="task-logo-img img-blur-loading" src="${item.image}" alt="${item.name}" id="img-task-${item.id}" onerror="this.src='birrgo-logo.png'">
                                 </div>
                                 <div class="task-details">
                                     <h4>${item.name}</h4>
-                                    <p style="color:#64748b;">Completed & Claimed</p>
+                                    <p style="color:#64748b;">Claimed</p>
                                 </div>
                             </div>
                             <div>
-                                <span class="status-verified">Claimed ✔</span>
+                                <span class="status-verified">Claimed</span>
                             </div>
                         `;
                     } else {
                         card.innerHTML = `
                             <div class="task-left">
                                 <div class="task-icon-badge">
-                                    <img src="${item.image}" alt="${item.name}" onerror="this.src='birrgo-logo.png'">
+                                    <img class="task-logo-img img-blur-loading" src="${item.image}" alt="${item.name}" id="img-task-${item.id}" onerror="this.src='birrgo-logo.png'">
                                 </div>
                                 <div class="task-details">
                                     <h4>${item.name}</h4>
-                                    <p>+${item.prize} ETB</p>
+                                    <p>+${item.prize} Birr</p>
                                 </div>
                             </div>
                             <div id="control-${item.id}">
@@ -637,6 +563,19 @@
                     }
 
                     container.appendChild(card);
+
+                    const taskImg = document.getElementById(`img-task-${item.id}`);
+                    if (taskImg) {
+                        if (taskImg.complete) {
+                            taskImg.classList.remove('img-blur-loading');
+                            taskImg.classList.add('img-blur-loaded');
+                        } else {
+                            taskImg.addEventListener('load', () => {
+                                taskImg.classList.remove('img-blur-loading');
+                                taskImg.classList.add('img-blur-loaded');
+                            });
+                        }
+                    }
 
                     if (!isAlreadyClaimed) {
                         document.getElementById(`link-click-${item.id}`).addEventListener('click', () => {
@@ -667,7 +606,7 @@
 
                     if (secondsRemaining <= 0) {
                         clearInterval(countdownInterval);
-                        node.innerHTML = `<span class="status-checking">Crediting...</span>`;
+                        node.innerHTML = `<span class="status-checking">Updating Wallet...</span>`;
 
                         try {
                             const walletBalanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
@@ -693,14 +632,16 @@
                             const detailsP = document.querySelector(`#card-${id} .task-details p`);
                             if (detailsP) {
                                 detailsP.style.color = '#64748b';
-                                detailsP.innerText = 'Completed & Claimed';
+                                detailsP.innerText = 'Claimed';
                             }
-                            node.innerHTML = `<span class="status-verified">Claimed ✔</span>`;
-                            document.getElementById('completionPopup').style.display = 'flex';
+                            node.innerHTML = `<span class="status-verified">Claimed</span>`;
+                            
+                            document.getElementById('popupRewardDisplay').innerText = prize;
+                            document.getElementById('completionPopup').classList.add('active');
 
                         } catch (err) {
                             console.error("Reward transaction error:", err);
-                            node.innerHTML = `<button class="task-btn btn-verify" id="verify-action-${id}">Retry</button>`;
+                            node.innerHTML = `<button class="task-btn btn-verify" id="verify-action-${id}">Retry Verify</button>`;
                             document.getElementById(`verify-action-${id}`).addEventListener('click', () => startTimerCountdown(id, prize));
                         }
                     } else {
@@ -718,7 +659,7 @@
             }
 
             document.getElementById('backToGiveBtn').addEventListener('click', () => window.location.replace('give.html'));
-            document.getElementById('popupCloseBtn').addEventListener('click', () => document.getElementById('completionPopup').style.display = 'none');
+            document.getElementById('popupCloseBtn').addEventListener('click', () => document.getElementById('completionPopup').classList.remove('active'));
 
             renderTasks();
         });
