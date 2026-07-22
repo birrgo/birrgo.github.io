@@ -50,8 +50,7 @@ app.get('/', (req, res) => {
 
 // Broadcast Endpoint
 app.post('/api/send-push', async (req, res) => {
-  // Added 'badgeUrl' parameter for status bar icon customization
-  const { title, message, imageUrl, badgeUrl, url, segments } = req.body;
+  const { title, message, imageUrl, iconUrl, badgeUrl, badge, url, segments } = req.body;
 
   if (!title || !message) {
     return res.status(400).json({ error: 'Title and message body are required.' });
@@ -60,7 +59,7 @@ app.post('/api/send-push', async (req, res) => {
   try {
     const db = getDatabase();
     
-    // Fetch live OneSignal credentials from Firebase 'config/onesignal' path
+    // Fetch live OneSignal credentials and default icon configs from Firebase
     const configSnapshot = await db.ref('config/onesignal').once('value');
     const configData = configSnapshot.val() || {};
 
@@ -70,6 +69,10 @@ app.post('/api/send-push', async (req, res) => {
     if (!appId || !restApiKey) {
       return res.status(500).json({ error: 'OneSignal API credentials not configured in Firebase.' });
     }
+
+    // Determine final icons using payload parameters first, then Firebase config, then env variables
+    const finalIcon = imageUrl || iconUrl || configData.defaultIcon || process.env.ONESIGNAL_DEFAULT_ICON || undefined;
+    const finalBadge = badgeUrl || badge || configData.defaultBadge || process.env.ONESIGNAL_DEFAULT_BADGE || undefined;
 
     const payload = {
       app_id: appId,
@@ -81,14 +84,15 @@ app.post('/api/send-push', async (req, res) => {
       ttl: 86400,
       priority: 10,
       
-      // Large preview image inside the notification panel
+      // Large preview image inside notification panel
       big_picture: imageUrl || undefined,
       
-      // Large logo icon inside the notification panel
-      chrome_web_icon: imageUrl || configData.defaultIcon || undefined,
+      // Main app/brand icon inside notification drawer
+      chrome_web_icon: finalIcon,
+      firefox_icon: finalIcon,
       
-      // ANDROID STATUS BAR ICON (White-on-transparent PNG)
-      chrome_web_badge: badgeUrl || configData.defaultBadge || undefined
+      // Android status bar small icon (Monochrome white PNG)
+      chrome_web_badge: finalBadge
     };
 
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
