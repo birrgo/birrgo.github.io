@@ -10,9 +10,9 @@
     
     <style>
         :root {
-            --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
-            --gold-gradient: linear-gradient(135deg, #ffe07d 0%, #f5af19 45%, #e65c00 100%);
+            --primary-burgundy: #4a0011;
+            --primary-gradient: linear-gradient(135deg, #600016 0%, #30000a 100%);
+            --gold-gradient: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --bg-light: #f8fafc;
@@ -48,47 +48,149 @@
             width: 100%;
             height: 100dvh;
             max-width: 450px;
-            background-color: #ffffff;
+            background-color: #f1f5f9;
             display: flex;
             flex-direction: column;
             position: relative;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
         }
 
+        /* Reduced Height Top Header */
         .app-header {
+            width: 100%;
+            background: var(--primary-burgundy);
+            color: #ffffff;
+            position: relative;
+            padding: calc(10px + env(safe-area-inset-top)) 16px 24px 16px;
+            z-index: 10;
+        }
+
+        .header-top-bar {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: calc(20px + env(safe-area-inset-top)) 20px 16px 20px;
-            border-bottom: 1px solid var(--border-light);
-            background: #ffffff;
+            justify-content: space-between;
+            position: relative;
+            z-index: 3;
         }
 
         .btn-back {
-            background: #f1f5f9;
-            border: 1px solid var(--border-light);
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-dark);
+            color: #ffffff;
+            text-decoration: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             cursor: pointer;
-            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .header-logo-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Title & Live Tracker Centered */
+        .header-center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-top: -6px;
+            position: relative;
+            z-index: 3;
         }
 
         .header-title h2 {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 800;
-            color: var(--text-dark);
+            color: #ffffff;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        /* Live Tracker Pill */
+        .live-tracker-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-top: 4px;
+            backdrop-filter: blur(4px);
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            animation: pulse-animation 1.5s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 5px rgba(34, 197, 94, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+
+        .live-tracker-text {
+            font-size: 9px;
+            font-weight: 700;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Compact SVG Curve */
+        .app-header-curve {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+
+        .app-header-curve svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 15px;
+        }
+
+        .app-header-curve .shape-fill {
+            fill: #f1f5f9;
         }
 
         .app-content {
             flex: 1;
             overflow-y: auto;
-            background-color: var(--bg-light);
-            padding: 16px;
+            background-color: #f1f5f9;
+            padding: 10px 16px 85px 16px;
             display: flex;
             flex-direction: column;
             gap: 14px;
@@ -96,95 +198,7 @@
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        /* Premium Centerpiece Winner Showcase Sample */
-        .winner-spotlight-card {
-            background: var(--primary-gradient);
-            border-radius: var(--border-radius-md);
-            padding: 16px;
-            color: #ffffff;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(128, 0, 32, 0.25);
-            border: 2px solid #ffe07d;
-        }
-
-        .winner-spotlight-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -30%;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(255,224,125,0.15) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .winner-badge-title {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--gold-gradient);
-            color: #4a0000;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .winner-main-flex {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .winner-info-block {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .winner-phone-masked {
-            font-size: 18px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .winner-meta-location {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.75);
-            font-weight: 600;
-        }
-
-        .winner-ticket-prize {
-            text-align: right;
-        }
-
-        .winner-lucky-badge {
-            background: #ffffff;
-            color: var(--primary-burgundy);
-            font-size: 15px;
-            font-weight: 900;
-            padding: 6px 14px;
-            border-radius: 10px;
-            display: inline-block;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .winner-prize-tag {
-            font-size: 10px;
-            font-weight: 700;
-            color: #ffe07d;
-            text-transform: uppercase;
-            margin-top: 4px;
-            letter-spacing: 0.5px;
-        }
-
-        /* Standard List Container */
+        /* Search Box Container */
         .search-box-container {
             position: sticky;
             top: 0;
@@ -239,15 +253,15 @@
         }
 
         .number-badge {
-            background: var(--bg-light);
-            color: var(--text-dark);
+            background: var(--primary-gradient);
+            color: #ffd700;
             font-weight: 800;
             font-size: 13px;
             padding: 6px 12px;
             border-radius: 10px;
             min-width: 70px;
             text-align: center;
-            border: 1.5px solid var(--border-light);
+            box-shadow: 0 2px 8px rgba(74, 0, 17, 0.2);
         }
 
         .owner-details {
@@ -268,9 +282,49 @@
         
         .loading-text {
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
-            padding: 40px 0;
+            padding: 30px 0;
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px dashed var(--border-light);
+        }
+
+        /* Fixed Bottom Advertisement Container */
+        .ad-container {
+            position: fixed;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 418px;
+            background: #ffffff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            z-index: 100;
+        }
+
+        .ad-tag {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            font-size: 9px;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .ad-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
         }
     </style>
 </head>
@@ -278,35 +332,36 @@
 
     <div class="app-view">
         
-        <div class="app-header">
-            <button class="btn-back" onclick="window.location.href='jetour.html'">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
-            <div class="header-title">
-                <h2>Allocation Matrix Logs</h2>
+        <!-- Compact Top Navigation Curved Header -->
+        <header class="app-header">
+            <div class="header-top-bar">
+                <button class="btn-back" onclick="window.location.href='jetour.html'" aria-label="Back">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <img src="birrgo-logo.png" alt="BirrGo Logo" class="header-logo-img" />
             </div>
-        </div>
+
+            <!-- Title & Live Tracker Badge centered inside top curve -->
+            <div class="header-center-content">
+                <div class="header-title">
+                    <h2>Allocation Matrix Logs</h2>
+                </div>
+                <div class="live-tracker-badge">
+                    <span class="pulse-dot"></span>
+                    <span class="live-tracker-text">Live Tracker Active</span>
+                </div>
+            </div>
+
+            <!-- Reduced Height Curved SVG Cutout -->
+            <div class="app-header-curve">
+                <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M0,0 C300,60 900,60 1200,0 L1200,120 L0,120 Z" class="shape-fill"></path>
+                </svg>
+            </div>
+        </header>
 
         <div class="app-content">
             
-            <!-- Sample Interactive First Round Winner Badge Box -->
-            <div class="winner-spotlight-card">
-                <div class="winner-badge-title">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="margin-bottom:-1px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    First Round Winner Live Sample
-                </div>
-                <div class="winner-main-flex">
-                    <div class="winner-info-block">
-                        <span class="winner-phone-masked">Terminal 0912••••34</span>
-                        <span class="winner-meta-location">📍 Bole, Addis Ababa</span>
-                    </div>
-                    <div class="winner-ticket-prize">
-                        <div class="winner-lucky-badge">Pos #0742</div>
-                        <div class="winner-prize-tag">Jetour Luxury Car</div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Search Panel -->
             <div class="search-box-container">
                 <input type="text" id="dashboardSearch" class="search-input" placeholder="🔍 Filter by positional metric indexes...">
@@ -319,6 +374,15 @@
             <div class="dashboard-list-stack" id="dashboardStack"></div>
 
         </div>
+
+        <!-- Fixed Bottom Advertisement Container -->
+        <div class="ad-container">
+            <span class="ad-tag">AD</span>
+            <div class="ad-content">
+                📢 <span>Advertisement Space</span>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -366,7 +430,7 @@
             container.innerHTML = '';
 
             if(items.length === 0) {
-                container.innerHTML = `<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:30px;">No records match the current query filter elements.</div>`;
+                container.innerHTML = `<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:30px;background:#fff;border-radius:14px;border:1px dashed var(--border-light);">No records match the current query filter elements.</div>`;
                 return;
             }
 
