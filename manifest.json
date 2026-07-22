@@ -33,7 +33,7 @@
       "src": "badge-icon.png",
       "sizes": "96x96",
       "type": "image/png",
-      "purpose": "monochrome badge"
+      "purpose": "monochrome"
     }
   ],
   "shortcuts": [
