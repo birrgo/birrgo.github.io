@@ -13,8 +13,7 @@
     <a href="lottery.html" class="back-btn" id="nav-back-btn">← Back</a>
     <div class="header-content">
       <h1>BirrGo Challenge </h1>
-     
-    </div>
+     </div>
   </div>
 
   <!-- Top Ad Banner (Empty) -->
@@ -211,18 +210,37 @@
       initUserSessionLedger();
     });
 
-    /* CUSTOM UI ALERT POPUP LOGIC */
+    /* CUSTOM UI ALERT POPUP LOGIC - SAFE DOM HANDLING */
     let alertCallback = null;
 
     window.showCustomAlert = function(message, title = "Notification", callback = null) {
-      document.getElementById('custom-alert-title').textContent = title;
-      document.getElementById('custom-alert-message').textContent = message;
-      document.getElementById('custom-alert-overlay').classList.remove('hidden');
       alertCallback = callback;
+
+      const titleEl = document.getElementById('custom-alert-title');
+      const msgEl = document.getElementById('custom-alert-message');
+      const overlayEl = document.getElementById('custom-alert-overlay');
+
+      // Fallback to native alert if custom modal elements aren't present in DOM yet
+      if (!titleEl || !msgEl || !overlayEl) {
+        alert(`${title}\n\n${message}`);
+        if (alertCallback) {
+          alertCallback();
+          alertCallback = null;
+        }
+        return;
+      }
+
+      titleEl.textContent = title;
+      msgEl.textContent = message;
+      overlayEl.classList.remove('hidden');
     };
 
     window.closeCustomAlert = function() {
-      document.getElementById('custom-alert-overlay').classList.add('hidden');
+      const overlayEl = document.getElementById('custom-alert-overlay');
+      if (overlayEl) {
+        overlayEl.classList.add('hidden');
+      }
+
       if (alertCallback) {
         alertCallback();
         alertCallback = null;
@@ -359,7 +377,7 @@
         }
       }
 
-      // If pool run short, fill with math general
+      // If pool runs short, fill with math general
       while (questionList.length < 5) {
         let extraMath = generateMathQuestion(difficulty, uniqueSet);
         questionList.push(extraMath);
@@ -651,7 +669,11 @@
       
       closeModal();
       closePinModal();
-      document.getElementById('header-sub').textContent = "Choose a category to start playing";
+
+      const headerSub = document.getElementById('header-sub');
+      if (headerSub) {
+        headerSub.textContent = "Choose a category to start playing";
+      }
     };
 
     /* GAME PLAY LOGIC */
@@ -678,7 +700,10 @@
       navBtn.removeAttribute("href");
       navBtn.onclick = showDashboard;
 
-      document.getElementById('header-sub').textContent = `${tier.name} • Win: ${tier.win} Birr`;
+      const headerSub = document.getElementById('header-sub');
+      if (headerSub) {
+        headerSub.textContent = `${tier.name} • Win: ${tier.win} Birr`;
+      }
 
       startTimer();
       renderCurrentQuestion();
