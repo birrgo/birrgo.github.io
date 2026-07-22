@@ -12,6 +12,7 @@
         :root {
             --primary-burgundy: #4a0011;
             --primary-gradient: linear-gradient(135deg, #600016 0%, #30000a 100%);
+            --green-gradient: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
             --gold-gradient: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
             --text-dark: #0f172a;
             --text-muted: #64748b;
@@ -146,15 +147,9 @@
         }
 
         @keyframes pulse-animation {
-            0% {
-                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 5px rgba(34, 197, 94, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
 
         .live-tracker-text {
@@ -193,10 +188,88 @@
             padding: 10px 16px 85px 16px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
             scrollbar-width: none;
         }
         .app-content::-webkit-scrollbar { display: none; }
+
+        /* Metrics Summary Counter */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .metric-card {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--card-shadow);
+        }
+
+        .metric-card.taken {
+            border-left: 4px solid var(--primary-burgundy);
+        }
+
+        .metric-card.available {
+            border-left: 4px solid #16a34a;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .metric-card.available .metric-value {
+            color: #16a34a;
+        }
+
+        .metric-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Navigation Filter Chips - Taken & Available */
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px 4px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn.active.taken-tab {
+            background: var(--primary-burgundy);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(74, 0, 17, 0.25);
+        }
+
+        .tab-btn.active.available-tab {
+            background: #16a34a;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+        }
 
         /* Search Box Container */
         .search-box-container {
@@ -252,6 +325,12 @@
             box-shadow: var(--card-shadow);
         }
 
+        /* Green Styling for Available Ticket Cards */
+        .dashboard-row-card.available-card {
+            border-left: 3.5px solid #16a34a;
+            background: #f0fdf4;
+        }
+
         .number-badge {
             background: var(--primary-gradient);
             color: #ffd700;
@@ -264,6 +343,13 @@
             box-shadow: 0 2px 8px rgba(74, 0, 17, 0.2);
         }
 
+        /* Green Badge for Available Tickets */
+        .number-badge.badge-available {
+            background: var(--green-gradient);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
+        }
+
         .owner-details {
             text-align: right;
         }
@@ -272,6 +358,17 @@
             font-size: 14px;
             font-weight: 700;
             color: var(--text-dark);
+        }
+
+        /* Green Status Tag for Available */
+        .status-tag-available {
+            font-size: 12px;
+            font-weight: 800;
+            color: #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
         }
 
         .owner-meta {
@@ -290,19 +387,25 @@
             border: 1px dashed var(--border-light);
         }
 
-        /* Fixed Bottom Advertisement Container */
+        /* Advertisement Container (Used both in-feed and fixed bottom) */
         .ad-container {
+            position: relative;
+            width: 100%;
+            background: #ffffff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+        }
+
+        .ad-container.fixed-bottom {
             position: fixed;
             bottom: 12px;
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 32px);
             max-width: 418px;
-            background: #ffffff;
-            border: 1px dashed #cbd5e1;
-            border-radius: 14px;
-            padding: 12px;
-            text-align: center;
             box-shadow: 0 4px 16px rgba(0,0,0,0.06);
             z-index: 100;
         }
@@ -362,12 +465,30 @@
 
         <div class="app-content">
             
-            <!-- Search Panel -->
-            <div class="search-box-container">
-                <input type="text" id="dashboardSearch" class="search-input" placeholder="🔍 Filter by positional metric indexes...">
+            <!-- Dynamic Metrics Summary (Taken vs Available) -->
+            <div class="metrics-grid">
+                <div class="metric-card taken">
+                    <div class="metric-value" id="countTaken">0</div>
+                    <div class="metric-label">Taken Numbers</div>
+                </div>
+                <div class="metric-card available">
+                    <div class="metric-value" id="countAvailable">0</div>
+                    <div class="metric-label">Available Numbers</div>
+                </div>
             </div>
 
-            <div class="section-label-header">Live Registry Matrix</div>
+            <!-- Navigation Bar: TAKEN & AVAILABLE (Green styled available tab) -->
+            <div class="filter-tabs">
+                <button class="tab-btn taken-tab active" onclick="setFilter('taken', this)">Taken</button>
+                <button class="tab-btn available-tab" onclick="setFilter('available', this)">Available</button>
+            </div>
+
+            <!-- Search Panel -->
+            <div class="search-box-container">
+                <input type="text" id="dashboardSearch" class="search-input" placeholder="🔍 Search ticket number, phone or location...">
+            </div>
+
+            <div class="section-label-header" id="sectionHeaderLabel">Allocated Numbers (Taken)</div>
 
             <div id="loadingIndicator" class="loading-text">Synchronizing allocation registry matrix...</div>
 
@@ -376,7 +497,7 @@
         </div>
 
         <!-- Fixed Bottom Advertisement Container -->
-        <div class="ad-container">
+        <div class="ad-container fixed-bottom">
             <span class="ad-tag">AD</span>
             <div class="ad-content">
                 📢 <span>Advertisement Space</span>
@@ -399,9 +520,13 @@
             appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
         };
 
+        // Updated total ticket pool size to 3500
+        const TOTAL_TICKETS = 3500;
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        let masterTicketsArray = [];
+        
+        let masterAllPool = [];
+        let currentFilter = 'taken'; // Defaults to Taken view
 
         document.addEventListener('DOMContentLoaded', () => {
             if(!localStorage.getItem('auth_session_phone')) {
@@ -410,7 +535,7 @@
             }
 
             fetchAllocatedRegistry();
-            document.getElementById('dashboardSearch').addEventListener('input', filterDashboardRegistry);
+            document.getElementById('dashboardSearch').addEventListener('input', applyFiltersAndRender);
         });
 
         function fetchAllocatedRegistry() {
@@ -418,11 +543,74 @@
             onValue(ticketsRef, (snapshot) => {
                 document.getElementById('loadingIndicator').style.display = 'none';
                 const data = snapshot.val() || {};
-                
-                // Convert to array and sort numerically by Ticket Number
-                masterTicketsArray = Object.values(data).sort((a, b) => parseInt(a.ticketNum) - parseInt(b.ticketNum));
-                renderDashboardRegistry(masterTicketsArray);
+
+                const takenMap = new Map();
+                Object.values(data).forEach(t => {
+                    takenMap.set(parseInt(t.ticketNum), t);
+                });
+
+                masterAllPool = [];
+                for (let i = 1; i <= TOTAL_TICKETS; i++) {
+                    // Padded to 4 digits to support up to 3500 properly (e.g. 0001, 0042, 3500)
+                    const paddedNum = i.toString().padStart(4, '0');
+                    if (takenMap.has(i)) {
+                        masterAllPool.push({
+                            ticketNum: paddedNum,
+                            status: 'taken',
+                            ...takenMap.get(i)
+                        });
+                    } else {
+                        masterAllPool.push({
+                            ticketNum: paddedNum,
+                            status: 'available',
+                            phone: null,
+                            location: null
+                        });
+                    }
+                }
+
+                updateSummaryMetrics();
+                applyFiltersAndRender();
             });
+        }
+
+        function updateSummaryMetrics() {
+            const takenCount = masterAllPool.filter(t => t.status === 'taken').length;
+            const availableCount = TOTAL_TICKETS - takenCount;
+
+            document.getElementById('countTaken').innerText = takenCount;
+            document.getElementById('countAvailable').innerText = availableCount;
+        }
+
+        window.setFilter = function(filter, element) {
+            currentFilter = filter;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+
+            const labels = {
+                'taken': 'Allocated Numbers (Taken)',
+                'available': 'Unallocated Numbers (Available)'
+            };
+            document.getElementById('sectionHeaderLabel').innerText = labels[filter];
+
+            applyFiltersAndRender();
+        };
+
+        function applyFiltersAndRender() {
+            const query = document.getElementById('dashboardSearch').value.toLowerCase().trim();
+
+            let list = masterAllPool.filter(item => item.status === currentFilter);
+
+            if (query) {
+                list = list.filter(t => {
+                    const phoneMatch = t.phone ? t.phone.toLowerCase().includes(query) : false;
+                    const numberMatch = t.ticketNum.toLowerCase().includes(query);
+                    const locationMatch = t.location ? t.location.toLowerCase().includes(query) : false;
+                    return phoneMatch || numberMatch || locationMatch;
+                });
+            }
+
+            renderDashboardRegistry(list);
         }
 
         function renderDashboardRegistry(items) {
@@ -430,40 +618,62 @@
             container.innerHTML = '';
 
             if(items.length === 0) {
-                container.innerHTML = `<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:30px;background:#fff;border-radius:14px;border:1px dashed var(--border-light);">No records match the current query filter elements.</div>`;
+                container.innerHTML = `<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:30px;background:#fff;border-radius:14px;border:1px dashed var(--border-light);">No numbers match the current selection.</div>`;
                 return;
             }
 
-            items.forEach(ticket => {
+            const renderLimit = items.length > 200 ? 200 : items.length;
+
+            for(let i = 0; i < renderLimit; i++) {
+                const ticket = items[i];
                 const card = document.createElement('div');
-                card.className = 'dashboard-row-card';
+                
+                if(ticket.status === 'taken') {
+                    card.className = 'dashboard-row-card';
+                    const rawPhone = ticket.phone || "0900000000";
+                    const hiddenPhone = rawPhone.substring(0, 5) + "••••" + rawPhone.slice(-2);
+                    const location = ticket.location || "Addis Ababa";
 
-                const rawPhone = ticket.phone || "0900000000";
-                const hiddenPhone = rawPhone.substring(0, 5) + "••••" + rawPhone.slice(-2);
-                const location = ticket.location || "Addis Ababa";
-
-                card.innerHTML = `
-                    <div class="number-badge">#${ticket.ticketNum}</div>
-                    <div class="owner-details">
-                        <div class="owner-phone">👤 ${hiddenPhone}</div>
-                        <div class="owner-meta">📍 ${location}</div>
-                    </div>
-                `;
+                    card.innerHTML = `
+                        <div class="number-badge">#${ticket.ticketNum}</div>
+                        <div class="owner-details">
+                            <div class="owner-phone">👤 ${hiddenPhone}</div>
+                            <div class="owner-meta">📍 ${location}</div>
+                        </div>
+                    `;
+                } else {
+                    card.className = 'dashboard-row-card available-card';
+                    card.innerHTML = `
+                        <div class="number-badge badge-available">#${ticket.ticketNum}</div>
+                        <div class="owner-details">
+                            <div class="status-tag-available">🟢 Available</div>
+                            <div class="owner-meta">Not Reserved</div>
+                        </div>
+                    `;
+                }
+                
                 container.appendChild(card);
-            });
-        }
 
-        function filterDashboardRegistry() {
-            const query = document.getElementById('dashboardSearch').value.toLowerCase().trim();
-            
-            const filtered = masterTicketsArray.filter(t => {
-                const phoneMatch = (t.phone || "").toLowerCase().includes(query);
-                const numberMatch = (t.ticketNum || "").toString().includes(query);
-                const locationMatch = (t.location || "").toLowerCase().includes(query);
-                return phoneMatch || numberMatch || locationMatch;
-            });
+                // Insert an ad container after every 10th item (excluding the last item if it ends on a multiple of 10)
+                if ((i + 1) % 10 === 0 && (i + 1) < renderLimit) {
+                    const adCard = document.createElement('div');
+                    adCard.className = 'ad-container';
+                    adCard.innerHTML = `
+                        <span class="ad-tag">AD</span>
+                        <div class="ad-content">
+                            📢 <span>Advertisement Space</span>
+                        </div>
+                    `;
+                    container.appendChild(adCard);
+                }
+            }
 
-            renderDashboardRegistry(filtered);
+            if (items.length > 200) {
+                const footerNotice = document.createElement('div');
+                footerNotice.style.cssText = "text-align:center;font-size:11px;color:var(--text-muted);padding:10px;";
+                footerNotice.innerText = `Showing top 200 of ${items.length} numbers. Refine search to narrow down.`;
+                container.appendChild(footerNotice);
+            }
         }
     </script>
 </body>
