@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Precision Stop & Win</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #500614;
+            --deep-red-gradient: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
+            /* Deposit button style gradient */
+            --red-card-bg: linear-gradient(135deg, #500614 0%, #2a0005 100%);
+            --accent-red: #dc2626;
+            --neon-red: #ff2a4b;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --card-tech-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            --border-light: #e2e8f0;
+            --border-red: rgba(220, 38, 38, 0.25);
+            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+            --border-radius-lg: 18px;
+            --border-radius-md: 12px;
+            --nav-bar-height: 70px;
+            --success-color: #10b981;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Times New Roman', Times, serif; 
+            letter-spacing: -0.15px; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        html, body { 
+            width: 100%; 
+            height: 100%; 
+            min-height: 100vh; 
+            background-color: var(--bg-light); 
+            overflow: hidden; 
+            font-size: 14px; 
+        }
+
+        .app-view { 
+            width: 100%; 
+            height: 100vh; 
+            height: 100dvh; 
+            background-color: var(--bg-light); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        .bg-wave { position: absolute; left: 0; right: 0; width: 100%; z-index: 0; pointer-events: none; }
+        .bg-wave-top { top: 0; height: 90px; }
+        .bg-wave-bottom { bottom: 0; height: 35px; }
+
+        .brand-header { 
+            display: grid; 
+            grid-template-columns: 36px 1fr 36px; 
+            align-items: center; 
+            padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 6px 12px; 
+            position: relative; 
+            z-index: 5; 
+            flex-shrink: 0; 
+        }
+
+        .back-btn-icon {
+            width: 32px; 
+            height: 32px; 
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: none; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); 
+            transition: transform 0.15s ease;
+        }
+        .back-btn-icon:active { transform: scale(0.90); }
+        .back-btn-icon svg { width: 16px; height: 16px; stroke: var(--primary-burgundy); }
+
+        .header-center-title {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .logo-image { 
+            height: 22px; 
+            width: auto; 
+            object-fit: contain; 
+            justify-self: end; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); 
+        }
+
+        .app-content { 
+            flex: 1 1 auto; 
+            min-height: 0; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 10px 12px calc(var(--nav-bar-height) + env(safe-area-inset-bottom, 12px)) 12px; 
+            position: relative; 
+            z-index: 2; 
+            gap: 14px; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            scrollbar-width: none; 
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        /* Level Cards UI Matching Deposit Button Style */
+        .levels-section-title {
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .levels-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .level-item {
+            position: relative;
+            background: var(--red-card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px -5px rgba(80, 6, 20, 0.3), 0 8px 10px -6px rgba(80, 6, 20, 0.2);
+            overflow: hidden;
+        }
+
+        .level-item.active {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: linear-gradient(135deg, #620819 0%, #1f0004 100%);
+            box-shadow: 0 12px 28px -4px rgba(80, 6, 20, 0.45), 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Locked State matching Deposit Button Style (No Shine/Animation) */
+        .level-item.locked {
+            cursor: not-allowed;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: linear-gradient(135deg, #42040f 0%, #150002 100%);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+            opacity: 0.85;
+        }
+
+        .level-info h4 {
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .level-info p {
+            font-size: 0.78rem;
+            color: #fca5a5;
+            font-weight: 600;
+            margin-top: 3px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .level-reward {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 4px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .trial-pill {
+            font-size: 0.72rem;
+            font-weight: 800;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        /* Cooldown Lock Overlay matching Deposit Button Theme */
+        .level-lock-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(80, 6, 20, 0.92) 0%, rgba(30, 0, 5, 0.95) 100%);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 10;
+        }
+
+        .level-item.locked .level-lock-overlay {
+            display: flex;
+        }
+
+        .lock-msg {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.86rem;
+            font-weight: 800;
+            color: #ff859b;
+            letter-spacing: 0.3px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .lock-timer {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: #ffffff;
+            background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
+            padding: 4px 10px;
+            border-radius: 8px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* High Gloss 3D Glass Box Interactive Circle Clock */
+        .timer-card {
+            background: var(--card-tech-bg);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-lg);
+            padding: 20px 14px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .timer-3d-button {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 8px 0;
+            border-radius: 50%;
+            /* Ultra glossy transparent glass look with vivid multi-layered highlights */
+            background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.95) 0%, rgba(240, 244, 248, 0.8) 40%, rgba(203, 213, 225, 0.7) 75%, rgba(148, 163, 184, 0.85) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 
+                0 20px 40px rgba(80, 6, 20, 0.25),
+                0 6px 15px rgba(0, 0, 0, 0.1),
+                inset 0 12px 20px rgba(255, 255, 255, 1),
+                inset 0 -12px 24px rgba(15, 23, 42, 0.18),
+                inset 0 0 0 3px rgba(255, 255, 255, 0.8),
+                0 0 0 6px rgba(255, 255, 255, 0.9),
+                0 0 0 12px rgba(80, 6, 20, 0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        /* Glass reflection overlay streak */
+        .timer-3d-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.1) 40%, rgba(255, 255, 255, 0) 60%);
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        .timer-3d-button:active {
+            transform: scale(0.96);
+            box-shadow: 
+                0 8px 20px rgba(80, 6, 20, 0.3),
+                inset 0 8px 16px rgba(0, 0, 0, 0.25),
+                inset 0 0 0 2px rgba(255, 255, 255, 0.6),
+                0 0 0 6px rgba(255, 255, 255, 0.9),
+                0 0 0 12px rgba(80, 6, 20, 0.25);
+        }
+
+        .digital-clock-overlay {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        /* Large Logo Inside Timer */
+        .inner-timer-logo {
+            height: 76px;
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
+        }
+
+        /* Increased Font Size for Digital Clock */
+        .digital-clock {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #500614;
+            letter-spacing: -0.5px;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8), 0 1px 2px rgba(80, 6, 20, 0.15);
+        }
+
+        .click-action-hint {
+            font-size: 0.74rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.8px;
+            margin-top: 6px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #7f1d1d 0%, #500614 100%);
+            padding: 4px 12px;
+            border-radius: 14px;
+            box-shadow: 0 3px 8px rgba(80, 6, 20, 0.25);
+            transition: background 0.2s ease;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .target-subtext {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-top: 8px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .target-subtext span {
+            color: var(--text-dark);
+            font-weight: 800;
+        }
+
+        /* Bottom Fixed Ad */
+        .bottom-wrapper { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            flex-shrink: 0; 
+            z-index: 30; 
+            padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; 
+            background: rgba(248, 250, 252, 0.94); 
+            backdrop-filter: blur(10px); 
+            border-top: 1px solid var(--border-light); 
+        }
+
+        .ad-container { 
+            position: relative; 
+            z-index: 2; 
+            background: var(--card-tech-bg); 
+            border: 1px dashed #cbd5e1; 
+            border-radius: 10px; 
+            padding: 5px 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+            min-height: 38px; 
+        }
+
+        .ad-badge { position: absolute; top: 2px; right: 6px; font-size: 8px; font-weight: 800; color: #94a3b8; font-family: 'Times New Roman', Times, serif; }
+        .ad-icon { font-size: 12px; }
+        .ad-label { font-size: 9.5px; font-weight: 700; color: #94a3b8; font-family: 'Times New Roman', Times, serif; }
+
+        /* Modal Popup */
+        .popup-backdrop { 
+            position: fixed; 
+            inset: 0; 
+            background-color: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(6px); 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 2000; 
+            padding: 20px;
+        }
+        .popup-backdrop.active { display: flex; }
+
+        .popup-card { 
+            background-color: #ffffff; 
+            border-radius: var(--border-radius-lg); 
+            padding: 20px 18px; 
+            width: 100%; 
+            max-width: 300px; 
+            text-align: center; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); 
+            transform: scale(0.9);
+            transition: transform 0.2s ease;
+        }
+
+        .popup-backdrop.active .popup-card {
+            transform: scale(1);
+        }
+
+        .popup-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .popup-text {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            line-height: 1.4;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .popup-btn { 
+            width: 100%; 
+            background: linear-gradient(135deg, #500614 0%, #2a0005 100%); 
+            border: none; 
+            border-radius: var(--border-radius-md); 
+            padding: 10px; 
+            font-size: 0.88rem; 
+            font-weight: 800; 
+            color: white; 
+            cursor: pointer; 
+            margin-top: 14px; 
+            box-shadow: 0 4px 12px rgba(80, 6, 20, 0.2);
+            font-family: 'Times New Roman', Times, serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-view" id="appView">
+
+        <!-- Top Wave Decoration -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 H375 V40 C 240 80, 130 30, 0 40 Z" fill="#500614"/>
+        </svg>
+
+        <!-- Bottom Wave Decoration -->
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 35" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 35 H0 V12 C 120 0, 260 20, 375 8 Z" fill="#500614"/>
+        </svg>
+
+        <!-- Header -->
+        <div class="brand-header">
+            <button class="back-btn-icon" id="backBtn" aria-label="Back">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h1 class="header-center-title">Precision Stop</h1>
+            <img class="logo-image" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
+        </div>
+
+        <!-- App Content -->
+        <div class="app-content">
+            
+            <!-- 1. LEVEL SELECTOR SECTION -->
+            <div>
+                <h3 class="levels-section-title">Select Challenge Level:</h3>
+                <div class="levels-grid">
+                    
+                    <!-- Easy Level -->
+                    <div class="level-item active" id="card-easy" data-level="easy" data-target="26.00" data-reward="10" data-display="00:00:26">
+                        <div class="level-info">
+                            <h4>Easy Mode <span class="trial-pill" id="badge-easy">2/2 Trials</span></h4>
+                            <p>Target exact stop time: 00:00:26</p>
+                        </div>
+                        <div class="level-reward">+10 Birr</div>
+                        
+                        <div class="level-lock-overlay" id="overlay-easy">
+                            <div class="lock-msg">🔒 Level Locked</div>
+                            <div class="lock-timer" id="timer-easy">60:00</div>
+                        </div>
+                    </div>
+
+                    <!-- Medium Level -->
+                    <div class="level-item" id="card-medium" data-level="medium" data-target="25.50" data-reward="20" data-display="00:00:25:50">
+                        <div class="level-info">
+                            <h4>Medium Mode <span class="trial-pill" id="badge-medium">2/2 Trials</span></h4>
+                            <p>Target exact stop time: 00:00:25:50</p>
+                        </div>
+                        <div class="level-reward">+20 Birr</div>
+                        
+                        <div class="level-lock-overlay" id="overlay-medium">
+                            <div class="lock-msg">🔒 Level Locked</div>
+                            <div class="lock-timer" id="timer-medium">60:00</div>
+                        </div>
+                    </div>
+
+                    <!-- Hard Level -->
+                    <div class="level-item" id="card-hard" data-level="hard" data-target="25.504" data-reward="100" data-display="00:00:25:50:40">
+                        <div class="level-info">
+                            <h4>Hard Mode <span class="trial-pill" id="badge-hard">2/2 Trials</span></h4>
+                            <p>Target exact stop time: 00:00:25:50:40</p>
+                        </div>
+                        <div class="level-reward">+100 Birr</div>
+                        
+                        <div class="level-lock-overlay" id="overlay-hard">
+                            <div class="lock-msg">🔒 Level Locked</div>
+                            <div class="lock-timer" id="timer-hard">60:00</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 2. HIGH GLOSS 3D GLASS BOX INTERACTIVE CIRCLE CLOCK -->
+            <div class="timer-card">
+                
+                <div class="timer-3d-button" id="timerCircleBtn">
+                    <div class="digital-clock-overlay">
+                        <!-- Extra Large BirrGo Logo Inside Timer -->
+                        <img class="inner-timer-logo" src="birrgo-logo.png" alt="BirrGo Logo">
+                        <div class="digital-clock" id="clockDisplay">00:00:00:00</div>
+                        <div class="click-action-hint" id="actionHint">TAP TO START</div>
+                    </div>
+                </div>
+
+                <div class="target-subtext">TARGET: <span id="targetLabel">00:00:26</span></div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Ad -->
+        <div class="bottom-wrapper">
+            <div class="ad-container">
+                <span class="ad-badge">AD</span>
+                <span class="ad-icon">📢</span>
+                <span class="ad-label">Advertisement Space</span>
+            </div>
+        </div>
+
+        <!-- Result Modal Popup -->
+        <div class="popup-backdrop" id="resultPopup">
+            <div class="popup-card">
+                <h3 class="popup-title" id="popupTitle">Result</h3>
+                <p class="popup-text" id="popupText"></p>
+                <button class="popup-btn" id="popupCloseBtn">OK</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, runTransaction, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const rawPhone = localStorage.getItem('auth_session_phone');
+            if (!rawPhone) {
+                window.location.replace("new2.html");
+                return;
+            }
+
+            const activeUserPhone = rawPhone.replace(/[^0-9]/g, '');
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+                authDomain: "birrgo-fdf7e.firebaseapp.com",
+                databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+                projectId: "birrgo-fdf7e",
+                storageBucket: "birrgo-fdf7e.firebasestorage.app",
+                messagingSenderId: "2317445154",
+                appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+                measurementId: "G-24X13TZ43D"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app);
+
+            // Game State
+            let startTime = 0;
+            let timerInterval = null;
+            let isRunning = false;
+            
+            let selectedLevel = 'easy';
+            let targetSeconds = 26.00;
+            let currentReward = 10;
+            let currentDisplayTarget = '00:00:26';
+
+            const COOLDOWN_TIME_MS = 60 * 60 * 1000; 
+
+            // DOM Elements
+            const clockDisplay = document.getElementById('clockDisplay');
+            const targetLabel = document.getElementById('targetLabel');
+            const timerCircleBtn = document.getElementById('timerCircleBtn');
+            const actionHint = document.getElementById('actionHint');
+            const levelItems = document.querySelectorAll('.level-item');
+
+            // --- PER LEVEL TRIAL & LOCK STORAGE SYSTEM ---
+            function getLevelSession(levelKey) {
+                const data = localStorage.getItem(`timer_session_${activeUserPhone}_${levelKey}`);
+                if (!data) return { trials: 2, cooldownEnd: 0 };
+                return JSON.parse(data);
+            }
+
+            function saveLevelSession(levelKey, trials, cooldownEnd) {
+                localStorage.setItem(`timer_session_${activeUserPhone}_${levelKey}`, JSON.stringify({ trials, cooldownEnd }));
+            }
+
+            const cooldownIntervals = {};
+
+            function updateAllLevelsLockStates() {
+                const levels = ['easy', 'medium', 'hard'];
+                let firstUnlockedLevel = null;
+
+                levels.forEach(lvl => {
+                    const session = getLevelSession(lvl);
+                    const now = Date.now();
+                    const card = document.getElementById(`card-${lvl}`);
+                    const badge = document.getElementById(`badge-${lvl}`);
+                    const timerElem = document.getElementById(`timer-${lvl}`);
+
+                    if (session.cooldownEnd > now) {
+                        card.classList.add('locked');
+                        if (card.classList.contains('active')) card.classList.remove('active');
+                        startLevelCooldownTimer(lvl, session.cooldownEnd, timerElem);
+                    } else {
+                        if (session.cooldownEnd !== 0 && session.cooldownEnd <= now) {
+                            saveLevelSession(lvl, 2, 0);
+                            session.trials = 2;
+                        }
+
+                        card.classList.remove('locked');
+                        badge.innerText = `${session.trials}/2 Trials`;
+                        
+                        if (cooldownIntervals[lvl]) clearInterval(cooldownIntervals[lvl]);
+
+                        if (!firstUnlockedLevel) firstUnlockedLevel = lvl;
+                    }
+                });
+
+                const currentSession = getLevelSession(selectedLevel);
+                if (currentSession.cooldownEnd > Date.now()) {
+                    if (firstUnlockedLevel) {
+                        selectLevelCard(document.getElementById(`card-${firstUnlockedLevel}`));
+                    }
+                }
+            }
+
+            function startLevelCooldownTimer(lvl, endTime, displayElem) {
+                if (cooldownIntervals[lvl]) clearInterval(cooldownIntervals[lvl]);
+
+                const update = () => {
+                    const remaining = endTime - Date.now();
+                    if (remaining <= 0) {
+                        clearInterval(cooldownIntervals[lvl]);
+                        updateAllLevelsLockStates();
+                    } else {
+                        const mins = Math.floor(remaining / 60000);
+                        const secs = Math.floor((remaining % 60000) / 1000);
+                        displayElem.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                    }
+                };
+
+                update();
+                cooldownIntervals[lvl] = setInterval(update, 1000);
+            }
+
+            function selectLevelCard(item) {
+                if (isRunning || item.classList.contains('locked')) return;
+
+                levelItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+
+                selectedLevel = item.getAttribute('data-level');
+                targetSeconds = parseFloat(item.getAttribute('data-target'));
+                currentReward = parseInt(item.getAttribute('data-reward'));
+                currentDisplayTarget = item.getAttribute('data-display');
+
+                targetLabel.innerText = currentDisplayTarget;
+                resetClockDisplay();
+            }
+
+            levelItems.forEach(item => {
+                item.addEventListener('click', () => selectLevelCard(item));
+            });
+
+            function resetClockDisplay() {
+                clockDisplay.innerText = "00:00:00:00";
+                actionHint.innerText = "TAP TO START";
+                actionHint.style.background = "linear-gradient(135deg, #7f1d1d 0%, #500614 100%)";
+            }
+
+            function formatTime(ms) {
+                const totalSeconds = ms / 1000;
+                const hrs = Math.floor(totalSeconds / 3600);
+                const mins = Math.floor((totalSeconds % 3600) / 60);
+                const secs = Math.floor(totalSeconds % 60);
+                const millis = Math.floor((ms % 1000) / 10);
+
+                return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:${millis.toString().padStart(2, '0')}`;
+            }
+
+            // --- CLICKABLE 3D GLASS CIRCLE TIMER TRIGGER ---
+            timerCircleBtn.addEventListener('click', () => {
+                if (!isRunning) {
+                    // START TIMER
+                    const currentSession = getLevelSession(selectedLevel);
+                    if (currentSession.cooldownEnd > Date.now()) {
+                        showPopup("Level Locked", "This level has exhausted its 2 trials. Please select another level.", "#dc2626");
+                        return;
+                    }
+
+                    isRunning = true;
+                    startTime = Date.now();
+                    actionHint.innerText = "TAP TO STOP";
+                    actionHint.style.background = "#dc2626";
+                    levelItems.forEach(i => i.style.pointerEvents = 'none');
+
+                    timerInterval = setInterval(() => {
+                        const elapsedTime = Date.now() - startTime;
+                        clockDisplay.innerText = formatTime(elapsedTime);
+                    }, 10);
+
+                } else {
+                    // STOP TIMER
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                    levelItems.forEach(i => i.style.pointerEvents = 'auto');
+                    actionHint.innerText = "TAP TO START";
+                    actionHint.style.background = "linear-gradient(135deg, #7f1d1d 0%, #500614 100%)";
+
+                    const stopTimeMs = Date.now() - startTime;
+                    const stoppedSeconds = stopTimeMs / 1000;
+                    let levelSession = getLevelSession(selectedLevel);
+
+                    // WIN CHECK: Precision Matching
+                    let isWinner = false;
+                    
+                    if (selectedLevel === 'easy') {
+                        isWinner = Math.abs(stoppedSeconds - 26.00) < 0.03;
+                    } else if (selectedLevel === 'medium') {
+                        isWinner = Math.abs(stoppedSeconds - 25.50) < 0.02;
+                    } else if (selectedLevel === 'hard') {
+                        isWinner = Math.abs(stoppedSeconds - 25.504) < 0.01;
+                    }
+
+                    if (isWinner) {
+                        awardUser(currentReward);
+                        showPopup("CONGRATS!", `🎉 Congra! Perfect exact timing! ${currentReward} Birr credited to wallet!`, "#10b981");
+                    } else {
+                        levelSession.trials -= 1;
+
+                        if (levelSession.trials <= 0) {
+                            levelSession.cooldownEnd = Date.now() + COOLDOWN_TIME_MS;
+                            saveLevelSession(selectedLevel, 0, levelSession.cooldownEnd);
+                            showPopup("You Failed!", `Stopped at ${formatTime(stopTimeMs)}. Exact target was ${currentDisplayTarget}. 2 trials exhausted for this level!`, "#dc2626");
+                        } else {
+                            saveLevelSession(selectedLevel, levelSession.trials, 0);
+                            showPopup("You Failed!", `Stopped at ${formatTime(stopTimeMs)} (target was ${currentDisplayTarget}). You have ${levelSession.trials} trial left. Try again!`, "#dc2626");
+                        }
+                    }
+
+                    updateAllLevelsLockStates();
+                }
+            });
+
+            async function awardUser(amount) {
+                try {
+                    const walletRef = ref(db, `users/${activeUserPhone}/walletBalance`);
+                    await runTransaction(walletRef, (curr) => (parseFloat(curr) || 0) + amount);
+
+                    const now = new Date();
+                    const timeStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + 
+                                    now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+                    await set(push(ref(db, `users/${activeUserPhone}/transactions`)), {
+                        title: `Precision Timer Winner (${selectedLevel.toUpperCase()})`,
+                        amount: amount,
+                        type: "income",
+                        timestamp: timeStr
+                    });
+                } catch (err) {
+                    console.error("Wallet error:", err);
+                }
+            }
+
+            function showPopup(title, text, titleColor) {
+                document.getElementById('popupTitle').innerText = title;
+                document.getElementById('popupTitle').style.color = titleColor;
+                document.getElementById('popupText').innerText = text;
+                document.getElementById('resultPopup').classList.add('active');
+            }
+
+            document.getElementById('popupCloseBtn').addEventListener('click', () => {
+                document.getElementById('resultPopup').classList.remove('active');
+            });
+
+            document.getElementById('backBtn').addEventListener('click', () => window.location.replace('give.html'));
+
+            // Initial Lock States Load
+            updateAllLevelsLockStates();
+        });
+    </script>
+</body>
+</html>
