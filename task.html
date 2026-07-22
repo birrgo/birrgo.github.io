@@ -41,9 +41,11 @@
         </div>
 
         <div class="app-content">
+            <!-- 3-Button Sub Menu Bar -->
             <div class="task-view-toggle-bar">
                 <button class="toggle-tab-btn active-view-tab" id="tabBtnWatch" onclick="switchTaskPanel('watch')">Watch & Earn</button>
                 <button class="toggle-tab-btn" id="tabBtnInvite" onclick="switchTaskPanel('invite')">Invitation</button>
+                <button class="toggle-tab-btn" id="tabBtnGiveaway" onclick="redirectToGiveaway()">Giveaway</button>
             </div>
 
             <div id="panelWatchEarn" class="sub-view-panel panel-active">
@@ -145,6 +147,11 @@
         const popupTitle = document.getElementById('popupTitle');
         const popupMessage = document.getElementById('popupMessage');
         const popupConfirmBtn = document.getElementById('popupConfirmBtn');
+
+        // Giveaway Redirection
+        window.redirectToGiveaway = function() {
+            window.location.href = 'give.html';
+        };
 
         window.switchTaskPanel = function(targetPanel) {
             const btnWatch = document.getElementById('tabBtnWatch');
