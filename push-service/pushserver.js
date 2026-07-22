@@ -50,7 +50,8 @@ app.get('/', (req, res) => {
 
 // Broadcast Endpoint
 app.post('/api/send-push', async (req, res) => {
-  const { title, message, imageUrl, url, segments } = req.body;
+  // Added 'badgeUrl' parameter for status bar icon customization
+  const { title, message, imageUrl, badgeUrl, url, segments } = req.body;
 
   if (!title || !message) {
     return res.status(400).json({ error: 'Title and message body are required.' });
@@ -79,8 +80,15 @@ app.post('/api/send-push', async (req, res) => {
       url: url || 'https://birrgo.online',
       ttl: 86400,
       priority: 10,
+      
+      // Large preview image inside the notification panel
       big_picture: imageUrl || undefined,
-      chrome_web_image: imageUrl || undefined
+      
+      // Large logo icon inside the notification panel
+      chrome_web_icon: imageUrl || configData.defaultIcon || undefined,
+      
+      // ANDROID STATUS BAR ICON (White-on-transparent PNG)
+      chrome_web_badge: badgeUrl || configData.defaultBadge || undefined
     };
 
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
@@ -107,7 +115,7 @@ app.post('/api/send-push', async (req, res) => {
       return res.status(200).json({ success: true, id: responseData.id });
     } else {
       const errorMsg = responseData.errors ? responseData.errors[0] : 'OneSignal delivery failed.';
-      return res.status(400).json({ error: errorMsg });
+      return res.status(400).json({ error: errorMsg, details: responseData });
     }
   } catch (error) {
     console.error("Push Broadcast Error:", error);
