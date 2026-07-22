@@ -15,7 +15,6 @@
     "finance",
     "utilities"
   ],
-  "badge": "badge-icon.png",
   "icons": [
     {
       "src": "icon.png",
@@ -33,7 +32,7 @@
       "src": "badge-icon.png",
       "sizes": "96x96",
       "type": "image/png",
-      "purpose": "monochrome"
+      "purpose": "monochrome any"
     }
   ],
   "shortcuts": [
