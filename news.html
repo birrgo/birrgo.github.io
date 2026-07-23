@@ -9,8 +9,6 @@
 </script>
 <script src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js"></script>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,6 +198,26 @@
             });
         }
 
+        // Helper function to resolve any timestamp format to a valid Unix Epoch integer
+        function extractValidTimestamp(item) {
+            const raw = item.updatedAt || item.createdAtTimestamp || item.timestamp || item.createdAt || item.date;
+
+            if (typeof raw === 'number' && !isNaN(raw)) {
+                return raw;
+            }
+            if (typeof raw === 'string') {
+                const parsed = parseInt(raw, 10);
+                if (!isNaN(parsed) && parsed > 1000000000) {
+                    return parsed < 100000000000 ? parsed * 1000 : parsed;
+                }
+                const dateParsed = new Date(raw).getTime();
+                if (!isNaN(dateParsed)) {
+                    return dateParsed;
+                }
+            }
+            return 0;
+        }
+
         function streamLiveAdminUpdatesLog() {
             const adminNewsRef = ref(db, `newNews`);
             
@@ -208,18 +226,20 @@
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     Object.keys(data).forEach(key => {
-                        localCachedBroadcasts.push({ id: key, ...data[key] });
+                        const item = data[key];
+                        localCachedBroadcasts.push({ 
+                            id: key, 
+                            ...item,
+                            resolvedTimestamp: extractValidTimestamp(item)
+                        });
                     });
                     
+                    // Strict sorting: Newest posts at the top
                     localCachedBroadcasts.sort((a, b) => {
-                        let timeA = a.updatedAt || a.createdAtTimestamp || a.timestamp || 0;
-                        let timeB = b.updatedAt || b.createdAtTimestamp || b.timestamp || 0;
-                        
-                        if (!timeA && a.date) timeA = new Date(a.date).getTime() || 0;
-                        if (!timeB && b.date) timeB = new Date(b.date).getTime() || 0;
-
-                        if (timeA !== 0 || timeB !== 0) return timeB - timeA;
-                        return b.id.localeCompare(a.id);
+                        if (b.resolvedTimestamp !== a.resolvedTimestamp) {
+                            return b.resolvedTimestamp - a.resolvedTimestamp;
+                        }
+                        return String(b.id).localeCompare(String(a.id));
                     });
 
                     renderFilteredBroadcasts();
@@ -311,14 +331,7 @@
             const isLongText = fullContent.length > maxPreviewLen;
             const previewContent = isLongText ? fullContent.substring(0, maxPreviewLen).trim() + "..." : fullContent;
 
-            let numericalTime = item.updatedAt || item.createdAtTimestamp || item.timestamp;
-
-            if (!numericalTime && item.date) {
-                const parsed = new Date(item.date).getTime();
-                if (!isNaN(parsed)) numericalTime = parsed;
-            }
-
-            if (!numericalTime) numericalTime = Date.now(); 
+            const numericalTime = item.resolvedTimestamp || Date.now();
 
             const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
             const isSystem = category.trim().toLowerCase() === "system releases";
@@ -366,12 +379,7 @@
             
             const customActionLabel = item.actionButtonLabel || item.actionLabel || item.buttonLabel || item.btnLabel || "Visit External Source / Link";
 
-            let numericalTime = item.updatedAt || item.createdAtTimestamp || item.timestamp;
-            if (!numericalTime && item.date) {
-                const parsed = new Date(item.date).getTime();
-                if (!isNaN(parsed)) numericalTime = parsed;
-            }
-            if (!numericalTime) numericalTime = Date.now();
+            const numericalTime = item.resolvedTimestamp || Date.now();
 
             const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
             const isSystem = category.trim().toLowerCase() === "system releases";

@@ -190,6 +190,24 @@
             resize: vertical;
         }
 
+        /* Image Preview Box */
+        .image-preview-container {
+            display: none;
+            margin-top: 8px;
+            text-align: center;
+            background: var(--bg-light);
+            border: 1px dashed var(--border-light);
+            padding: 10px;
+            border-radius: 12px;
+        }
+        .image-preview-container img {
+            max-width: 100%;
+            max-height: 180px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
         .btn-row { display: flex; gap: 10px; margin-top: 10px; }
 
         .btn-admin-action {
@@ -224,7 +242,6 @@
             border: 1px solid var(--border-light);
         }
 
-        /* Category Filter Buttons in Manager */
         .filter-btn-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -332,7 +349,6 @@
 
     <div class="toast-banner" id="adminToast">Action Completed Successfully</div>
 
-    <!-- Confirm Modal -->
     <div class="modal-overlay" id="customConfirmModal">
         <div class="modal-box">
             <h3 class="modal-title" id="modalTitleDisplay">Confirm Request</h3>
@@ -345,7 +361,6 @@
         </div>
     </div>
 
-    <!-- Preview Modal -->
     <div class="modal-overlay" id="previewNewsModal">
         <div class="modal-box">
             <h3 class="modal-title" id="previewModalTitle">News Article Preview</h3>
@@ -369,7 +384,6 @@
             </div>
         </div>
 
-        <!-- Mode Notification Banner -->
         <div class="editing-banner" id="editingBanner">
             <span>✏️ Mode: Editing Post (<strong id="editingNewsCode"></strong>)</span>
             <button class="cancel-edit-btn" id="cancelEditBtn">Cancel Edit</button>
@@ -385,7 +399,6 @@
             </select>
         </div>
 
-        <!-- Standard News Entry Fields -->
         <div id="standardFormFields">
             <div class="input-field-wrapper">
                 <label>News Search Code</label>
@@ -397,12 +410,20 @@
                 <input class="admin-input" type="text" id="newsTitle" placeholder="e.g. System Upgrade Live!">
             </div>
 
+            <!-- Image Link Field positioned centrally between Title & Content -->
+            <div class="input-field-wrapper">
+                <label>🖼️ Cover Image / Banner URL (Optional)</label>
+                <input class="admin-input" type="url" id="newsImageUrl" placeholder="https://example.com/banner.jpg">
+                <div class="image-preview-container" id="imagePreviewBox">
+                    <img id="imagePreviewElement" src="" alt="Image Preview" onerror="this.parentElement.style.display='none'">
+                </div>
+            </div>
+
             <div class="input-field-wrapper">
                 <label>Broadcast Message Content</label>
                 <textarea class="admin-input" id="newsMessage" placeholder="Type article content or update detail..."></textarea>
             </div>
 
-            <!-- Action Link & Button -->
             <div style="background: var(--bg-light); border: 1px solid var(--border-light); padding: 14px; border-radius: 12px; margin-bottom: 16px;">
                 <p style="font-size: 11.5px; font-weight: 800; color: var(--primary-burgundy); text-transform: uppercase; margin-bottom: 10px;">
                     🔗 Action Link & Button (Optional)
@@ -418,11 +439,10 @@
             </div>
         </div>
 
-        <!-- Dynamic Promo Code Creation Fields (Option 4) -->
         <div id="promoFormFields" class="hidden-fields">
             <div style="background: #fef3c7; border: 1px solid rgba(245, 158, 11, 0.3); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
                 <p style="font-size: 12px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 12px;">
-                    🎁 Promo Code Setup (Creates New Promo Code Entry)
+                    🎁 Promo Code Setup (Saves under Global Campaign)
                 </p>
                 
                 <div class="input-field-wrapper">
@@ -449,11 +469,9 @@
             <button class="btn-admin-action btn-delete" id="deleteAllCategoriesBtn" style="width: auto; padding: 0 16px;">Purge All News</button>
         </div>
 
-        <!-- Manage News & Promo Section -->
         <div style="border-top: 1px dashed var(--border-light); padding-top:20px;">
             <h3 class="section-title" style="font-size: 16px; color: var(--text-dark); margin-bottom: 12px;">Manage News & Promo Codes</h3>
             
-            <!-- 4 Category Filter Buttons -->
             <div class="filter-btn-grid">
                 <button class="filter-btn active" data-filter="ALL">1. All Items</button>
                 <button class="filter-btn" data-filter="All Updates">2. News Feed</button>
@@ -465,20 +483,17 @@
         </div>
     </div>
 
-    <!-- Firebase SDK via local db.js -->
     <script type="module">
         import { db, ref, onValue, push, set, remove, update } from "./db.js";
 
         let res = null;
         let oldNewsState = {};
         let newNewsState = {};
-        let promoCodesState = {};
-        let legacyPromoState = {};
+        let globalPromoState = {};
         let currentEditingKey = null;
         let currentEditingNode = 'newNews';
         let activeCategoryFilter = 'ALL';
 
-        // Toggle promo form UI based on Category Selection
         const categorySelect = document.getElementById('postCategory');
         categorySelect.addEventListener('change', (e) => {
             const isPromoCodeOption = e.target.value === 'Promo Code News';
@@ -486,7 +501,21 @@
             document.getElementById('promoFormFields').classList.toggle('hidden-fields', !isPromoCodeOption);
         });
 
-        // 4 Category Filter Button Event Listeners
+        // Live image preview listener
+        const imageUrlInput = document.getElementById('newsImageUrl');
+        const imagePreviewBox = document.getElementById('imagePreviewBox');
+        const imagePreviewElement = document.getElementById('imagePreviewElement');
+
+        imageUrlInput.addEventListener('input', (e) => {
+            const url = e.target.value.trim();
+            if(url) {
+                imagePreviewElement.src = url;
+                imagePreviewBox.style.display = 'block';
+            } else {
+                imagePreviewBox.style.display = 'none';
+            }
+        });
+
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -496,7 +525,6 @@
             });
         });
 
-        // Modal Utility
         function openModal(t, d, m, c, tx) {
             document.getElementById('modalTitleDisplay').innerText = t; 
             document.getElementById('modalDescriptionDisplay').innerText = d;
@@ -511,7 +539,6 @@
         document.getElementById('modalCancelBtn').addEventListener('click', () => { if(res) res(false); document.getElementById('customConfirmModal').classList.remove('active'); });
         document.getElementById('closePreviewBtn').addEventListener('click', () => { document.getElementById('previewNewsModal').classList.remove('active'); });
 
-        // Toast Alert Utility
         function triggerAdminAlert(m, s=true) {
             const t = document.getElementById('adminToast'); 
             t.innerText = m;
@@ -520,7 +547,6 @@
             setTimeout(() => t.style.display='none', 3500);
         }
 
-        // Real-Time Listeners
         onValue(ref(db, 'news'), snapshot => { 
             oldNewsState = snapshot.val() || {}; 
             render(); 
@@ -531,17 +557,11 @@
             render(); 
         }, error => console.error("Database 'newNews' Connection Error:", error));
 
-        onValue(ref(db, 'promoCodes'), snapshot => { 
-            promoCodesState = snapshot.val() || {}; 
-            render(); 
-        }, error => console.warn("Promo Codes Node Error:", error));
-
         onValue(ref(db, 'globalPromoCampaign'), snapshot => { 
-            legacyPromoState = snapshot.val() || {}; 
+            globalPromoState = snapshot.val() || {}; 
             render(); 
-        }, error => console.warn("Legacy Promo Node Error:", error));
+        }, error => console.warn("Global Promo Node Error:", error));
 
-        // Combined UI Render Engine
         function render() {
             const container = document.getElementById('manageNewsCardsContainer'); 
             container.innerHTML = ''; 
@@ -560,48 +580,31 @@
 
             let renderedItemsCount = 0;
 
-            // Render Promo Codes (`promoCodes` collection)
+            // Render all promo codes under `globalPromoCampaign`
             if (activeCategoryFilter === 'ALL' || activeCategoryFilter === 'Promo') {
-                Object.keys(promoCodesState).forEach(k => {
-                    const item = promoCodesState[k];
-                    renderedItemsCount++;
-                    container.innerHTML += `
-                        <div class="manage-news-card">
-                            <div class="manage-news-header">
-                                <div>
-                                    <span class="code-badge">${item.code}</span>
-                                    <strong style="margin-left:6px; font-size:14px; color:var(--text-dark);">Promo Code (${item.rewardAmount || 0} ETB)</strong>
-                                </div>
-                                <span class="node-tag node-tag-promo">Promo Code</span>
-                            </div>
-                            <p style="font-size:12px; color:var(--text-muted);">
-                                Users Claimed: <strong>${item.currentClaimCount || 0} / ${item.maxClaims || 0}</strong> | Win: <strong>${item.rewardAmount || 0} Birr</strong>
-                            </p>
-                            <div class="manage-btn-group">
-                                <button class="btn-news-ctrl btn-ctrl-delete del-btn" data-key="${k}" data-node="promoCodes">Delete Promo Code</button>
-                            </div>
-                        </div>`;
-                });
-
-                // Render Legacy Promo Item if present
-                if(legacyPromoState && legacyPromoState.code) {
-                    renderedItemsCount++;
-                    container.innerHTML += `
-                        <div class="manage-news-card">
-                            <div class="manage-news-header">
-                                <div>
-                                    <span class="code-badge">${legacyPromoState.code}</span>
-                                    <strong style="margin-left:6px; font-size:14px;">Legacy Promo (${legacyPromoState.rewardAmount || 0} Birr)</strong>
-                                </div>
-                                <span class="node-tag node-tag-promo">Promo</span>
-                            </div>
-                            <p style="font-size:12px; color:var(--text-muted);">
-                                Claims: <strong>${legacyPromoState.currentClaimCount || 0} / ${legacyPromoState.maxClaims || 0} Users</strong> | Win: <strong>${legacyPromoState.rewardAmount || 0} ETB</strong>
-                            </p>
-                            <div class="manage-btn-group">
-                                <button class="btn-news-ctrl btn-ctrl-delete del-btn" data-key="" data-node="globalPromoCampaign">Delete Promo</button>
-                            </div>
-                        </div>`;
+                if (typeof globalPromoState === 'object' && globalPromoState !== null) {
+                    Object.keys(globalPromoState).forEach(k => {
+                        const item = globalPromoState[k];
+                        if (item && item.code) {
+                            renderedItemsCount++;
+                            container.innerHTML += `
+                                <div class="manage-news-card">
+                                    <div class="manage-news-header">
+                                        <div>
+                                            <span class="code-badge">${item.code}</span>
+                                            <strong style="margin-left:6px; font-size:14px; color:var(--text-dark);">Global Promo (${item.rewardAmount || 0} Birr)</strong>
+                                        </div>
+                                        <span class="node-tag node-tag-promo">Global Promo</span>
+                                    </div>
+                                    <p style="font-size:12px; color:var(--text-muted);">
+                                        Claims: <strong>${item.currentClaimCount || 0} / ${item.maxClaims || 0} Users</strong> | Win: <strong>${item.rewardAmount || 0} ETB</strong>
+                                    </p>
+                                    <div class="manage-btn-group">
+                                        <button class="btn-news-ctrl btn-ctrl-delete del-btn" data-key="${k}" data-node="globalPromoCampaign">Delete Promo Code</button>
+                                    </div>
+                                </div>`;
+                        }
+                    });
                 }
             }
 
@@ -614,7 +617,6 @@
                 const tagClass = nodeName === 'news' ? 'node-tag-old' : 'node-tag-new';
                 const itemCategory = item.category || 'All Updates';
 
-                // Category Filter Matching
                 let isMatch = false;
                 if (activeCategoryFilter === 'ALL') isMatch = true;
                 else if (activeCategoryFilter === 'Promo' && (itemCategory === 'Promo Rewards' || itemCategory === 'Promo Code News')) isMatch = true;
@@ -678,6 +680,16 @@
 
                 document.getElementById('newsCustomCode').value = item.newsCode || item.code || '';
                 document.getElementById('newsTitle').value = item.title || item.newsTitle || '';
+                
+                const imgUrl = item.imageUrl || item.image || '';
+                document.getElementById('newsImageUrl').value = imgUrl;
+                if(imgUrl) {
+                    imagePreviewElement.src = imgUrl;
+                    imagePreviewBox.style.display = 'block';
+                } else {
+                    imagePreviewBox.style.display = 'none';
+                }
+
                 document.getElementById('newsMessage').value = item.content || item.message || '';
                 document.getElementById('newsRedirectUrl').value = item.link || item.redirectUrl || '';
                 document.getElementById('newsButtonLabel').value = item.buttonLabel || '';
@@ -696,10 +708,15 @@
 
                 if(!item) return;
 
+                const imgHtml = (item.imageUrl || item.image) 
+                    ? `<div style="text-align:center; margin:10px 0;"><img src="${item.imageUrl || item.image}" style="max-width:100%; border-radius:8px; max-height:160px; object-fit:cover;"></div>` 
+                    : '';
+
                 document.getElementById('previewModalDetails').innerHTML = `
                     <div class="modal-data-row"><span class="modal-data-label">Code:</span><span class="modal-data-value">${item.newsCode || item.code || 'N/A'}</span></div>
                     <div class="modal-data-row"><span class="modal-data-label">Title:</span><span class="modal-data-value">${item.title || item.newsTitle || 'Untitled'}</span></div>
                     <div class="modal-data-row"><span class="modal-data-label">Category:</span><span class="modal-data-value">${item.category || 'General'}</span></div>
+                    ${imgHtml}
                     <div class="modal-data-row"><span class="modal-data-label">Link:</span><span class="modal-data-value">${item.link || item.redirectUrl || 'None'}</span></div>
                     <div style="background:var(--bg-light); padding:12px; border-radius:10px; margin-top:10px; font-size:13px; color:var(--text-dark); max-height:120px; overflow-y:auto; line-height:1.4;">
                         ${item.content || item.message || 'No content message provided.'}
@@ -709,7 +726,6 @@
             }));
         }
 
-        // Reset Form State
         document.getElementById('cancelEditBtn').addEventListener('click', resetFormState);
 
         function resetFormState() {
@@ -724,6 +740,8 @@
 
             document.getElementById('newsCustomCode').value = '';
             document.getElementById('newsTitle').value = '';
+            document.getElementById('newsImageUrl').value = '';
+            imagePreviewBox.style.display = 'none';
             document.getElementById('newsMessage').value = '';
             document.getElementById('newsRedirectUrl').value = '';
             document.getElementById('newsButtonLabel').value = '';
@@ -746,7 +764,7 @@
                 hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true
             });
 
-            // Option 4: Adding New Promo Code
+            // Option 4: Add Promo Code into `globalPromoCampaign` node
             if (cat === 'Promo Code News') {
                 const promoCode = document.getElementById('promoCode').value.trim().toUpperCase();
                 const maxClaims = parseInt(document.getElementById('promoMaxClaims').value, 10);
@@ -769,8 +787,8 @@
                 };
 
                 try {
-                    await set(push(ref(db, 'promoCodes')), promoPayload);
-                    triggerAdminAlert(`Promo Code [${promoCode}] Created Successfully!`);
+                    await set(push(ref(db, 'globalPromoCampaign')), promoPayload);
+                    triggerAdminAlert(`Global Promo Code [${promoCode}] Created Successfully!`);
                     resetFormState();
                 } catch(err) {
                     console.error(err);
@@ -783,6 +801,7 @@
 
             // Options 1, 2, 3: Standard News Feed Posts
             const title = document.getElementById('newsTitle').value.trim();
+            const imageUrl = document.getElementById('newsImageUrl').value.trim();
             const message = document.getElementById('newsMessage').value.trim();
             const redirectUrl = document.getElementById('newsRedirectUrl').value.trim();
             const buttonLabel = document.getElementById('newsButtonLabel').value.trim();
@@ -803,6 +822,7 @@
                 newsCode: newsCode,
                 category: cat, 
                 title: title, 
+                imageUrl: imageUrl,
                 content: message, 
                 link: redirectUrl,
                 buttonLabel: buttonLabel,
@@ -832,11 +852,10 @@
 
         // Purge All Database Records
         document.getElementById('deleteAllCategoriesBtn').addEventListener('click', async () => {
-            if(!await openModal("CRITICAL PURGE", "Permanently delete ALL news and promo entries across database?", [{label:"Target Nodes:", value:"news, newNews, promoCodes, globalPromoCampaign"}], "btn-delete", "Delete Everything")) return;
+            if(!await openModal("CRITICAL PURGE", "Permanently delete ALL news and promo entries across database?", [{label:"Target Nodes:", value:"news, newNews, globalPromoCampaign"}], "btn-delete", "Delete Everything")) return;
             try {
                 await remove(ref(db, 'news')); 
                 await remove(ref(db, 'newNews')); 
-                await remove(ref(db, 'promoCodes')); 
                 await remove(ref(db, 'globalPromoCampaign')); 
                 resetFormState();
                 triggerAdminAlert("Flushed all database items!");
