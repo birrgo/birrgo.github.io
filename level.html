@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Invitation Levels</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="task.css">
+    <style>
+        /* Top Navigation Header Styling */
+        .brand-header-custom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn-header-back {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-header-back:active {
+            transform: scale(0.92);
+        }
+
+        .btn-header-back svg {
+            width: 20px;
+            height: 20px;
+            stroke: #1e293b;
+            stroke-width: 2.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header-page-title {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin: 0;
+            text-align: center;
+            flex: 1;
+        }
+
+        .header-small-logo {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Level Header Summary Card */
+        .level-summary-card {
+            background: linear-gradient(135deg, #4a0012 0%, #800020 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 16px;
+            color: #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-summary-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.08), transparent);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .summary-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .summary-title {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+        }
+
+        .summary-invites-badge {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .summary-stats {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .summary-subtext {
+            font-size: 12px;
+            color: #ffcad4;
+        }
+
+        /* Level Cards List */
+        .level-list-container {
+            padding: 0 16px 90px 16px; /* Adjusted padding to accommodate bottom ad container */
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .level-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .level-card.completed {
+            border: 1px solid #22c55e;
+            background: #f0fdf4;
+        }
+
+        .level-card-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .level-info-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .level-badge-num {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #800020;
+            font-weight: 800;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .level-card.completed .level-badge-num {
+            background: #22c55e;
+            color: #ffffff;
+            border-color: #22c55e;
+        }
+
+        .level-details h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 2px 0;
+        }
+
+        .level-details p {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .reward-highlight-text {
+            color: #800020;
+            font-weight: 700;
+        }
+
+        /* Progress Counts Box */
+        .level-progress-tracker {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11.5px;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+        }
+
+        .level-card.completed .level-progress-tracker {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+
+        .tracker-done {
+            color: #1e293b;
+        }
+
+        .tracker-remaining {
+            color: #e53e3e;
+            font-weight: 700;
+        }
+
+        .tracker-completed-label {
+            color: #16a34a;
+            font-weight: 700;
+        }
+
+        /* Action Buttons */
+        .btn-claim-level {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-claim-level.claimable {
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-claim-level.locked {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .btn-claim-level.claimed {
+            background: transparent;
+            color: #16a34a;
+            font-weight: 800;
+            cursor: default;
+        }
+
+        /* Fixed Bottom Advertisement Space (Replaces Bottom Navigation Menu) */
+        .fixed-ad-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 65px;
+            background: #ffffff;
+            border-top: 1px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            z-index: 100;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+            box-sizing: border-box;
+            padding: 0 16px;
+        }
+
+        .ad-banner-tag {
+            position: absolute;
+            top: 4px;
+            right: 12px;
+            font-size: 9px;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .ad-banner-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-view">
+        <div class="toast-container" id="toast">Reward Claimed!</div>
+
+        <!-- Top Fluid Vector Curve -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H375V65C375 65 280 155 0 95V0Z" fill="url(#paint0_linear)"/>
+            <defs>
+                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#4a0012"/>
+                    <stop offset="1" stop-color="#800020"/>
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <!-- Header Bar -->
+        <div class="brand-header-custom">
+            <button class="btn-header-back" onclick="window.location.href='task.html'" aria-label="Back">
+                <svg viewBox="0 0 24 24">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h2 class="header-page-title">Invitation Levels</h2>
+            <img src="birrgo-logo.png" alt="BirrGo Logo" class="header-small-logo">
+        </div>
+
+        <!-- Summary Banner -->
+        <div class="level-summary-card">
+            <div class="summary-header-flex">
+                <span class="summary-title">Invitation Milestones</span>
+                <span class="summary-invites-badge" id="totalInvitesBadge">0 Invites</span>
+            </div>
+            <div class="summary-stats" id="totalBonusEarned">0 Birr</div>
+            <div class="summary-subtext">Earn extra milestone bonuses as your network grows!</div>
+        </div>
+
+        <!-- Level Cards List -->
+        <div class="level-list-container" id="levelListContainer">
+            <!-- Dynamic level cards populated by JS -->
+        </div>
+
+        <!-- Fixed Advertisement Container (Placed exactly in the bottom menu area) -->
+        <div class="fixed-ad-banner">
+            <span class="ad-banner-tag">AD</span>
+            <div class="ad-banner-text">
+                📢 <span>Advertisement Space</span>
+            </div>
+        </div>
+
+        <!-- Custom Popup Dialog -->
+        <div class="custom-popup-backdrop" id="customPopup">
+            <div class="custom-popup-card">
+                <div class="popup-status-badge bg-success" id="popupBadge">
+                    <svg viewBox="0 0 24 24" id="popupIcon">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h3 class="custom-popup-title" id="popupTitle">Notification</h3>
+                <p class="custom-popup-msg" id="popupMessage">Message info goes here natively.</p>
+                <button class="btn-popup-confirm" id="popupConfirmBtn">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Defined Level Tier Config
+        const levelTiers = [
+            { level: 1,  reqUsers: 10,     reward: 100 },
+            { level: 2,  reqUsers: 50,     reward: 500 },
+            { level: 3,  reqUsers: 100,    reward: 1000 },
+            { level: 4,  reqUsers: 300,    reward: 3000 },
+            { level: 5,  reqUsers: 500,    reward: 5000 },
+            { level: 6,  reqUsers: 700,    reward: 70000 },
+            { level: 7,  reqUsers: 1000,   reward: 10000 },
+            { level: 8,  reqUsers: 3000,   reward: 300000 },
+            { level: 9,  reqUsers: 5000,   reward: 500000 },
+            { level: 10, reqUsers: 10000,  reward: 1000000 }
+        ];
+
+        let activeUserPhone = "";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            activeUserPhone = localStorage.getItem('auth_session_phone');
+            if (!activeUserPhone) {
+                window.location.href = "new2.html";
+                return;
+            }
+
+            await loadLevelData();
+        });
+
+        async function loadLevelData() {
+            const container = document.getElementById('levelListContainer');
+            container.innerHTML = '';
+
+            try {
+                const userSnapshot = await get(ref(db, `users/${activeUserPhone}`));
+                
+                if (userSnapshot.exists()) {
+                    const userData = userSnapshot.val();
+                    const referredObj = userData.referredUsers || {};
+                    const totalInvites = Object.keys(referredObj).length;
+                    const claimedLevels = userData.claimedLevelBonus || {};
+
+                    document.getElementById('totalInvitesBadge').innerText = `${totalInvites} Invites`;
+
+                    let totalEarned = 0;
+
+                    levelTiers.forEach(tier => {
+                        const isClaimed = !!claimedLevels[`level_${tier.level}`];
+                        const isEligible = totalInvites >= tier.reqUsers;
+
+                        // Calculate remaining users required
+                        const invitesDone = Math.min(totalInvites, tier.reqUsers);
+                        const invitesLeft = Math.max(0, tier.reqUsers - totalInvites);
+
+                        if (isClaimed) {
+                            totalEarned += tier.reward;
+                        }
+
+                        const card = document.createElement('div');
+                        card.className = `level-card ${isClaimed ? 'completed' : ''}`;
+
+                        let buttonMarkup = '';
+                        if (isClaimed) {
+                            buttonMarkup = `<span class="btn-claim-level claimed">✓ Claimed</span>`;
+                        } else if (isEligible) {
+                            buttonMarkup = `<button class="btn-claim-level claimable" onclick="claimLevelBonus(${tier.level}, ${tier.reward}, ${tier.reqUsers})">Claim</button>`;
+                        } else {
+                            buttonMarkup = `<button class="btn-claim-level locked">Locked</button>`;
+                        }
+
+                        // Progress tracker text
+                        let progressTextMarkup = '';
+                        if (isEligible) {
+                            progressTextMarkup = `<span class="tracker-completed-label">✓ Completed (${tier.reqUsers}/${tier.reqUsers})</span>`;
+                        } else {
+                            progressTextMarkup = `
+                                <span class="tracker-done">Invited: <b>${invitesDone}</b></span>
+                                <span class="tracker-remaining">Left: <b>${invitesLeft}</b></span>
+                            `;
+                        }
+
+                        card.innerHTML = `
+                            <div class="level-card-main">
+                                <div class="level-info-left">
+                                    <div class="level-badge-num">L${tier.level}</div>
+                                    <div class="level-details">
+                                        <h4>Invite ${tier.reqUsers.toLocaleString()} Users</h4>
+                                        <p>Bonus: <span class="reward-highlight-text">+${tier.reward.toLocaleString()} Birr</span></p>
+                                    </div>
+                                </div>
+                                ${buttonMarkup}
+                            </div>
+                            <div class="level-progress-tracker">
+                                ${progressTextMarkup}
+                            </div>
+                        `;
+
+                        container.appendChild(card);
+                    });
+
+                    document.getElementById('totalBonusEarned').innerText = `${totalEarned.toLocaleString()} Birr`;
+                }
+            } catch (err) {
+                console.error("Error loading level info:", err);
+            }
+        }
+
+        window.claimLevelBonus = async function(level, rewardAmount, reqUsers) {
+            try {
+                const userRef = ref(db, `users/${activeUserPhone}`);
+                const snapshot = await get(userRef);
+
+                if (!snapshot.exists()) return;
+
+                const userData = snapshot.val();
+                const totalInvites = Object.keys(userData.referredUsers || {}).length;
+                const claimedLevels = userData.claimedLevelBonus || {};
+
+                if (totalInvites < reqUsers) {
+                    showModal('error', 'Requirement Not Met', `You need at least ${reqUsers} invited users to claim Level ${level}.`);
+                    return;
+                }
+
+                if (claimedLevels[`level_${level}`]) {
+                    showModal('lock', 'Already Claimed', `You have already claimed Level ${level} reward.`);
+                    return;
+                }
+
+                const currentBalance = userData.balance || 0;
+                const updatedBalance = currentBalance + rewardAmount;
+
+                const updates = {};
+                updates[`users/${activeUserPhone}/balance`] = updatedBalance;
+                updates[`users/${activeUserPhone}/claimedLevelBonus/level_${level}`] = true;
+
+                await update(ref(db), updates);
+
+                showModal('success', 'Bonus Claimed!', `Successfully added ${rewardAmount.toLocaleString()} Birr to your wallet!`, () => {
+                    loadLevelData();
+                });
+
+            } catch (error) {
+                console.error("Failed to claim level bonus:", error);
+                showModal('error', 'Claim Failed', 'An error occurred while claiming your reward. Please try again.');
+            }
+        };
+
+        function showModal(type, title, message, onConfirm = null) {
+            const popupBadge = document.getElementById('popupBadge');
+            const popupIcon = document.getElementById('popupIcon');
+            const popupTitle = document.getElementById('popupTitle');
+            const popupMessage = document.getElementById('popupMessage');
+            const popupConfirmBtn = document.getElementById('popupConfirmBtn');
+            const customPopup = document.getElementById('customPopup');
+
+            popupBadge.className = "popup-status-badge";
+            popupTitle.innerText = title;
+            popupMessage.innerText = message;
+
+            if (type === 'success') {
+                popupBadge.classList.add('bg-success');
+                popupIcon.innerHTML = `<polyline points="20 6 9 17 4 12"></polyline>`;
+            } else if (type === 'lock') {
+                popupBadge.classList.add('bg-lock');
+                popupIcon.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
+            } else {
+                popupBadge.classList.add('bg-error');
+                popupIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
+            }
+
+            customPopup.style.display = 'flex';
+            setTimeout(() => customPopup.classList.add('show-modal'), 10);
+
+            const handleClosure = () => {
+                customPopup.classList.remove('show-modal');
+                setTimeout(() => {
+                    customPopup.style.display = 'none';
+                    if (onConfirm) onConfirm();
+                }, 300);
+            };
+            popupConfirmBtn.onclick = handleClosure;
+        }
+    </script>
+</body>
+</html>
