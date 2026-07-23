@@ -3,538 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BirrGo | User Activity Tracker</title>
+    <title>BirrGo | Activity Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-burgundy: #4d0511;
-            --accent-burgundy-red: #881337;
-            --text-dark: #1f2937; 
-            --text-muted: #6b7280; 
-            --bg-light: #f8fafc;
-            --online-color: #10b981;
-            --offline-color: #ef4444;
-            --unpaid-burgundy-bg: #fff5f5;
-            --unpaid-burgundy-border: #fecdd3;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html, body {
-            background-color: var(--bg-light);
-            width: 100%;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-
-        .top-wave-header-wrapper {
-            background: var(--primary-burgundy);
-            width: 100%;
-            position: relative;
-            z-index: 100;
-            padding-top: env(safe-area-inset-top);
-        }
-
-        .top-header-content {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            padding: 10px 14px 6px 14px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .btn-circle-back {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: none;
-            color: var(--primary-burgundy);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        }
-
-        .header-center-title {
-            color: #ffffff;
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 0.04em;
-            text-align: center;
-            margin-top: 5px;
-        }
-
-        .admin-status-3d-glass {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 12px;
-            padding: 4px 8px;
-            font-size: 9.5px;
-            font-weight: 600;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        #admin-status-indicator-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: var(--online-color);
-            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
-        }
-
-        .header-wave-svg {
-            width: 100%;
-            height: 12px;
-            display: block;
-        }
-
-        .app-view {
-            width: 100%;
-            max-width: 450px;
-            margin: 0 auto;
-            padding: 12px 16px 16px 16px;
-            display: flex;
-            flex-direction: column;
-            min-height: calc(100vh - 65px);
-            position: relative;
-        }
-
-        .main-body-content {
-            flex-grow: 1;
-        }
-
-        .screen-title {
-            text-align: center;
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 3px;
-        }
-
-        .screen-title span {
-            color: var(--primary-burgundy);
-        }
-
-        .screen-subtitle {
-            text-align: center;
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 14px;
-        }
-
-        .activity-tabs {
-            display: flex;
-            background: #ffffff;
-            padding: 4px;
-            border-radius: 14px;
-            margin-bottom: 16px;
-            border: 1px solid #e2e8f0;
-            gap: 2px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        
-        .activity-tabs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .activity-tab-btn {
-            flex: 1;
-            min-width: 65px;
-            border: none;
-            background: none;
-            padding: 8px 4px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            white-space: nowrap;
-            position: relative;
-        }
-
-        .activity-tab-btn.active {
-            background: var(--primary-burgundy);
-            color: #ffffff;
-            box-shadow: 0 2px 6px rgba(77, 5, 17, 0.2);
-        }
-
-        /* TAB BADGES FOR UNPAID AND PENDING COUNT */
-        .tab-count-badge {
-            background: #ef4444;
-            color: #ffffff;
-            font-size: 8.5px;
-            font-weight: 800;
-            padding: 1px 5px;
-            border-radius: 8px;
-            margin-left: 3px;
-            display: inline-block;
-        }
-
-        .activity-tab-btn.active .tab-count-badge {
-            background: #ffffff;
-            color: var(--primary-burgundy);
-        }
-
-        .activity-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 2px;
-        }
-
-        /* ONE-TIME NOTIFICATION POPUP BANNER */
-        .status-popup-banner {
-            background: #ecfdf5;
-            border: 1px solid #a7f3d0;
-            border-left: 4px solid #10b981;
-            border-radius: 14px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.12);
-            animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .status-popup-banner.rejected {
-            background: #fef2f2;
-            border-color: #fca5a5;
-            border-left-color: #ef4444;
-            box-shadow: 0 3px 10px rgba(239, 68, 68, 0.12);
-        }
-
-        .popup-banner-text {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #065f46;
-        }
-
-        .status-popup-banner.rejected .popup-banner-text {
-            color: #991b1b;
-        }
-
-        .btn-read-ack {
-            background: #10b981;
-            color: #ffffff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .status-popup-banner.rejected .btn-read-ack {
-            background: #ef4444;
-        }
-
-        @keyframes slideDown {
-            0% { transform: translateY(-10px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
-        .activity-item {
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            padding: 14px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            transition: transform 0.2s;
-            position: relative;
-        }
-
-        .activity-item.unpaid-card {
-            border: 1px solid var(--unpaid-burgundy-border);
-            background: linear-gradient(180deg, #ffffff 0%, var(--unpaid-burgundy-bg) 100%);
-            box-shadow: 0 4px 12px rgba(136, 19, 55, 0.08);
-            border-left: 4px solid var(--accent-burgundy-red);
-        }
-
-        .activity-item.pending-card {
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            background: #eff6ff;
-            border-left: 4px solid #2563eb;
-        }
-
-        .activity-item.cancelled-card {
-            border: 1px solid rgba(156, 163, 175, 0.3);
-            background: #f9fafb;
-        }
-
-        .activity-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .activity-item-title {
-            font-weight: 700;
-            font-size: 13.5px;
-            color: var(--text-dark);
-        }
-
-        .activity-item-amount {
-            font-weight: 800;
-            font-size: 14.5px;
-            color: var(--primary-burgundy);
-        }
-
-        .activity-badge {
-            font-size: 9.5px;
-            font-weight: 800;
-            padding: 3px 9px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .activity-badge.unpaid { 
-            background: #ffe4e6; 
-            color: var(--accent-burgundy-red); 
-            border: 1px solid #fecdd3; 
-            box-shadow: 0 1px 3px rgba(136, 19, 55, 0.12);
-        }
-        
-        .activity-badge.pending { background: #dbeafe; color: #2563eb; border: 1px solid #bfdbfe; }
-        .activity-badge.approved { background: #d1fae5; color: #059669; border: 1px solid #a7f3d0; }
-        .activity-badge.rejected { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
-        .activity-badge.cancelled { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
-
-        .card-action-box {
-            margin-top: 4px;
-            padding-top: 10px;
-            border-top: 1px dashed rgba(136, 19, 55, 0.2);
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-continue-payment {
-            width: 100%;
-            background: linear-gradient(135deg, var(--accent-burgundy-red) 0%, var(--primary-burgundy) 100%);
-            color: #ffffff;
-            border: none;
-            padding: 10px;
-            border-radius: 12px;
-            font-size: 11.5px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            box-shadow: 0 3px 8px rgba(77, 5, 17, 0.25);
-            letter-spacing: 0.2px;
-        }
-
-        .btn-continue-payment:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(77, 5, 17, 0.35);
-        }
-
-        .activity-meta {
-            font-size: 11px;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .empty-activity-state {
-            text-align: center;
-            padding: 50px 20px;
-            font-size: 13px;
-            color: #94a3b8;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .chat-floating-btn {
-            align-self: flex-end;
-            margin-bottom: 8px;
-            background: var(--primary-burgundy);
-            color: #ffffff;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 12px rgba(77, 5, 17, 0.3);
-            animation: pulseGlow 2s infinite ease-in-out;
-            transition: transform 0.2s;
-            position: relative;
-        }
-
-        .chat-floating-btn:active {
-            transform: scale(0.95);
-        }
-
-        .chat-badge-count {
-            background: #ef4444;
-            color: #ffffff;
-            font-size: 9px;
-            font-weight: 800;
-            padding: 2px 6px;
-            border-radius: 10px;
-            margin-left: 2px;
-            border: 1px solid #ffffff;
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(77, 5, 17, 0.5); }
-            70% { box-shadow: 0 0 0 10px rgba(77, 5, 17, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(77, 5, 17, 0); }
-        }
-
-        .bottom-ad-container {
-            border: 1px dashed #cbd5e1;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            position: relative;
-            margin-top: auto;
-        }
-
-        .ad-tag {
-            position: absolute;
-            top: -8px;
-            right: 12px;
-            background: #f1f5f9;
-            color: #94a3b8;
-            font-size: 8px;
-            font-weight: 800;
-            padding: 1px 4px;
-            border-radius: 4px;
-        }
-
-        .ad-icon { font-size: 14px; }
-        .ad-text { font-size: 11px; font-weight: 600; color: #94a3b8; }
-
-        .chat-window {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: calc(100% - 40px);
-            max-width: 360px;
-            height: 420px;
-            background: #ffffff;
-            border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 1000;
-            border: 1px solid #e2e8f0;
-        }
-
-        .chat-header {
-            background: var(--primary-burgundy);
-            color: white;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .chat-merchant-info { display: flex; align-items: center; gap: 10px; }
-        .chat-avatar {
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 12px;
-            position: relative;
-        }
-
-        .status-dot-inner {
-            position: absolute; bottom: 0; right: 0;
-            width: 8px; height: 8px;
-            border-radius: 50%; background: var(--online-color);
-            border: 1.5px solid #ffffff;
-        }
-
-        .status-dot-inner.offline { background: var(--offline-color); }
-        .chat-title { font-size: 13px; font-weight: 700; }
-        .chat-status-text { font-size: 10px; opacity: 0.8; }
-        .close-chat-btn {
-            background: transparent; border: none;
-            color: white; cursor: pointer; font-size: 20px;
-        }
-
-        .chat-messages {
-            flex-grow: 1; padding: 14px;
-            overflow-y: auto; background: #f8fafc;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-
-        .chat-bubble {
-            max-width: 80%; padding: 8px 12px;
-            border-radius: 12px; font-size: 12px;
-        }
-
-        .chat-bubble.merchant {
-            background: #ffffff; color: var(--text-dark);
-            align-self: flex-start; border: 1px solid #e2e8f0;
-        }
-
-        .chat-bubble.user {
-            background: var(--primary-burgundy); color: white;
-            align-self: flex-end;
-        }
-
-        .chat-input-area {
-            padding: 10px 14px; border-top: 1px solid #e2e8f0;
-            background: white; display: flex; align-items: center; gap: 10px;
-        }
-
-        .chat-input {
-            flex-grow: 1; border: none; outline: none;
-            font-size: 12px; background: transparent;
-        }
-
-        .chat-send-btn {
-            background: transparent; border: none;
-            color: var(--primary-burgundy); cursor: pointer;
-            font-weight: 700; font-size: 12px;
-        }
-    </style>
+    <link rel="stylesheet" href="usera.css">
 </head>
 <body>
 
@@ -578,6 +49,7 @@
                     <button class="activity-tab-btn" id="tab-cancelled" onclick="filterActivity('cancelled')">Cancelled</button>
                 </div>
 
+                <!-- SINGLE GLOBAL NOTIFICATION POPUP -->
                 <div id="status-popup-area"></div>
 
                 <div class="activity-list" id="activity-list-container">
@@ -586,7 +58,7 @@
             </div>
         </div>
 
-        <button class="chat-floating-btn" onclick="toggleChatWindow(event)">
+        <button class="chat-floating-btn" id="chatFloatingBtn" onclick="toggleChatWindow(event)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
@@ -596,7 +68,6 @@
 
         <div class="bottom-ad-container">
             <span class="ad-tag">AD</span>
-            <span class="ad-icon">📢</span>
             <span class="ad-text">Advertisement Space</span>
         </div>
     </div>
@@ -679,9 +150,7 @@
         };
 
         window.handleChatKey = function(event) {
-            if (event.key === 'Enter') {
-                sendUserMessage();
-            }
+            if (event.key === 'Enter') sendUserMessage();
         };
 
         function initializeChatListener() {
@@ -717,15 +186,10 @@
                     snapshot.forEach((child) => {
                         const msg = child.val();
                         if (msg && (msg.sender === 'merchant' || msg.sender === 'support' || msg.sender !== 'user')) {
-                            if (msg.isRead === false || msg.read === false || msg.isRead === undefined) {
-                                updates[`chats/${userId}/messages/${child.key}/isRead`] = true;
-                                updates[`chats/${userId}/messages/${child.key}/read`] = true;
-                            }
+                            if (!msg.isRead) updates[`chats/${userId}/messages/${child.key}/isRead`] = true;
                         }
                     });
-                    if (Object.keys(updates).length > 0) {
-                        update(ref(db), updates);
-                    }
+                    if (Object.keys(updates).length > 0) update(ref(db), updates);
                 }
             }, { onlyOnce: true });
 
@@ -741,11 +205,7 @@
                     snapshot.forEach((childSnapshot) => {
                         const msg = childSnapshot.val();
                         const isFromSupport = msg && (msg.sender === 'merchant' || msg.sender === 'support' || msg.sender !== 'user');
-                        const isUnread = msg && (msg.isRead === false || msg.read === false || (isFromSupport && msg.isRead === undefined && msg.read === undefined));
-
-                        if (isFromSupport && isUnread) {
-                            unreadCount++;
-                        }
+                        if (isFromSupport && !msg.isRead) unreadCount++;
                     });
                 }
 
@@ -759,20 +219,7 @@
             });
         }
 
-        function initializeChatStatus() {
-            const headerDot = document.getElementById('chat-header-dot');
-            const statusText = document.getElementById('chat-status-text');
-
-            if (isMerchantOnline) {
-                if (headerDot) headerDot.classList.remove('offline');
-                if (statusText) statusText.innerText = "Online";
-            } else {
-                if (headerDot) headerDot.classList.add('offline');
-                if (statusText) statusText.innerText = "Offline";
-            }
-        }
-
-        // ACKNOWLEDGE / CLEAR ONE-TIME STATUS POPUP BANNER
+        // PERMANENT CLEARANCE OF POPUP NOTIFICATION
         window.acknowledgeOrderStatus = function(orderId) {
             const updates = {};
             updates[`users/${userId}/transactions/${orderId}/userRead`] = true;
@@ -801,22 +248,24 @@
                     userTransactionsList.reverse();
                 }
 
-                // Update activity count badges
                 const unpaidBadge = document.getElementById('count-unpaid');
                 const pendingBadge = document.getElementById('count-pending');
 
-                if (unpaidCount > 0) {
-                    unpaidBadge.innerText = unpaidCount;
-                    unpaidBadge.style.display = 'inline-block';
-                } else {
-                    unpaidBadge.style.display = 'none';
-                }
+                unpaidBadge.innerText = unpaidCount;
+                unpaidBadge.style.display = unpaidCount > 0 ? 'inline-block' : 'none';
 
-                if (pendingCount > 0) {
-                    pendingBadge.innerText = pendingCount;
-                    pendingBadge.style.display = 'inline-block';
+                pendingBadge.innerText = pendingCount;
+                pendingBadge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+
+                const chatBtn = document.getElementById('chatFloatingBtn');
+                const chatWin = document.getElementById('chatWindow');
+
+                if (unpaidCount > 0 || pendingCount > 0) {
+                    if (chatBtn) chatBtn.style.display = 'flex';
                 } else {
-                    pendingBadge.style.display = 'none';
+                    if (chatBtn) chatBtn.style.display = 'none';
+                    if (chatWin) chatWin.style.display = 'none';
+                    isChatOpen = false;
                 }
 
                 renderActivityItems();
@@ -838,7 +287,6 @@
                     adminLabel.style.color = "#ef4444";
                     indicatorDot.style.backgroundColor = "#ef4444";
                 }
-                initializeChatStatus();
             });
 
             fetchUserTransactionsRealtime();
@@ -874,47 +322,57 @@
             container.innerHTML = '';
             popupArea.innerHTML = '';
 
-            // Check for unread completed/approved or rejected order popups
-            const unreadCompletedOrRejected = userTransactionsList.find(item => {
-                const status = (item.status || '').toLowerCase();
-                const isFinalState = status === 'approved' || status === 'success' || status === 'completed' || status === 'rejected' || status === 'failed';
-                return isFinalState && item.userRead !== true;
-            });
+            // RENDER ONLY ONE SINGLE UNREAD POPUP ACROSS THE WHOLE SYSTEM AT ANY TIME
+            let activePopupItem = userTransactionsList.find(item => item.userRead !== true);
 
-            if (unreadCompletedOrRejected) {
-                const status = (unreadCompletedOrRejected.status || '').toLowerCase();
-                const isApproved = status === 'approved' || status === 'success' || status === 'completed';
-                const bannerClass = isApproved ? 'status-popup-banner' : 'status-popup-banner rejected';
-                const messageText = isApproved 
-                    ? `🎉 Order Ref #${unreadCompletedOrRejected.orderRef || ''} Verified & ${unreadCompletedOrRejected.amount} ETB Credited!` 
-                    : `⚠️ Order Ref #${unreadCompletedOrRejected.orderRef || ''} Was Rejected by Admin.`;
+            if (activePopupItem) {
+                const status = (activePopupItem.status || 'unpaid').toLowerCase();
+                let stateClass = 'unpaid';
+                let bannerTitle = 'Payment Pending';
+                let message = `Order Ref #${activePopupItem.orderRef || 'N/A'} - Action Required`;
+                let actionBtnText = 'Clear Notification';
+
+                if (status === 'pending' || status === 'waiting approval') {
+                    stateClass = 'pending';
+                    bannerTitle = 'Under Review';
+                    message = `Order Ref #${activePopupItem.orderRef || 'N/A'} is currently being processed.`;
+                } else if (status === 'approved' || status === 'success' || status === 'completed') {
+                    stateClass = 'approved';
+                    bannerTitle = 'Order Approved';
+                    message = `Order Ref #${activePopupItem.orderRef || 'N/A'} verified! ${activePopupItem.amount || 0} Birr credited.`;
+                } else if (status === 'rejected' || status === 'failed') {
+                    stateClass = 'rejected';
+                    bannerTitle = 'Order Rejected';
+                    message = `Order Ref #${activePopupItem.orderRef || 'N/A'} could not be processed.`;
+                } else if (status === 'cancelled') {
+                    stateClass = 'cancelled';
+                    bannerTitle = 'Order Cancelled';
+                    message = `Order Ref #${activePopupItem.orderRef || 'N/A'} was cancelled.`;
+                }
 
                 popupArea.innerHTML = `
-                    <div class="${bannerClass}">
-                        <span class="popup-banner-text">${messageText}</span>
-                        <button class="btn-read-ack" onclick="acknowledgeOrderStatus('${unreadCompletedOrRejected.id}')">Acknowledge & Clear</button>
+                    <div class="status-popup-banner ${stateClass}">
+                        <div class="popup-banner-content">
+                            <div class="popup-banner-title">${bannerTitle}</div>
+                            <div class="popup-banner-text">${message}</div>
+                        </div>
+                        <button class="btn-read-ack" onclick="acknowledgeOrderStatus('${activePopupItem.id}')">${actionBtnText}</button>
                     </div>
                 `;
             }
 
+            // FILTER CARDS PER SELECTED TAB
             const filteredList = userTransactionsList.filter(item => {
                 const status = (item.status || 'unpaid').toLowerCase();
                 const type = (item.type || '').toLowerCase();
                 const title = (item.title || '').toLowerCase();
-
                 const isDeposit = type.includes('deposit') || title.includes('deposit') || (!item.type && !item.title);
 
-                if (currentActivityFilter === 'unpaid') {
-                    return isDeposit && (status === 'unpaid' || status === 'open');
-                } else if (currentActivityFilter === 'pending') {
-                    return isDeposit && (status === 'pending' || status === 'waiting approval');
-                } else if (currentActivityFilter === 'approved') {
-                    return status === 'approved' || status === 'success' || status === 'completed';
-                } else if (currentActivityFilter === 'rejected') {
-                    return status === 'rejected' || status === 'failed';
-                } else if (currentActivityFilter === 'cancelled') {
-                    return status === 'cancelled';
-                }
+                if (currentActivityFilter === 'unpaid') return isDeposit && (status === 'unpaid' || status === 'open');
+                if (currentActivityFilter === 'pending') return isDeposit && (status === 'pending' || status === 'waiting approval');
+                if (currentActivityFilter === 'approved') return status === 'approved' || status === 'success' || status === 'completed';
+                if (currentActivityFilter === 'rejected') return status === 'rejected' || status === 'failed';
+                if (currentActivityFilter === 'cancelled') return status === 'cancelled';
                 return false;
             });
 
@@ -926,14 +384,13 @@
             filteredList.forEach(item => {
                 const card = document.createElement('div');
                 card.classList.add('activity-item');
-                
                 const cleanAmount = parseFloat(item.amount || 0).toLocaleString();
 
                 if (currentActivityFilter === 'unpaid') {
                     card.classList.add('unpaid-card');
                     card.innerHTML = `
                         <div class="activity-item-header">
-                            <span class="activity-item-title">${item.title || '📥 Deposit Request'}</span>
+                            <span class="activity-item-title">${item.title || 'Deposit Request'}</span>
                             <span class="activity-badge unpaid">UNPAID</span>
                         </div>
                         <div class="activity-meta">
@@ -953,8 +410,8 @@
                     card.classList.add('pending-card');
                     card.innerHTML = `
                         <div class="activity-item-header">
-                            <span class="activity-item-title">${item.title || '📥 Deposit Request'}</span>
-                            <span class="activity-badge pending">Waiting Admin Verification</span>
+                            <span class="activity-item-title">${item.title || 'Deposit Request'}</span>
+                            <span class="activity-badge pending">Pending Approval</span>
                         </div>
                         <div class="activity-meta">
                             <span>Ref: ${item.orderRef || 'N/A'}</span>
@@ -967,8 +424,8 @@
                 } else if (currentActivityFilter === 'approved') {
                     card.innerHTML = `
                         <div class="activity-item-header">
-                            <span class="activity-item-title">${item.title || '📥 Deposit Verified'}</span>
-                            <span class="activity-badge approved">APPROVED & CREDITED</span>
+                            <span class="activity-item-title">${item.title || 'Deposit Verified'}</span>
+                            <span class="activity-badge approved">APPROVED</span>
                         </div>
                         <div class="activity-meta">
                             <span>Ref: ${item.orderRef || 'N/A'}</span>
@@ -982,7 +439,7 @@
                     card.classList.add('cancelled-card');
                     card.innerHTML = `
                         <div class="activity-item-header">
-                            <span class="activity-item-title">${item.title || '❌ Cancelled Deposit'}</span>
+                            <span class="activity-item-title">${item.title || 'Cancelled Deposit'}</span>
                             <span class="activity-badge cancelled">CANCELLED</span>
                         </div>
                         <div class="activity-meta">
@@ -996,7 +453,7 @@
                 } else {
                     card.innerHTML = `
                         <div class="activity-item-header">
-                            <span class="activity-item-title">${item.title || '📥 Deposit'}</span>
+                            <span class="activity-item-title">${item.title || 'Deposit'}</span>
                             <span class="activity-badge ${(item.status || '').toLowerCase()}">${item.status || ''}</span>
                         </div>
                         <div class="activity-meta">
