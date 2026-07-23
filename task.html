@@ -6,7 +6,7 @@
     <title>BirrGo - Premium Tasks</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="task.css">
     <style>
         /* Compact Clickable Badge - Reduced Box Width */
@@ -60,12 +60,12 @@
             }
         }
 
-        /* Compact Segmented Control Menu Bar (Matched to Reference Image) */
+        /* Compact Segmented Control Menu Bar */
         .task-view-toggle-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #e2e8f0; /* Soft light gray/blue container background */
+            background-color: #e2e8f0;
             padding: 4px;
             border-radius: 20px;
             margin: 0 16px 16px 16px;
@@ -78,7 +78,7 @@
             padding: 7px 10px;
             font-size: 11.5px;
             font-weight: 600;
-            color: #64748b; /* Muted tab text */
+            color: #64748b;
             background: transparent;
             border: none;
             border-radius: 16px;
@@ -88,26 +88,63 @@
             white-space: nowrap;
         }
 
-        /* Active Tab styling matching the image */
         .toggle-tab-btn.active-view-tab {
             background-color: #ffffff;
-            color: #4a0012; /* Theme burgundy text */
+            color: #4a0012;
             font-weight: 700;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
         }
 
-        /* Reduced Size Box Matched to Theme Burgundy */
+        /* GIVEAWAY HEADER TEXT STYLES */
+        .giveaway-header-block {
+            text-align: center;
+            padding: 6px 12px 10px 12px;
+        }
+
+        /* Updated Modern Burgundy Title Style */
+        .giveaway-main-title {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #660018; /* Modern Burgundy */
+            letter-spacing: -0.3px;
+            margin-bottom: 8px;
+            line-height: 1.25;
+            text-transform: none;
+        }
+
+        .giveaway-description-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            color: #334155;
+            line-height: 1.45;
+            font-weight: 600;
+            max-width: 320px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        }
+
+        .giveaway-description-text strong {
+            color: #800020;
+            font-weight: 800;
+        }
+
+        /* REDUCED SIZE BOX MATCHED TO THEME BURGUNDY */
         .glass-image-box {
             background: linear-gradient(145deg, #4a0012 0%, #800020 100%);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 18px;
+            border-radius: 16px;
             padding: 0;
             width: 100%;
-            max-width: 220px;
-            height: 200px;
-            margin: 10px auto 20px auto;
+            max-width: 180px;
+            height: 160px;
+            margin: 10px auto 16px auto;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 
                         inset 0 1px 1px rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
@@ -149,7 +186,7 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            border-radius: 18px;
+            border-radius: 16px;
         }
 
         @keyframes float3D {
@@ -163,21 +200,21 @@
 
         .btn-open-giveaway {
             width: 100%;
-            max-width: 280px;
+            max-width: 260px;
             display: block;
             margin: 0 auto;
-            padding: 14px 20px;
+            padding: 13px 20px;
             border: none;
             border-radius: 14px;
             background: linear-gradient(180deg, #a30029 0%, #660018 100%);
             color: #ffffff;
             font-weight: 800;
-            font-size: 16px;
+            font-size: 15px;
             letter-spacing: 0.5px;
             text-transform: uppercase;
             cursor: pointer;
             box-shadow: 0 6px 0px #3d000e, 
-                        0 10px 15px rgba(0, 0, 0, 0.4),
+                        0 10px 15px rgba(0, 0, 0, 0.35),
                         inset 0 1px 1px rgba(255, 255, 255, 0.3);
             transition: all 0.15s ease;
             position: relative;
@@ -187,8 +224,71 @@
         .btn-open-giveaway:active {
             top: 4px;
             box-shadow: 0 2px 0px #3d000e, 
-                        0 4px 8px rgba(0, 0, 0, 0.4),
+                        0 4px 8px rgba(0, 0, 0, 0.35),
                         inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Compact Clickable Level Bar (Inside Invitation Panel Only) */
+        .compact-level-bar {
+            background: linear-gradient(135deg, #4a0012 0%, #800020 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 6px 12px;
+            margin: 8px 0 14px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.15s ease;
+        }
+
+        .compact-level-bar:active {
+            transform: scale(0.98);
+        }
+
+        .compact-level-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .compact-level-icon {
+            font-size: 14px;
+        }
+
+        .compact-level-text h5 {
+            margin: 0;
+            font-size: 11.5px;
+            font-weight: 700;
+        }
+
+        .compact-level-text p {
+            margin: 0;
+            font-size: 10px;
+            color: #ffcad4;
+        }
+
+        .compact-level-right {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 3px 8px;
+            border-radius: 8px;
+        }
+
+        .compact-level-right svg {
+            width: 11px;
+            height: 11px;
+            stroke: #ffffff;
+            stroke-width: 2.5;
+            fill: none;
         }
     </style>
 </head>
@@ -252,6 +352,23 @@
                     </div>
                 </div>
 
+                <!-- Compact Level Display Button (Only under Invitation Tab) -->
+                <div class="compact-level-bar" onclick="window.location.href='level.html'">
+                    <div class="compact-level-left">
+                        <span class="compact-level-icon">🏆</span>
+                        <div class="compact-level-text">
+                            <h5 id="userCurrentLevelText">Your Level: Level 1</h5>
+                            <p id="userInviteProgressText">0 / 10 Users Invited</p>
+                        </div>
+                    </div>
+                    <div class="compact-level-right">
+                        <span>Details</span>
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
                 <div class="sub-header-row">
                     <h4 class="sub-title-text">Invited Friends</h4>
                     <span class="counter-badge" id="inviteCountLabel">0 Users</span>
@@ -264,6 +381,13 @@
 
             <!-- Panel 3: Giveaway Panel -->
             <div id="panelGiveaway" class="sub-view-panel">
+                <div class="giveaway-header-block">
+                    <h2 class="giveaway-main-title">Open Your Giveaway Box</h2>
+                    <p class="giveaway-description-text">
+                        Make <strong>thousands of Birr a day</strong> with simple & free tasks! Watch videos, like & follow, find hidden keys, and stop the timer at the exact time to claim daily giveaways from <strong>BirrGo</strong>.
+                    </p>
+                </div>
+
                 <div class="glass-image-box">
                     <div class="giveaway-3d-box">
                         <img src="g.png" alt="Giveaway Graphic">
@@ -342,6 +466,19 @@
         let activeUserPhone = "";
         let activeAccountId = ""; 
 
+        const levelTiers = [
+            { level: 1, reqUsers: 10 },
+            { level: 2, reqUsers: 50 },
+            { level: 3, reqUsers: 100 },
+            { level: 4, reqUsers: 300 },
+            { level: 5, reqUsers: 500 },
+            { level: 6, reqUsers: 700 },
+            { level: 7, reqUsers: 1000 },
+            { level: 8, reqUsers: 3000 },
+            { level: 9, reqUsers: 5000 },
+            { level: 10, reqUsers: 10000 }
+        ];
+
         const customPopup = document.getElementById('customPopup');
         const popupBadge = document.getElementById('popupBadge');
         const popupIcon = document.getElementById('popupIcon');
@@ -404,6 +541,11 @@
                         shareBtn.innerText = "Share Invite Link";
                         shareBtn.disabled = false;
                     }
+
+                    // Calculate level & progress
+                    const referredObj = userData.referredUsers || {};
+                    const totalInvites = Object.keys(referredObj).length;
+                    updateLevelBar(totalInvites);
                 }
             } catch (err) {
                 console.error("Profile sync error: ", err);
@@ -412,6 +554,21 @@
             initTasks();
             setupNavigationHandlers();
         });
+
+        function updateLevelBar(totalInvites) {
+            let currentTier = levelTiers[0];
+            for (let i = 0; i < levelTiers.length; i++) {
+                if (totalInvites >= levelTiers[i].reqUsers) {
+                    currentTier = levelTiers[i];
+                } else {
+                    currentTier = levelTiers[i];
+                    break;
+                }
+            }
+
+            document.getElementById('userCurrentLevelText').innerText = `Your Level: Level ${currentTier.level}`;
+            document.getElementById('userInviteProgressText').innerText = `${totalInvites} / ${currentTier.reqUsers} Users Invited`;
+        }
 
         function setupNavigationHandlers() {
             document.getElementById('navHome').addEventListener('click', () => window.location.href = 'dashboard.html');

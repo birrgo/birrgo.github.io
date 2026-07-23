@@ -6,7 +6,7 @@
     <title>BirrGo - Premium Lottery</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <style>
         :root { 
             --primary-burgundy: #500614; 
@@ -33,7 +33,6 @@
         .bg-wave-top { top: 0; height: 95px; }
         .bg-wave-bottom { bottom: 0; height: 25px; }
         
-        /* FIXED: Bottom padding safely scaled up to 90px to prevent layout item occlusion */
         .app-content { 
             flex: 1; 
             display: flex; 
@@ -57,13 +56,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
             position: relative;
             z-index: 5;
         }
 
-        /* Compact Clickable Pill Badge */
         .whats-new-badge {
             display: inline-flex;
             align-items: center;
@@ -87,7 +85,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
-        /* Animated Red Pulse Icon */
         .whats-new-dot {
             width: 8px;
             height: 8px;
@@ -99,31 +96,43 @@
         }
 
         @keyframes pulse-red {
-            0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
-            }
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 8px rgba(229, 62, 62, 0);
-            }
-            100% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
-            }
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(229, 62, 62, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(229, 62, 62, 0); }
         }
 
-        .sub-tab-container { display: flex; background: #e2e8f0; border-radius: 30px; padding: 3px; margin-bottom: 12px; z-index: 2; position: relative; flex-shrink: 0; }
-        .sub-tab-btn { flex: 1; border: none; background: transparent; padding: 8px; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); border-radius: 20px; cursor: pointer; transition: all 0.2s ease; }
-        .sub-tab-btn.active { background: #ffffff; color: var(--primary-burgundy); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+        /* INCREASED SIZE FOR TOP SUB-MENU */
+        .sub-tab-container { 
+            display: flex; 
+            background: #e2e8f0; 
+            border-radius: 28px; 
+            padding: 4px; 
+            margin-bottom: 12px; 
+            z-index: 2; 
+            position: relative; 
+            flex-shrink: 0; 
+        }
+        .sub-tab-btn { 
+            flex: 1; 
+            border: none; 
+            background: transparent; 
+            padding: 9px 8px; 
+            font-size: 0.82rem; 
+            font-weight: 800; 
+            color: var(--text-muted); 
+            border-radius: 22px; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+        .sub-tab-btn.active { background: #ffffff; color: var(--primary-burgundy); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        
         .page-view-section { display: none; flex-direction: column; gap: 10px; }
         .page-view-section.active-view { display: flex; }
         
         .featured-card { width: 100%; min-height: 95px; border-radius: var(--border-radius-lg); overflow: hidden; background: #ffffff; color: var(--text-dark); position: relative; border: 1px solid var(--border-light); box-shadow: var(--card-shadow); cursor: pointer; transition: transform 0.15s ease; display: flex; align-items: stretch; }
         .featured-card.premium-theme { background: var(--primary-gradient); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.08); }
-        
         .featured-card.young-theme { background: #0b1329; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; }
-        .featured-card.topup-theme { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); }
+        
         .shine-glow::after { content: ''; position: absolute; top: -50%; left: -60%; width: 30%; height: 200%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%); transform: rotate(25deg); animation: shimmerEffect 4.5s infinite ease-in-out; pointer-events: none; z-index: 4; }
         @keyframes shimmerEffect { 0% { left: -60%; } 30% { left: 140%; } 100% { left: 140%; } }
         
@@ -137,17 +146,156 @@
         .badge-premium { position: absolute; top: 6px; right: 8px; background: linear-gradient(90deg, #ffd700, #ffa500); color: #000000; padding: 2px 6px; border-radius: 8px; font-size: 0.52rem; font-weight: 800; text-transform: uppercase; z-index: 3; }
         .featured-card-body { flex: 1; padding: 8px 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 2px; min-width: 0; }
         .featured-title { font-size: 0.82rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 55px; }
-        .premium-theme .featured-title, .young-theme .featured-title, .topup-theme .featured-title { color: #ffffff; }
+        .premium-theme .featured-title, .young-theme .featured-title { color: #ffffff; }
         .featured-meta { font-size: 0.68rem; color: var(--text-muted); line-height: 1.2; font-weight: 500; }
-        .premium-theme .featured-meta, .young-theme .featured-meta, .topup-theme .featured-meta { color: rgba(255, 255, 255, 0.8); }
+        .premium-theme .featured-meta, .young-theme .featured-meta { color: rgba(255, 255, 255, 0.8); }
         .featured-meta span { color: var(--primary-burgundy); font-weight: 800; }
-        .premium-theme .featured-meta span, .young-theme .featured-meta span, .topup-theme .featured-meta span { color: #ffd700; }
+        .premium-theme .featured-meta span, .young-theme .featured-meta span { color: #ffd700; }
         .countdown-pill { background: rgba(16, 185, 129, 0.08); color: var(--success-green); padding: 1px 6px; border-radius: 20px; font-size: 0.58rem; font-weight: 700; display: inline-flex; align-items: center; gap: 3px; }
-        .premium-theme .countdown-pill, .young-theme .countdown-pill, .topup-theme .countdown-pill { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
-        
-        .btn-topup-action { background: #10b981; color: #ffffff; font-weight: 800; border: none; border-radius: 6px; padding: 4px 10px; font-size: 0.65rem; margin-top: 4px; display: inline-block; cursor: pointer; text-align: center; width: fit-content; text-transform: uppercase; }
+        .premium-theme .countdown-pill, .young-theme .countdown-pill { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
 
-        /* FIXED: Synchronized bottom-nav-bar sizing specifications to flawlessly match wallet.html design specs */
+        /* --- CENTERED TOP UP DISPLAY SECTION --- */
+        .topup-center-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 5px;
+            width: 100%;
+            perspective: 1000px;
+        }
+
+        .topup-main-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* UPDATED DESCRIPTION FONT STYLE */
+        .topup-description-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            color: #334155;
+            text-align: center;
+            line-height: 1.5;
+            font-weight: 600;
+            letter-spacing: 0.1px;
+            max-width: 310px;
+            margin-bottom: 16px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .topup-description-text strong {
+            color: var(--primary-burgundy);
+            font-weight: 800;
+        }
+
+        /* 3D GLASS ANIMATED CONTAINER */
+        .topup-image-card {
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 22px;
+            box-shadow: 0 15px 35px rgba(80, 6, 20, 0.15), 
+                        0 5px 15px rgba(255, 255, 255, 0.6) inset;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1.5px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+            animation: float3D 5s ease-in-out infinite;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes float3D {
+            0% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            50% { transform: translateY(-8px) rotateX(6deg) rotateY(-4deg); }
+            100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+        }
+
+        .topup-image-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.4) 0%,
+                rgba(255, 255, 255, 0.05) 40%,
+                rgba(255, 255, 255, 0) 60%
+            );
+            transform: rotate(30deg);
+            pointer-events: none;
+            animation: glassShine 6s infinite ease-in-out;
+        }
+
+        @keyframes glassShine {
+            0% { transform: translateY(-30%) rotate(30deg); }
+            50% { transform: translateY(30%) rotate(30deg); }
+            100% { transform: translateY(-30%) rotate(30deg); }
+        }
+
+        .topup-image-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 14px;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-topup-animated {
+            width: 100%;
+            max-width: 270px;
+            padding: 13px 18px;
+            background: linear-gradient(135deg, #700b1d 0%, #500614 50%, #2a0005 100%);
+            background-size: 200% 200%;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.88rem;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 20px rgba(80, 6, 20, 0.35);
+            animation: pulseBurgundy 2s infinite, gradientShift 4s ease infinite;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-topup-animated:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 10px rgba(80, 6, 20, 0.2);
+        }
+
+        @keyframes pulseBurgundy {
+            0% { box-shadow: 0 0 0 0 rgba(80, 6, 20, 0.6); }
+            70% { box-shadow: 0 0 0 14px rgba(80, 6, 20, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(80, 6, 20, 0); }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Bottom Nav Bar */
         .bottom-nav-bar { 
             position: fixed; 
             bottom: 0; 
@@ -233,7 +381,7 @@
                 <div class="profile-badge" id="headerProfileBtn">👤</div>
             </div>
 
-            <!-- NEWS BUTTON ROW (Single Word News Button) -->
+            <!-- NEWS BUTTON ROW -->
             <div class="news-badges-row">
                 <a href="wo.html" class="whats-new-badge">
                     <span class="whats-new-dot"></span>
@@ -241,7 +389,7 @@
                 </a>
             </div>
 
-            <!-- 3 MENU SUB-TAB CONTAINER -->
+            <!-- 3 MENU SUB-TAB CONTAINER (Increased Size) -->
             <div class="sub-tab-container">
                 <button class="sub-tab-btn active" id="btnPagePreview">Premium</button>
                 <button class="sub-tab-btn" id="btnPageYoung">Young</button>
@@ -310,7 +458,6 @@
                     </div>
                 </div>
 
-                <!-- 5TH CARD: Win 10,000 Birr IQ Card -->
                 <div class="featured-card premium-theme" id="tenThousandIqCard">
                     <span class="badge-premium" style="background: linear-gradient(90deg, #00c6ff, #0072ff); color: #ffffff;">IQ Challenge</span>
                     <div class="card-img-wrapper">
@@ -391,21 +538,20 @@
                 </div>
             </div>
 
-            <!-- NEW 3RD MENU PAGE: TOP UP SECTION -->
+            <!-- TOP UP SECTION WITH REVISED FONT & TRUSTED PAYMENT DESCRIPTION -->
             <div class="page-view-section" id="sectionPageTopup">
-                <div class="featured-card topup-theme shine-glow" id="topupLotteryCard">
-                    <span class="badge-premium" style="background: #10b981; color: #fff;">Instant Deposit</span>
-                    <div class="card-img-wrapper">
-                        <img src="37023.jpg" class="placeholder" alt="Loading..." />
-                        <img src="33440.png" class="image-lazy-blur" alt="Real Money Lottery" />
+                <div class="topup-center-wrapper">
+                    <h2 class="topup-main-title">Instant Balance Top Up</h2>
+                    
+                    <p class="topup-description-text">
+                        Top up seamlessly via <strong>Telebirr, CBE Birr & Ethiopian Banks</strong>. Experience a <strong>100% trusted, secure, and instant fast payment system</strong> to fuel your games and test your luck today!
+                    </p>
+                    
+                    <div class="topup-image-card">
+                        <img src="mo.jpg" alt="Top Up" />
                     </div>
-                    <div class="featured-card-body">
-                        <h3 class="featured-title">Try Lottery by Real Money</h3>
-                        <p class="featured-meta">Top up your account balance to play real money draw games.</p>
-                        <div class="card-footer-row">
-                            <button class="btn-topup-action">Deposit Now</button>
-                        </div>
-                    </div>
+
+                    <button class="btn-topup-animated" id="btnTopupNowAction">Top Up Your Card</button>
                 </div>
             </div>
 
@@ -679,7 +825,8 @@
             document.getElementById('youngBajajCard').addEventListener('click', () => {
                 syncCodeWithDatabase(`b.html?card=${completeRawCardSequence}`);
             });
-            document.getElementById('topupLotteryCard').addEventListener('click', () => {
+            
+            document.getElementById('btnTopupNowAction').addEventListener('click', () => {
                 goToPage('deposit.html');
             });
         }
