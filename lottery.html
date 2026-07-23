@@ -48,18 +48,18 @@
             overflow: hidden; 
         }
 
-        /* REDUCED TOP CURVE HEADER */
+        /* SLIGHTLY INCREASED CENTER CURVE HEADER */
         .header-curved-bg {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 48px;
+            height: 58px; /* Slightly increased total height to accommodate center dip */
             background: var(--burgundy-gradient);
-            border-bottom-left-radius: 50% 12px;
-            border-bottom-right-radius: 50% 12px;
+            border-bottom-left-radius: 50% 20px; /* Enhanced center curve radius */
+            border-bottom-right-radius: 50% 20px;
             z-index: 2;
-            padding: calc(4px + env(safe-area-inset-top)) 16px 0 16px;
+            padding: calc(6px + env(safe-area-inset-top)) 16px 0 16px;
         }
 
         .brand-header { 
@@ -91,10 +91,10 @@
             cursor: pointer; 
         }
 
-        /* NEWS BADGE - MOVED SLIGHTLY FURTHER UP */
+        /* NEWS BADGE - ADJUSTED FOR ENHANCED CURVE */
         .news-badges-row {
             position: absolute;
-            top: 15px; /* Shifted higher up into the curve */
+            top: 20px; /* Positioned dynamically within the deeper curve center */
             left: 50%;
             transform: translateX(-50%);
             z-index: 20;
@@ -191,7 +191,7 @@
             display: flex; 
             flex-direction: column; 
             background-color: transparent; 
-            padding: calc(68px + env(safe-area-inset-top)) 12px calc(80px + env(safe-area-inset-bottom)) 12px; 
+            padding: calc(72px + env(safe-area-inset-top)) 12px calc(80px + env(safe-area-inset-bottom)) 12px; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch; 
             position: relative; 
@@ -439,7 +439,7 @@
 
     <div class="app-view">
         
-        <!-- HEADER WITH TOP CURVE -->
+        <!-- HEADER WITH MODERATELY INCREASED CENTER CURVE -->
         <div class="header-curved-bg">
             <div class="brand-header">
                 <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">

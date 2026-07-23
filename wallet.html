@@ -4,8 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BirrGo - Premium Wallet</title>
-    <!-- Standalone Stylesheet -->
     <link rel="stylesheet" href="wallet.css">
+    <style>
+        .glass-meta-grid {
+            background: rgba(128, 0, 32, 0.04);
+            border: 1px solid rgba(128, 0, 32, 0.12);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+            max-height: 45vh;
+            overflow-y: auto;
+        }
+
+        .grid-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+        }
+
+        .grid-lbl {
+            color: #6b5257;
+            font-weight: 500;
+        }
+
+        .grid-val {
+            font-weight: 700;
+            color: #1f0007;
+            text-align: right;
+            max-width: 62%;
+            word-break: break-word;
+        }
+
+        .font-mono {
+            font-family: monospace;
+            font-size: 11px;
+            letter-spacing: 0.3px;
+        }
+
+        .action-tray {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            border-top: 1px dashed rgba(128, 0, 32, 0.12);
+            padding-top: 10px;
+        }
+
+        .tray-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .tray-btn-primary {
+            background: #800020;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(128, 0, 32, 0.15);
+        }
+
+        .tray-btn-secondary {
+            background: #ffffff;
+            color: #800020;
+            border: 2px solid #800020;
+            font-weight: 800;
+        }
+    </style>
 </head>
 <body>
 
@@ -13,7 +85,6 @@
 
     <div class="app-view" id="mainAppView">
         
-        <!-- Top Branded Curved Vectors Layout -->
         <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
             <defs>
@@ -24,11 +95,10 @@
             </defs>
         </svg>
 
-        <!-- Centered Shiny Glass News Badge inside Top Curve -->
         <div class="top-wave-badge-wrapper">
             <button class="badge-button" id="whatsNewBadgeBtn">
                 <span class="badge-dot"></span>
-                <span class="badge-text">Tech And Application Review</span>
+                <span class="badge-text">Tech And Application </span>
             </button>
         </div>
 
@@ -48,7 +118,6 @@
                 </button>
             </div>
 
-            <!-- Digital Card shifted down with increased top margin -->
             <div class="digital-card">
                 <div class="card-top">
                     <div class="card-chip"></div>
@@ -194,12 +263,12 @@
                     <div class="gold-emv-chip"></div>
                 </div>
 
-                <div style="text-align: center; margin-bottom: 14px;">
-                    <div class="status-pill-badge">
+                <div style="text-align: center; margin-bottom: 12px;">
+                    <div class="status-pill-badge" style="display:inline-flex; align-items:center; gap:5px; background:#2e7d32; color:#fff; padding:4px 12px; border-radius:50px; font-size:10px; font-weight:700;">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="#ffffff">
                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                         </svg>
-                        Verified Receipt
+                        Secure Verified Receipt
                     </div>
                 </div>
 
@@ -214,7 +283,7 @@
                     </div>
 
                     <div class="ledger-amount-box">
-                        <div class="ledger-label">Amount</div>
+                        <div class="ledger-label">Receipt Amount</div>
                         <div id="pop-val-amount" class="ledger-val">0.00 ETB</div>
                     </div>
 
@@ -223,13 +292,29 @@
                             <span class="grid-lbl">Description</span>
                             <span id="pop-val-desc" class="grid-val">—</span>
                         </div>
+                        <div class="grid-item" id="row-entry" style="display: none;">
+                            <span class="grid-lbl">Entry Number</span>
+                            <span id="pop-val-entry" class="grid-val font-mono">—</span>
+                        </div>
+                        <div class="grid-item" id="row-account">
+                            <span class="grid-lbl">Recipient</span>
+                            <span id="pop-val-account" class="grid-val">—</span>
+                        </div>
                         <div class="grid-item">
-                            <span class="grid-lbl">Date</span>
+                            <span class="grid-lbl">Transaction Type</span>
+                            <span id="pop-val-type" class="grid-val">—</span>
+                        </div>
+                        <div class="grid-item">
+                            <span class="grid-lbl">Date & Time</span>
                             <span id="pop-val-date" class="grid-val">—</span>
                         </div>
                         <div class="grid-item">
-                            <span class="grid-lbl">Reference</span>
-                            <span id="pop-val-ref" class="grid-val" style="font-family: monospace;">—</span>
+                            <span class="grid-lbl">Reference Code</span>
+                            <span id="pop-val-ref" class="grid-val font-mono">—</span>
+                        </div>
+                        <div class="grid-item" id="row-balance" style="display: none;">
+                            <span class="grid-lbl">Updated Balance</span>
+                            <span id="pop-val-balance" class="grid-val">—</span>
                         </div>
                         <div class="grid-item">
                             <span class="grid-lbl">Status</span>
@@ -534,7 +619,7 @@
             if (targetText.includes('byd')) return "by.jpg";
             if (targetText.includes('jetour')) return "33111.jpg";
             if (targetText.includes('samsung')) return "s2.jpg";
-            if (targetText.includes('motorcycle')) return "m2.jpg";
+            if (targetText.includes('motorcycle') || targetText.includes('moter')) return "m2.jpg";
             if (targetText.includes('bajaj')) return "b2.jpg";
             if (targetText.includes('video')) return "33164.png";
             if (targetText.includes('commercial bank') || targetText.includes('cbe')) return "c2.jpg";
@@ -552,7 +637,51 @@
             return "";
         }
 
-        function launchReceiptPopup(txnId, tx) {
+        // Returns campaign key if transaction belongs to 1 of the 6 allowed campaigns
+        function getCampaignKeyIfCampaign(title) {
+            const text = (title || '').toLowerCase();
+            if (text.includes('jetour')) return 'jetour';
+            if (text.includes('byd')) return 'byd';
+            if (text.includes('iphone')) return 'iphone';
+            if (text.includes('samsung')) return 'samsung';
+            if (text.includes('bajaj')) return 'bajaj';
+            if (text.includes('motorcycle') || text.includes('moter')) return 'motorcycle';
+            return null;
+        }
+
+        // Asynchronous ticket number search from database matrix
+        async function fetchExactEntryNumber(tx, txnId, campaignKey) {
+            const direct = tx.ticketNum || tx.ticketNo || tx.exactNumber || tx.entryNumber || tx.ticketId;
+            if (direct !== undefined && direct !== null) {
+                return `#${String(direct).padStart(4, '0')}`;
+            }
+
+            try {
+                const ticketsRef = ref(db, `lottery/${campaignKey}/tickets`);
+                const snapshot = await get(ticketsRef);
+
+                if (snapshot.exists()) {
+                    const allTickets = snapshot.val();
+                    for (const key in allTickets) {
+                        const item = allTickets[key];
+                        if (key === txnId || item.txnId === txnId || item.phone === activeUserPhone) {
+                            if (item.ticketNum !== undefined) {
+                                return `#${String(item.ticketNum).padStart(4, '0')}`;
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not retrieve ticket registry matrix:", err);
+            }
+
+            if (txnId && txnId.length > 5) {
+                return `#${txnId.substring(txnId.length - 6).toUpperCase()}`;
+            }
+            return "#0001";
+        }
+
+        async function launchReceiptPopup(txnId, tx) {
             document.body.classList.add('popup-active');
             const overlay = document.getElementById('digitalSlipPopup');
             overlay.classList.add('active');
@@ -572,6 +701,33 @@
             document.getElementById('pop-val-desc').innerText = tx.title;
             document.getElementById('pop-val-date').innerText = tx.timestamp;
             document.getElementById('pop-val-ref').innerText = txnId;
+            document.getElementById('pop-val-type').innerText = tx.isPromo ? "Promotional Reward" : (isIncome ? "Deposit / Credit" : "Withdrawal / Debit");
+
+            // Check if transaction belongs strictly to 1 of the 6 campaign types
+            const campaignKey = getCampaignKeyIfCampaign(tx.title);
+            const rowEntry = document.getElementById('row-entry');
+
+            if (campaignKey) {
+                const entryNumber = await fetchExactEntryNumber(tx, txnId, campaignKey);
+                document.getElementById('pop-val-entry').innerText = entryNumber;
+                rowEntry.style.display = 'flex';
+            } else {
+                rowEntry.style.display = 'none';
+            }
+
+            // Recipient Resolution
+            const targetRecipient = tx.recipientName || tx.recipientPhone || tx.recipient || tx.account || tx.phone || tx.sender || activeUserPhone;
+            document.getElementById('pop-val-account').innerText = targetRecipient;
+
+            // Balance Row Mapping
+            const rowBalance = document.getElementById('row-balance');
+            if (tx.balance !== undefined && tx.balance !== null) {
+                const bal = parseFloat(tx.balance);
+                document.getElementById('pop-val-balance').innerText = `${bal.toFixed(2)} ETB`;
+                rowBalance.style.display = 'flex';
+            } else {
+                rowBalance.style.display = 'none';
+            }
 
             const avatarContainer = document.getElementById('pop-avatar-container');
             let iconSrc = resolveTransactionIcon(tx.title);
@@ -579,15 +735,13 @@
             if (tx.isPromo && !iconSrc) iconSrc = "33440.png";
 
             if (iconSrc) {
-                avatarContainer.innerHTML = `<img src="${iconSrc}" alt="icon" class="image-lazy-blur loaded">`;
+                avatarContainer.innerHTML = `<img src="${iconSrc}" alt="icon" class="image-lazy-blur loaded" onerror="this.parentElement.innerHTML='⚡'">`;
             } else {
                 avatarContainer.innerHTML = `<span>⚡</span>`;
             }
 
-            setTimeout(() => {
-                loader.style.display = 'none';
-                content.style.display = 'block';
-            }, 300);
+            loader.style.display = 'none';
+            content.style.display = 'block';
 
             document.getElementById('popPrintBtn').onclick = () => window.print();
         }
@@ -616,11 +770,18 @@
             const historyContainer = document.getElementById('transaction-history-container');
             const userRef = ref(db, `users/${activeUserPhone}`);
 
-            function convertToTimestamp(timeStr) {
+            function convertToTimestamp(tx) {
+                if (tx.timestampISO) {
+                    const parsedISO = Date.parse(tx.timestampISO);
+                    if (!isNaN(parsedISO)) return parsedISO;
+                }
+                if (tx.sortingTime) return Number(tx.sortingTime);
+
+                const timeStr = tx.timestamp;
                 if (!timeStr || timeStr === 'Just now') return Date.now();
                 if (!isNaN(timeStr)) return Number(timeStr);
-                let cleanStr = timeStr.replace(/,/g, '').trim();
                 
+                let cleanStr = String(timeStr).replace(/,/g, '').trim();
                 if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(cleanStr)) {
                     const sections = cleanStr.split(' ');
                     const dateParts = sections[0].split('/');
@@ -643,7 +804,6 @@
                 if (text.includes('like') || text.includes('liked')) return "Liked Video";
                 if (text.includes('monthly') || text.includes('lottery ticket')) return "Lottery Ticket";
                 
-                // Dynamic Challenge arena type formatting (Easy, Medium, Hard, Easy/Hard, etc.)
                 if (text.includes('challenge') || text.includes('arena')) {
                     let typeLabel = "";
                     if (text.includes('easy hard') || text.includes('easy/hard')) {
@@ -677,7 +837,7 @@
                 if (text.includes('samsung') || text.includes('samsun')) return "Samsung S25 Ultra";
                 if (text.includes('byd')) return "BYD";
                 if (text.includes('jetour')) return "Jetour";
-                if (text.includes('motorcycle')) return "Motorcycle";
+                if (text.includes('motorcycle') || text.includes('moter')) return "Motorcycle";
                 if (text.includes('bajaj')) return "Bajaj";
                 if (text.includes('bingo')) return text.includes('win') ? "Bingo Win Reward" : "Bingo Prize";
                 if (text.includes('invitation') || text.includes('invited')) return "Referral Bonus";
@@ -708,7 +868,7 @@
                                 return;
                             }
 
-                            let calculatedFallbackSort = tx.sortingTime ? Number(tx.sortingTime) : convertToTimestamp(tx.timestamp);
+                            let calculatedFallbackSort = convertToTimestamp(tx);
 
                             if ((rawTitle.includes('video') || rawTitle.includes('preview') || rawTitle.includes('watch') || rawTitle.includes('pic')) && !rawTitle.includes('like')) {
                                 videoCounter++;
@@ -718,12 +878,15 @@
                             }
 
                             masterTransactionList.push({
-                                id: key, 
+                                id: key,
+                                ...tx,
                                 title: rawTitle || 'Wallet Activity',
                                 timestamp: tx.timestamp || 'Just now',
                                 amount: parseFloat(tx.amount) || 0,
                                 type: tx.type || (tx.amount > 0 ? 'income' : 'expense'),
-                                sortingValue: calculatedFallbackSort
+                                sortingValue: calculatedFallbackSort,
+                                recipient: tx.recipientName || tx.recipientPhone || tx.recipient || tx.account || tx.phone || tx.sender,
+                                balance: tx.balance !== undefined ? tx.balance : tx.balanceAfter
                             });
                         });
                     }
@@ -732,26 +895,24 @@
                         Object.keys(userData.claimedPromos).forEach(codeKey => {
                             const promo = userData.claimedPromos[codeKey];
                             let dateLabel = 'Just now';
-                            let finalSortVal = 0;
-                            
+                            let finalSortVal = promo.claimedAt ? Number(promo.claimedAt) : Date.now();
+
                             if (promo.claimedAt) {
-                                finalSortVal = Number(promo.claimedAt);
                                 const d = new Date(finalSortVal);
                                 dateLabel = d.toLocaleDateString([], {month:'short', day:'numeric'}) + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-                            } else {
-                                finalSortVal = Date.now();
                             }
-
-                            let rawPromoTitle = `Claimed Code: ${codeKey}`;
 
                             masterTransactionList.push({
                                 id: codeKey, 
-                                title: rawPromoTitle,
+                                ...promo,
+                                title: `Claimed Code: ${codeKey}`,
                                 timestamp: dateLabel,
                                 amount: parseFloat(promo.amountClaimed) || 0, 
                                 type: 'income',
                                 sortingValue: finalSortVal,
-                                isPromo: true
+                                isPromo: true,
+                                recipient: promo.recipientName || promo.recipientPhone || promo.recipient || promo.account || promo.phone,
+                                balance: promo.balance !== undefined ? promo.balance : promo.balanceAfter
                             });
                         });
                     }
@@ -765,6 +926,7 @@
                     return;
                 }
 
+                // Sort Newest to Oldest
                 masterTransactionList.sort((a, b) => b.sortingValue - a.sortingValue);
 
                 masterTransactionList.forEach(tx => {

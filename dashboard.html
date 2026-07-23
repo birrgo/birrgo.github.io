@@ -67,8 +67,8 @@
         }
         .bg-wave-top {
             top: 0;
-            height: 12vh;
-            min-height: 80px;
+            height: 14vh;
+            min-height: 95px;
         }
         .bg-wave-bottom {
             bottom: 0;
@@ -94,9 +94,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             padding: 2px 2px;
             background: transparent;
+            position: relative;
+            z-index: 5;
         }
 
         .logo-image {
@@ -126,12 +128,15 @@
             fill: #334155;
         }
 
-        /* ULTIMATE 3D GLASS BOX NEWS PILL - CURVED-BACK BORDER & INTENSE CENTER SHINE */
+        /* MOVED SLIGHTLY HIGHER UP ON RED CURVE */
         .news-container {
-            margin-bottom: 16px;
+            margin-top: -52px; /* Shifted higher up onto the burgundy background wave */
+            margin-bottom: 28px;
             display: flex;
-            justify-content: flex-start;
-            perspective: 800px; /* Adds physical 3D perspective depth */
+            justify-content: center; /* Centered horizontally */
+            perspective: 800px;
+            position: relative;
+            z-index: 20; /* Keep above header SVG element */
         }
 
         .news-pill {
@@ -139,27 +144,20 @@
             display: inline-flex;
             align-items: center;
             gap: 0.75rem;
-            /* Curved convex radial gradient center glow */
-            background: radial-gradient(circle at 50% 50%, #ffffff 20%, #e2e8f0 85%, #cbd5e1 100%);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 0.7rem 1.35rem;
-            border-radius: 50px; /* Fully rounded pillow curves */
-            /* Solid sharp black border */
-            border: 2px solid #000000;
+            background: 
+                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.7) 60%),
+                linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.65rem 1.4rem;
+            border-radius: 50px;
+            border: 1.5px solid rgba(255, 255, 255, 0.95);
             
-            /* Enhanced 3D Curved-Back Inner & Outer Shadow Matrix */
             box-shadow: 
-                /* Outer floating 3D drop shadow */
-                0 12px 24px -4px rgba(0, 0, 0, 0.35),
-                0 6px 12px -2px rgba(0, 0, 0, 0.2),
-                /* Top white reflection edge */
-                inset 0 2px 2px rgba(255, 255, 255, 1),
-                /* Center bright shine highlight */
-                inset 0 0 16px 2px rgba(255, 255, 255, 0.9),
-                /* Inner edge dark shadows creating the curved-back recessed border effect */
-                inset 0 5px 8px -2px rgba(0, 0, 0, 0.25),
-                inset 0 -5px 8px -2px rgba(0, 0, 0, 0.25);
+                0 12px 25px -4px rgba(0, 0, 0, 0.3),
+                0 4px 10px -2px rgba(0, 0, 0, 0.15),
+                inset 0 3px 4px 0 rgba(255, 255, 255, 1),
+                inset 0 -2px 4px 0 rgba(203, 213, 225, 0.4);
                 
             cursor: pointer;
             outline: none;
@@ -181,7 +179,7 @@
                 rgba(255, 255, 255, 0.95) 50%,
                 transparent 100%
             );
-            transform: rotate(30deg);
+            transform: rotate(25deg);
             animation: glassShimmer3D 3.5s infinite ease-in-out;
         }
 
@@ -192,11 +190,10 @@
         }
 
         .news-pill:active { 
-            transform: translateY(2px) scale(0.96); 
+            transform: translateY(1px) scale(0.96); 
             box-shadow: 
-                0 4px 10px rgba(0, 0, 0, 0.3),
-                inset 0 3px 6px rgba(0, 0, 0, 0.35),
-                inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+                0 4px 10px rgba(0, 0, 0, 0.2),
+                inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .news-dot {
@@ -432,7 +429,6 @@
             text-align: center;
         }
 
-        /* FLOATING PREMIUM AI CHAT INTERFACE */
         .premium-ai-trigger {
             position: fixed;
             bottom: calc(72px + env(safe-area-inset-bottom));
@@ -769,7 +765,7 @@
                 </button>
             </div>
 
-            <!-- Enhanced 3D Glass Box News Pill - Curved Back & Shiny Center -->
+            <!-- News Pill Nudged Higher Up -->
             <div class="news-container">
                 <div class="news-pill" id="dashboardNewsPill">
                     <span class="news-dot"></span>
