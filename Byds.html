@@ -6,7 +6,7 @@
     <title>BirrGo - BYD Allocated Tickets Registry</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -267,7 +267,7 @@
     <div class="app-view">
         
         <div class="app-header">
-            <button class="btn-back" onclick="window.location.href='real.html'">
+            <button class="btn-back" onclick="window.location.href='byd.html'">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
             <div class="header-title">
@@ -338,14 +338,20 @@
         });
 
         function fetchAllocatedRegistry() {
-            // Updated isolated endpoint layout targeting new BYD structural tree branch
-            const ticketsRef = ref(db, 'lottery/byd/tickets');
+            // Updated to match the exact live structure path used in new2.html
+            const ticketsRef = ref(db, 'new_byd/tickets');
             onValue(ticketsRef, (snapshot) => {
                 document.getElementById('loadingIndicator').style.display = 'none';
                 const data = snapshot.val() || {};
                 
+                // Filter to match live stream logic: only include approved or pending entries
+                const validEntries = Object.values(data).filter(tx => {
+                    const st = (tx.status || '').toLowerCase().trim();
+                    return st === 'approved' || st === 'pending';
+                });
+
                 // Convert to array and sort numerically by Ticket Number
-                masterTicketsArray = Object.values(data).sort((a, b) => parseInt(a.ticketNum) - parseInt(b.ticketNum));
+                masterTicketsArray = validEntries.sort((a, b) => parseInt(a.ticketNum) - parseInt(b.ticketNum));
                 renderDashboardRegistry(masterTicketsArray);
             });
         }
@@ -363,8 +369,8 @@
                 const card = document.createElement('div');
                 card.className = 'dashboard-row-card';
 
-                const rawPhone = ticket.phone || "0900000000";
-                const hiddenPhone = rawPhone.substring(0, 5) + "••••" + rawPhone.slice(-2);
+                const rawPhone = ticket.phone || ticket.cardSequence || "0900000000";
+                const hiddenPhone = rawPhone.length >= 7 ? rawPhone.substring(0, 5) + "••••" + rawPhone.slice(-2) : "09••••00";
                 const location = ticket.location || "Addis Ababa";
 
                 card.innerHTML = `
@@ -383,9 +389,10 @@
             
             const filtered = masterTicketsArray.filter(t => {
                 const phoneMatch = (t.phone || "").toLowerCase().includes(query);
+                const seqMatch = (t.cardSequence || "").toLowerCase().includes(query);
                 const numberMatch = (t.ticketNum || "").toString().includes(query);
                 const locationMatch = (t.location || "").toLowerCase().includes(query);
-                return phoneMatch || numberMatch || locationMatch;
+                return phoneMatch || seqMatch || numberMatch || locationMatch;
             });
 
             renderDashboardRegistry(filtered);

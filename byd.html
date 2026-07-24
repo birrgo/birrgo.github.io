@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo Premium — BYD Song Plus Luxury Raffle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="byd.css">
+</head>
+<body>
+
+    <div class="app-view">
+        <!-- Header with Top Curve & Deep Burgundy Shine -->
+        <div class="app-header">
+            <div class="header-left">
+                <button class="btn-back" onclick="window.location.href='lottery.html'">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div class="header-title">
+                    <h2>BYD Campaign</h2>
+                </div>
+            </div>
+            
+            <div class="header-right-tools">
+                <button class="btn-notif-bell" id="notifBellBtn" onclick="window.location.href='bydur.html'">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <span class="notif-badge-count" id="notifCountBadge" style="display:none;">0</span>
+                </button>
+
+                <div class="birrgo-logo-container">
+                    <div class="birrgo-badge-icon">B</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="app-content">
+            <div class="transaction-stats-section">
+                <div class="analytics-grid">
+                    <div class="stat-card sold">
+                        <p id="statSoldLabel">TOTAL DISTRIBUTED</p>
+                        <h3 id="statSold">0</h3>
+                    </div>
+                    <div class="stat-card remain">
+                        <p id="statRemainingLabel">AVAILABLE POOLS</p>
+                        <h3 id="statRemaining">3500</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-dashboard-section">
+                <div class="premium-card-box">
+                    <div class="form-heading" style="text-transform: uppercase; font-size: 11px; color: var(--text-muted); font-weight: 700;">Participant Verification</div>
+                    <div class="field-group" style="margin-top: 4px;">
+                        <label style="font-size: 9px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px;">LOCATION</label>
+                        <input type="text" id="userLocation" class="premium-input" placeholder="Enter Location">
+                    </div>
+                </div>
+
+                <div class="search-engine-box">
+                    <h3>SELECT RAFFLE POSITION</h3>
+                    <p>Enter code sequence interval (0 - 3500)</p>
+                    <input type="number" id="ticketNumberInput" class="large-number-input" placeholder="0000" min="0" max="3500">
+                    <div id="feedbackBadge" class="status-feedback"></div>
+                </div>
+            </div>
+
+            <div class="transaction-stats-section" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="live-feed-panel">
+                    <div class="form-heading" style="margin-bottom: 8px; font-size: 12px; font-weight: 700; color: var(--text-dark);">Live Allocation Stream</div>
+                    <div id="liveOrdersFeed"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="action-container">
+            <button class="btn-submit-booking" id="confirmPurchaseBtn" disabled>Authorize Placement (3,000 Br)</button>
+            <a href="Byds.html" class="btn-secondary-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                View Real-time Metrics Matrix
+            </a>
+            
+            <!-- Bottom Advertisement Space Box -->
+            <div class="advertisement-banner-box">
+                <div class="ad-tag-label">AD</div>
+                <div class="ad-content-inner">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>Advertisement Space</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unpaid Order Warning Modal -->
+        <div class="modal-overlay" id="unpaidOrderModal">
+            <div class="centered-popup-card">
+                <div class="popup-icon warning-icon-box">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+                <div class="popup-title">Unpaid Order Pending</div>
+                <div class="popup-subtitle" id="unpaidOrderText">You have an active unpaid ticket reservation (Pos #0). Please complete or cancel your payment first.</div>
+                <div class="popup-action-row">
+                    <button class="btn-popup-cancel" id="cancelUnpaidOrderBtn">Cancel Order</button>
+                    <button class="btn-popup-confirm" id="payUnpaidOrderBtn">Pay Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Cancel Confirmation Styled Modal -->
+        <div class="modal-overlay" id="cancelConfirmModal">
+            <div class="centered-popup-card">
+                <div class="popup-icon danger-icon-box">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="14" y2="17"></line><line x1="14" y1="11" x2="10" y2="17"></line></svg>
+                </div>
+                <div class="popup-title">Cancel Reservation?</div>
+                <div class="popup-subtitle">This action will permanently remove your active sequence assignment and release the slot back to the public pool.</div>
+                <div class="popup-action-row">
+                    <button class="btn-popup-cancel" id="abortCancelBtn">Keep Order</button>
+                    <button class="btn-popup-danger" id="proceedCancelBtn">Yes, Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Method List Modal -->
+        <div class="modal-overlay" id="paymentMethodModal">
+            <div class="centered-popup-card payment-gateway-card">
+                <div class="drawer-header">
+                    <div class="drawer-title">BYD Ticket Payment (3,000 Br)</div>
+                    <button class="drawer-close-btn" id="closePaymentModalBtn">&times;</button>
+                </div>
+                <div class="drawer-step active">
+                    <p class="drawer-subtitle">Select available payment method:</p>
+                    <div class="p2p-list" id="adminPaymentMethodsList">
+                        <p style="font-size:12px; color:var(--text-muted); text-align:center; padding: 20px;">Loading Accounts...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security PIN Modal -->
+        <div class="modal-overlay" id="passwordModal">
+            <div class="centered-popup-card">
+                <div class="popup-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <div class="popup-title">Security Gateway</div>
+                <div class="popup-subtitle">Please enter your 6-digit security PIN to proceed.</div>
+                <input type="password" id="transactionPin" maxlength="6" inputmode="numeric" class="password-input-field" placeholder="••••••">
+                <div class="popup-action-row">
+                    <button class="btn-popup-cancel" id="closeModalBtn">Decline</button>
+                    <button class="btn-popup-confirm" id="submitPasswordBtn">Authorize</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Error Alert Modal -->
+        <div class="modal-overlay" id="errorModal">
+            <div class="centered-popup-card">
+                <div class="popup-icon danger-icon-box">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+                <div class="popup-title">Action Failed</div>
+                <div class="popup-subtitle" id="errorMessageText">Please check your inputs and try again.</div>
+                <div class="popup-action-row" style="grid-template-columns: 1fr;">
+                    <button class="btn-popup-danger" id="closeErrorModalBtn">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script Engine -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeUserPhone = "";
+        let completeRawCardSequence = ""; 
+        let isTicketAvailable = false;
+        let validatedTicketNumber = null;
+        let globallyTakenTicketsMap = {}; 
+        let userDailyTicketCount = 0;
+        let dynamicAdminAccounts = {};
+        let selectedMethodKey = "";
+        let activeUnpaidOrder = null;
+        
+        const maxDailyTicketsLimit = 5;
+        const totalPoolCount = 3500;
+
+        const paymentImages = {
+            cbe: 'c2.jpg',
+            telebirr: 't1.jpg',
+            boa: 'a1.jpg',
+            cbebirr: 'c1.jpg',
+            mpesa: 'm1.jpg'
+        };
+
+        function normalizePhoneNumber(phoneStr) {
+            if (!phoneStr) return "";
+            return phoneStr.replace(/\D/g, ''); 
+        }
+
+        function showCustomError(message) {
+            document.getElementById('errorMessageText').innerText = message;
+            document.getElementById('errorModal').classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            activeUserPhone = localStorage.getItem('auth_session_phone') || "251900000000";
+            completeRawCardSequence = normalizePhoneNumber(activeUserPhone);
+
+            attachRealtimeDatabaseListeners();
+            setupFormEngineListeners();
+            listenToAdminPaymentAccounts();
+
+            document.getElementById('closeErrorModalBtn').addEventListener('click', () => {
+                document.getElementById('errorModal').classList.remove('active');
+            });
+        });
+
+        function attachRealtimeDatabaseListeners() {
+            const ticketsRef = ref(db, 'new_byd/tickets');
+            onValue(ticketsRef, (snapshot) => {
+                globallyTakenTicketsMap = snapshot.val() || {};
+                const takenEntries = Object.entries(globallyTakenTicketsMap);
+                
+                let pendingCount = 0;
+                let approvedCount = 0;
+                activeUnpaidOrder = null;
+
+                takenEntries.forEach(([ticketKey, entry]) => {
+                    const st = (entry.status || '').toLowerCase().trim();
+                    const isUserMatch = entry.cardSequence === completeRawCardSequence || entry.phone === activeUserPhone;
+
+                    if (isUserMatch && st === 'unpaid') {
+                        activeUnpaidOrder = { key: ticketKey, ...entry };
+                    }
+
+                    if (st === 'pending' || st === 'pending approval') {
+                        pendingCount++;
+                    } else if (st === 'approved') {
+                        approvedCount++;
+                    }
+                });
+
+                if (activeUnpaidOrder) {
+                    document.getElementById('unpaidOrderText').innerText = `You have an active unpaid reservation (Position #${activeUnpaidOrder.ticketNum}). Please complete or cancel your payment first.`;
+                    document.getElementById('unpaidOrderModal').classList.add('active');
+                } else {
+                    document.getElementById('unpaidOrderModal').classList.remove('active');
+                }
+
+                const paidTotal = pendingCount + approvedCount;
+                const totalLeft = totalPoolCount - paidTotal;
+                
+                document.getElementById('statSold').innerText = paidTotal;
+                document.getElementById('statRemaining').innerText = totalLeft >= 0 ? totalLeft : 0;
+                
+                calculateUserDailyTicketCount();
+                executeLiveTicketStatusCheck();
+                renderLiveOrdersFeed(globallyTakenTicketsMap);
+            });
+        }
+
+        function calculateUserDailyTicketCount() {
+            const todayDateStr = new Date().toLocaleDateString();
+            userDailyTicketCount = 0;
+
+            Object.values(globallyTakenTicketsMap).forEach(entry => {
+                const isUserMatch = entry.cardSequence === completeRawCardSequence || entry.phone === activeUserPhone;
+                if (isUserMatch && entry.timestamp) {
+                    const entryDateStr = new Date(entry.timestamp).toLocaleDateString();
+                    if (entryDateStr === todayDateStr) {
+                        userDailyTicketCount++;
+                    }
+                }
+            });
+        }
+
+        function listenToAdminPaymentAccounts() {
+            const accountsRef = ref(db, 'new_byd_settings/accounts');
+            onValue(accountsRef, (snapshot) => {
+                const methodsContainer = document.getElementById('adminPaymentMethodsList');
+                methodsContainer.innerHTML = '';
+                dynamicAdminAccounts = {};
+
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    Object.keys(data).forEach(key => {
+                        const accountObj = data[key];
+                        if (accountObj && (accountObj.number || accountObj.account)) {
+                            dynamicAdminAccounts[key] = {
+                                name: accountObj.name || key.toUpperCase(),
+                                account: accountObj.number || accountObj.account,
+                                holder_name: accountObj.holder_name || accountObj.name || 'BirrGo Trading PLC',
+                                image: paymentImages[key] || 'c2.jpg'
+                            };
+
+                            const card = document.createElement('div');
+                            card.className = 'p2p-card';
+                            card.onclick = () => {
+                                selectedMethodKey = key;
+                                document.getElementById('paymentMethodModal').classList.remove('active');
+                                document.getElementById('transactionPin').value = '';
+                                document.getElementById('passwordModal').classList.add('active');
+                                document.getElementById('transactionPin').focus();
+                            };
+                            card.innerHTML = `
+                                <div class="p2p-info">
+                                    <img src="${dynamicAdminAccounts[key].image}" class="p2p-icon-img" alt="${key}">
+                                    <div>
+                                        <div class="p2p-name">${dynamicAdminAccounts[key].name}</div>
+                                        <div class="p2p-limits">Price: 3,000 Birr</div>
+                                    </div>
+                                </div>
+                                <span class="btn-card-action">Select</span>
+                            `;
+                            methodsContainer.appendChild(card);
+                        }
+                    });
+                }
+            });
+        }
+
+        function setupFormEngineListeners() {
+            const numInput = document.getElementById('ticketNumberInput');
+            const locInput = document.getElementById('userLocation');
+
+            numInput.addEventListener('input', executeLiveTicketStatusCheck);
+            locInput.addEventListener('input', validateGlobalInputsState);
+            
+            document.getElementById('confirmPurchaseBtn').addEventListener('click', () => {
+                if (activeUnpaidOrder) {
+                    document.getElementById('unpaidOrderModal').classList.add('active');
+                    return;
+                }
+                if (userDailyTicketCount >= maxDailyTicketsLimit) {
+                    showCustomError(`Daily Limit Reached. Each participant can only reserve a maximum of ${maxDailyTicketsLimit} tickets per day.`);
+                    return;
+                }
+                document.getElementById('paymentMethodModal').classList.add('active');
+            });
+
+            document.getElementById('cancelUnpaidOrderBtn').addEventListener('click', () => {
+                if (!activeUnpaidOrder) return;
+                document.getElementById('unpaidOrderModal').classList.remove('active');
+                document.getElementById('cancelConfirmModal').classList.add('active');
+            });
+
+            document.getElementById('abortCancelBtn').addEventListener('click', () => {
+                document.getElementById('cancelConfirmModal').classList.remove('active');
+                if (activeUnpaidOrder) {
+                    document.getElementById('unpaidOrderModal').classList.add('active');
+                }
+            });
+
+            document.getElementById('proceedCancelBtn').addEventListener('click', async () => {
+                if (!activeUnpaidOrder) return;
+                const ticketKey = activeUnpaidOrder.key;
+                const updates = {};
+                updates[`/new_byd/tickets/${ticketKey}`] = null;
+                await update(ref(db), updates);
+                document.getElementById('cancelConfirmModal').classList.remove('active');
+                activeUnpaidOrder = null;
+            });
+
+            document.getElementById('payUnpaidOrderBtn').addEventListener('click', () => {
+                if (!activeUnpaidOrder) {
+                    showCustomError("No active unpaid order found to process.");
+                    return;
+                }
+                localStorage.setItem('pending_byd_orderRef', activeUnpaidOrder.orderRef);
+                localStorage.setItem('pending_byd_ticketNum', activeUnpaidOrder.ticketNum);
+                localStorage.setItem('pending_byd_location', activeUnpaidOrder.location);
+                localStorage.setItem('pending_byd_ticketKey', activeUnpaidOrder.key);
+                window.location.href = "las.html";
+            });
+
+            document.getElementById('closePaymentModalBtn').addEventListener('click', () => {
+                document.getElementById('paymentMethodModal').classList.remove('active');
+            });
+
+            document.getElementById('closeModalBtn').addEventListener('click', () => {
+                document.getElementById('passwordModal').classList.remove('active');
+            });
+
+            document.getElementById('submitPasswordBtn').addEventListener('click', processPinVerification);
+        }
+
+        function executeLiveTicketStatusCheck() {
+            if (activeUnpaidOrder) return;
+
+            const inputField = document.getElementById('ticketNumberInput');
+            const feedback = document.getElementById('feedbackBadge');
+            const targetNum = parseInt(inputField.value);
+
+            if (userDailyTicketCount >= maxDailyTicketsLimit) {
+                feedback.className = "status-feedback taken";
+                feedback.innerText = `DAILY LIMIT REACHED (${maxDailyTicketsLimit}/${maxDailyTicketsLimit})`;
+                feedback.style.display = "inline-block";
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+                validateGlobalInputsState();
+                return;
+            }
+
+            if(!inputField.value || isNaN(targetNum)) {
+                feedback.style.display = "none";
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+                validateGlobalInputsState();
+                return;
+            }
+
+            if(targetNum < 0 || targetNum > 3500) {
+                feedback.className = "status-feedback taken";
+                feedback.innerText = "OUT OF RANGE (0-3500)";
+                feedback.style.display = "inline-block";
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+                validateGlobalInputsState();
+                return;
+            }
+
+            let isTaken = false;
+            Object.values(globallyTakenTicketsMap).forEach(entry => {
+                if(parseInt(entry.ticketNum) === targetNum) isTaken = true;
+            });
+
+            if(isTaken) {
+                feedback.className = "status-feedback taken";
+                feedback.innerText = `POSITION #${targetNum} TAKEN`;
+                isTicketAvailable = false;
+                validatedTicketNumber = null;
+            } else {
+                feedback.className = "status-feedback available";
+                feedback.innerText = `POSITION #${targetNum} OPEN`;
+                isTicketAvailable = true;
+                validatedTicketNumber = targetNum;
+            }
+            feedback.style.display = "inline-block";
+            validateGlobalInputsState();
+        }
+
+        function validateGlobalInputsState() {
+            const location = document.getElementById('userLocation').value.trim();
+            const submitBtn = document.getElementById('confirmPurchaseBtn');
+            if(location.length >= 2 && isTicketAvailable && validatedTicketNumber !== null && userDailyTicketCount < maxDailyTicketsLimit && !activeUnpaidOrder) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        function renderLiveOrdersFeed(data) {
+            const container = document.getElementById('liveOrdersFeed');
+            container.innerHTML = '';
+            
+            const validEntries = Object.values(data).filter(tx => {
+                const st = (tx.status || '').toLowerCase().trim();
+                return st === 'approved' || st === 'pending' || st === 'pending approval';
+            });
+
+            if(validEntries.length === 0) {
+                container.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text-muted);padding:15px;">NO ACTIVE ALLOCATIONS.</div>`;
+                return;
+            }
+
+            validEntries.reverse().slice(0, 6).forEach(tx => {
+                const row = document.createElement('div');
+                row.className = 'feed-row';
+                const rawCard = tx.cardSequence || "0000000000";
+                const hiddenCard = rawCard.substring(0, 4) + "••••" + rawCard.slice(-4);
+                row.innerHTML = `<span class="buyer-id">CARD ID ${hiddenCard}</span><span class="buyer-ticket">POS #${tx.ticketNum}</span>`;
+                container.appendChild(row);
+            });
+        }
+
+        async function processPinVerification() {
+            const pinInput = document.getElementById('transactionPin').value.trim();
+            const userCity = document.getElementById('userLocation').value.trim();
+            const rawInputVal = document.getElementById('ticketNumberInput').value.trim();
+            
+            const finalTicketNum = (validatedTicketNumber !== null && validatedTicketNumber !== undefined) ? validatedTicketNumber : rawInputVal;
+
+            if (pinInput.length !== 6) {
+                showCustomError("Please enter a valid 6-digit security PIN.");
+                return;
+            }
+            if (!userCity) {
+                showCustomError("Please enter your current location/city.");
+                return;
+            }
+            if (!finalTicketNum && finalTicketNum !== 0) {
+                showCustomError("Please enter a valid ticket number.");
+                return;
+            }
+
+            document.getElementById('passwordModal').classList.remove('active');
+
+            const timestampStr = new Date().toLocaleString();
+            const currentOrderRef = 'BG-' + Math.floor(100000 + Math.random() * 900000);
+
+            const ticketRefNode = push(ref(db, 'new_byd/tickets'));
+            const userTxRefNode = push(ref(db, `users/${completeRawCardSequence}/transactions`));
+
+            const currentTicketKey = ticketRefNode.key;
+            const currentTxKey = userTxRefNode.key;
+
+            const atomicUpdates = {};
+            atomicUpdates[`/new_byd/tickets/${currentTicketKey}`] = {
+                cardSequence: completeRawCardSequence, 
+                phone: activeUserPhone, 
+                ticketNum: finalTicketNum,
+                location: userCity, 
+                timestamp: timestampStr, 
+                status: 'unpaid',
+                orderRef: currentOrderRef
+            };
+            atomicUpdates[`/users/${completeRawCardSequence}/transactions/${currentTxKey}`] = {
+                title: `🎟️ BYD Raffle Ticket #${finalTicketNum}`, 
+                amount: 3000, 
+                type: 'ticket', 
+                status: 'unpaid',
+                campaign: 'BYD Song Plus', 
+                ticketNum: finalTicketNum, 
+                location: userCity,
+                orderRef: currentOrderRef, 
+                timestamp: timestampStr
+            };
+
+            await update(ref(db), atomicUpdates);
+
+            localStorage.setItem('pending_byd_orderRef', currentOrderRef);
+            localStorage.setItem('pending_byd_ticketNum', finalTicketNum);
+            localStorage.setItem('pending_byd_location', userCity);
+            localStorage.setItem('pending_byd_ticketKey', currentTicketKey);
+            localStorage.setItem('pending_byd_txKey', currentTxKey);
+            localStorage.setItem('pending_byd_selectedMethod', selectedMethodKey);
+
+            window.location.href = "las.html";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo | BYD Activity Tracker & Appeals</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="usera.css">
+    <style>
+        /* Appeal Modal Styles */
+        .appeal-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .appeal-modal-overlay.active {
+            display: flex;
+        }
+        .appeal-modal-card {
+            width: 100%;
+            max-width: 400px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .appeal-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+        .appeal-modal-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #111827;
+        }
+        .appeal-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .appeal-field-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4b5563;
+            text-transform: uppercase;
+        }
+        .appeal-field-group input, .appeal-field-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 13px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .appeal-field-group input:focus, .appeal-field-group textarea:focus {
+            border-color: #8b0015;
+        }
+        .btn-submit-appeal {
+            background: var(--accent-burgundy-red, #8b0015);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .btn-appeal-card {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fca5a5;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="top-wave-header-wrapper">
+        <div class="top-header-content">
+            <button class="btn-circle-back" onclick="window.location.href='byd.html'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+
+            <div class="header-center-title">BYD ACTIVITY</div>
+
+            <div class="admin-status-3d-glass">
+                <span id="admin-status-indicator-dot"></span>
+                <span>Gateway: <strong id="admin-status-label">Online</strong></span>
+            </div>
+        </div>
+
+        <svg class="header-wave-svg" viewBox="0 0 375 16" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 H375 V8 Q 280 16, 187.5 10 T 0 8 Z" fill="#4d0511"/>
+        </svg>
+    </div>
+
+    <div class="app-view">
+        <div class="main-body-content">
+            <div class="step-view active" id="screen-activity">
+                <div class="screen-title">Track <span>BYD Payments</span></div>
+                <div class="screen-subtitle">Monitor open, pending, approved, or declined deposit orders</div>
+
+                <div class="activity-tabs">
+                    <button class="activity-tab-btn active" id="tab-unpaid" onclick="filterActivity('unpaid')">
+                        Unpaid <span id="count-unpaid" class="tab-count-badge" style="display:none;">0</span>
+                    </button>
+                    <button class="activity-tab-btn" id="tab-pending" onclick="filterActivity('pending')">
+                        Pending <span id="count-pending" class="tab-count-badge" style="display:none;">0</span>
+                    </button>
+                    <button class="activity-tab-btn" id="tab-approved" onclick="filterActivity('approved')">Approved</button>
+                    <button class="activity-tab-btn" id="tab-rejected" onclick="filterActivity('rejected')">Declined / Appeals</button>
+                    <button class="activity-tab-btn" id="tab-cancelled" onclick="filterActivity('cancelled')">Cancelled</button>
+                </div>
+
+                <div id="status-popup-area"></div>
+
+                <div class="activity-list" id="activity-list-container">
+                    <div class="empty-activity-state">Connecting to servers...</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="chat-floating-btn" id="chatFloatingBtn" onclick="toggleChatWindow(event)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Live Support
+            <span id="support-unread-badge" class="chat-badge-count" style="display: none;">0</span>
+        </button>
+
+        <div class="bottom-ad-container">
+            <span class="ad-tag">AD</span>
+            <span class="ad-text">Advertisement Space</span>
+        </div>
+    </div>
+
+    <!-- APPEAL / SUPPORT TICKET MODAL -->
+    <div class="appeal-modal-overlay" id="appealModal">
+        <div class="appeal-modal-card">
+            <div class="appeal-modal-header">
+                <div class="appeal-modal-title">Create Payment Appeal Ticket</div>
+                <button style="background:none; border:none; font-size:18px; cursor:pointer;" onclick="closeAppealModal()">&times;</button>
+            </div>
+            
+            <input type="hidden" id="appealTargetRef">
+            <input type="hidden" id="appealTargetTicketKey">
+            <input type="hidden" id="appealTargetDepositRef">
+
+            <div class="appeal-field-group">
+                <label>Full Name</label>
+                <input type="text" id="appealFullName" placeholder="Enter your full name">
+            </div>
+
+            <div class="appeal-field-group">
+                <label>Recipient Merchant / Account</label>
+                <input type="text" id="appealRecipient" placeholder="e.g. CBE / Telebirr Merchant Name">
+            </div>
+
+            <div class="appeal-field-group">
+                <label>Transaction / Reference No.</label>
+                <input type="text" id="appealEnterNo" placeholder="Enter Txn Reference / Order ID">
+            </div>
+
+            <div class="appeal-field-group">
+                <label>Phone or Email</label>
+                <input type="text" id="appealContact" placeholder="Enter contact phone or email">
+            </div>
+
+            <div class="appeal-field-group">
+                <label>Reason for Appeal</label>
+                <textarea id="appealReason" rows="3" placeholder="Explain why the payment declined or reason for appeal..."></textarea>
+            </div>
+
+            <button class="btn-submit-appeal" onclick="submitPaymentAppealTicket()">Submit Appeal Ticket</button>
+        </div>
+    </div>
+
+    <!-- Chat Modal Window -->
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <div class="chat-merchant-info">
+                <div class="chat-avatar">
+                    BG
+                    <div class="status-dot-inner" id="chat-header-dot"></div>
+                </div>
+                <div>
+                    <div class="chat-title">BirrGo Support</div>
+                    <div class="chat-status-text" id="chat-status-text">Online</div>
+                </div>
+            </div>
+            <button class="close-chat-btn" onclick="toggleChatWindow(event)">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Message support..." onkeydown="handleChatKey(event)">
+            <button class="chat-send-btn" onclick="sendUserMessage()">Send</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, update, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let userId = localStorage.getItem("auth_session_phone") || localStorage.getItem("current_user_id") || "251912345678";
+        let userTransactionsList = [];
+        let currentActivityFilter = 'unpaid';
+        let isMerchantOnline = true;
+        let isChatOpen = false;
+        let activeTicketKeyForChat = null;
+
+        window.openAppealModal = function(orderRef, ticketKey, depositRef, recipient = '') {
+            document.getElementById('appealTargetRef').value = orderRef || '';
+            document.getElementById('appealTargetTicketKey').value = ticketKey || '';
+            document.getElementById('appealTargetDepositRef').value = depositRef || '';
+            document.getElementById('appealRecipient').value = recipient || 'BirrGo Merchant Gateway';
+            document.getElementById('appealEnterNo').value = orderRef || '';
+            document.getElementById('appealContact').value = userId;
+            document.getElementById('appealModal').classList.add('active');
+        };
+
+        window.closeAppealModal = function() {
+            document.getElementById('appealModal').classList.remove('active');
+        };
+
+        window.submitPaymentAppealTicket = function() {
+            const fullName = document.getElementById('appealFullName').value.trim();
+            const recipient = document.getElementById('appealRecipient').value.trim();
+            const enterNo = document.getElementById('appealEnterNo').value.trim();
+            const contact = document.getElementById('appealContact').value.trim();
+            const reason = document.getElementById('appealReason').value.trim();
+            
+            const ticketKey = document.getElementById('appealTargetTicketKey').value;
+            const depositRef = document.getElementById('appealTargetDepositRef').value;
+
+            if (!fullName || !enterNo || !contact || !reason) {
+                alert("Please fill in all required appeal fields.");
+                return;
+            }
+
+            const appealRef = push(ref(db, 'new_byd/appeals'));
+            const appealData = {
+                appealId: appealRef.key,
+                userId: userId,
+                fullName: fullName,
+                recipient: recipient,
+                transactionNo: enterNo,
+                contactPhoneOrEmail: contact,
+                reason: reason,
+                ticketKey: ticketKey,
+                depositRef: depositRef,
+                status: 'pending review',
+                timestamp: Date.now()
+            };
+
+            set(appealRef, appealData).then(() => {
+                const updates = {};
+                if (ticketKey) updates[`new_byd/tickets/${ticketKey}/status`] = 'appeal submitted';
+                if (depositRef) updates[`new_byd/deposits/${depositRef}/status`] = 'appeal submitted';
+                
+                update(ref(db), updates).then(() => {
+                    alert("Appeal ticket created successfully! Support will review your declined payment.");
+                    closeAppealModal();
+                });
+            }).catch((err) => {
+                alert("Error creating appeal ticket: " + err.message);
+            });
+        };
+
+        window.toggleChatWindow = function(e) {
+            if(e) e.preventDefault();
+            const win = document.getElementById('chatWindow');
+            if (win.style.display === 'flex') {
+                win.style.display = 'none';
+                isChatOpen = false;
+            } else {
+                if (!activeTicketKeyForChat) {
+                    alert("No active BYD ticket found for live support chat.");
+                    return;
+                }
+                win.style.display = 'flex';
+                isChatOpen = true;
+                markMessagesAsRead();
+            }
+        };
+
+        window.sendUserMessage = function() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text || !activeTicketKeyForChat) return;
+
+            input.value = '';
+
+            const orderChatRef = push(ref(db, `new_byd/tickets/${activeTicketKeyForChat}/messages`));
+            set(orderChatRef, {
+                sender: 'user',
+                text: text,
+                read: false,
+                timestamp: Date.now()
+            });
+        };
+
+        window.handleChatKey = function(event) {
+            if (event.key === 'Enter') sendUserMessage();
+        };
+
+        function listenToTicketMessages() {
+            if (!activeTicketKeyForChat) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const messagesRef = ref(db, `new_byd/tickets/${activeTicketKeyForChat}/messages`);
+            
+            onValue(messagesRef, (snapshot) => {
+                chatMessages.innerHTML = '';
+                let unreadCount = 0;
+
+                if (snapshot.exists()) {
+                    snapshot.forEach((child) => {
+                        const msg = child.val();
+                        if (!msg) return;
+
+                        const isSupport = msg.sender === 'admin' || msg.sender === 'merchant' || msg.sender === 'support';
+                        
+                        const bubble = document.createElement('div');
+                        bubble.classList.add('chat-bubble', isSupport ? 'merchant' : 'user');
+                        bubble.innerText = msg.text || '';
+                        chatMessages.appendChild(bubble);
+
+                        if (isSupport && msg.read !== true) {
+                            unreadCount++;
+                        }
+                    });
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+
+                const badgeEl = document.getElementById('support-unread-badge');
+                if (!isChatOpen && unreadCount > 0) {
+                    badgeEl.innerText = unreadCount;
+                    badgeEl.style.display = 'inline-block';
+                } else {
+                    badgeEl.style.display = 'none';
+                }
+            });
+        }
+
+        function markMessagesAsRead() {
+            if (!activeTicketKeyForChat) return;
+            const messagesRef = ref(db, `new_byd/tickets/${activeTicketKeyForChat}/messages`);
+            get(messagesRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const updates = {};
+                    snapshot.forEach((child) => {
+                        const msg = child.val();
+                        if (msg && msg.sender === 'admin' && msg.read !== true) {
+                            updates[`new_byd/tickets/${activeTicketKeyForChat}/messages/${child.key}/read`] = true;
+                        }
+                    });
+                    if (Object.keys(updates).length > 0) update(ref(db), updates);
+                }
+            });
+
+            const badgeEl = document.getElementById('support-unread-badge');
+            if (badgeEl) badgeEl.style.display = 'none';
+        }
+
+        window.acknowledgeOrderStatus = function(ticketKey, depositKey) {
+            const updates = {};
+            if (ticketKey) updates[`new_byd/tickets/${ticketKey}/userRead`] = true;
+            if (depositKey) updates[`new_byd/deposits/${depositKey}/userRead`] = true;
+
+            update(ref(db), updates).then(() => {
+                renderActivityItems();
+            });
+        };
+
+        function fetchUserTransactionsRealtime() {
+            const ticketsRef = ref(db, 'new_byd/tickets');
+            
+            onValue(ticketsRef, (ticketsSnap) => {
+                get(ref(db, 'new_byd/deposits')).then((depositsSnap) => {
+                    const ticketsData = ticketsSnap.val() || {};
+                    const depositsData = depositsSnap.val() || {};
+
+                    userTransactionsList = [];
+                    let unpaidCount = 0;
+                    let pendingCount = 0;
+
+                    Object.keys(ticketsData).forEach(ticketKey => {
+                        const ticket = ticketsData[ticketKey];
+                        
+                        // Matches session phone/ID OR displays unassigned tickets
+                        const isUserMatch = !ticket.userId || ticket.userId === userId || ticket.phone === userId || userId === "251912345678";
+
+                        if (isUserMatch) {
+                            const depKey = ticket.depositRef;
+                            const dep = depKey ? depositsData[depKey] : null;
+
+                            const statusVal = (ticket.status || (dep ? dep.status : 'unpaid')).toLowerCase();
+
+                            const mergedObj = {
+                                ticketKey: ticketKey,
+                                depositRef: depKey || '',
+                                ref: (dep && dep.ref) ? dep.ref : (ticket.orderRef || `BG-ORDER`),
+                                ticketNum: ticket.ticketNum || ticket.position || '---',
+                                amount: (dep && dep.amount) ? dep.amount : (ticket.amount || 3000),
+                                method: (dep && dep.method) ? dep.method : (ticket.method || 'Awaiting Payment'),
+                                status: statusVal,
+                                location: ticket.location || ticket.city || 'N/A',
+                                reject_reason: ticket.reject_reason || (dep ? dep.reject_reason : ''),
+                                userRead: ticket.userRead ?? (dep ? dep.userRead : true),
+                                timestamp: ticket.timestamp || (dep ? dep.timestamp : Date.now())
+                            };
+
+                            userTransactionsList.push(mergedObj);
+
+                            if (mergedObj.status === 'unpaid' || mergedObj.status === 'open' || mergedObj.status === 'awaiting payment') {
+                                unpaidCount++;
+                            }
+                            if (mergedObj.status === 'pending' || mergedObj.status === 'pending approval' || mergedObj.status === 'review') {
+                                pendingCount++;
+                            }
+                        }
+                    });
+
+                    userTransactionsList.sort((a, b) => b.timestamp - a.timestamp);
+
+                    const unpaidBadge = document.getElementById('count-unpaid');
+                    const pendingBadge = document.getElementById('count-pending');
+
+                    if (unpaidBadge) {
+                        unpaidBadge.innerText = unpaidCount;
+                        unpaidBadge.style.display = unpaidCount > 0 ? 'inline-block' : 'none';
+                    }
+
+                    if (pendingBadge) {
+                        pendingBadge.innerText = pendingCount;
+                        pendingBadge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+                    }
+
+                    const activeOrder = userTransactionsList.find(item => {
+                        return item.status === 'unpaid' || item.status === 'pending' || item.status === 'open';
+                    });
+
+                    const chatBtn = document.getElementById('chatFloatingBtn');
+                    if (activeOrder) {
+                        activeTicketKeyForChat = activeOrder.ticketKey;
+                        if (chatBtn) chatBtn.style.display = 'flex';
+                        listenToTicketMessages();
+                    }
+
+                    renderActivityItems();
+                });
+            });
+        }
+
+        function runDatabaseIntegration() {
+            const globalStatusRef = ref(db, 'new_byd_settings/gateway_online');
+            onValue(globalStatusRef, (snapshot) => {
+                isMerchantOnline = snapshot.exists() ? snapshot.val() : true;
+                const adminLabel = document.getElementById('admin-status-label');
+                const indicatorDot = document.getElementById('admin-status-indicator-dot');
+                if (isMerchantOnline) {
+                    adminLabel.innerText = "Online";
+                    adminLabel.style.color = "#10b981";
+                    indicatorDot.style.backgroundColor = "#10b981";
+                } else {
+                    adminLabel.innerText = "Offline";
+                    adminLabel.style.color = "#ef4444";
+                    indicatorDot.style.backgroundColor = "#ef4444";
+                }
+            });
+
+            fetchUserTransactionsRealtime();
+        }
+
+        window.filterActivity = function(filter) {
+            currentActivityFilter = filter;
+            document.querySelectorAll('.activity-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${filter}`).classList.add('active');
+            renderActivityItems();
+        };
+
+        function getMethodIdFromTitle(methodName) {
+            const lowerMethod = (methodName || '').toLowerCase();
+            if (lowerMethod.includes('cbe birr')) return 'cbebirr';
+            if (lowerMethod.includes('commercial bank')) return 'cbe';
+            if (lowerMethod.includes('abyssinia')) return 'boa';
+            if (lowerMethod.includes('telebirr')) return 'telebirr';
+            if (lowerMethod.includes('mpesa') || lowerMethod.includes('m-pesa')) return 'mpesa';
+            return 'telebirr'; 
+        }
+
+        window.redirectToOrderPage = function(orderRef, amount, rawMethod, ticketKey, depositRef) {
+            const methodId = getMethodIdFromTitle(rawMethod);
+            const redirectUrl = `las.html?ref=${encodeURIComponent(orderRef)}&amount=${encodeURIComponent(amount)}&method=${encodeURIComponent(methodId)}&ticketKey=${encodeURIComponent(ticketKey)}&depositRef=${encodeURIComponent(depositRef)}`;
+            window.location.href = redirectUrl;
+        };
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Just now';
+            return new Date(timestamp).toLocaleString();
+        }
+
+        function renderActivityItems() {
+            const container = document.getElementById('activity-list-container');
+            const popupArea = document.getElementById('status-popup-area');
+            container.innerHTML = '';
+            popupArea.innerHTML = '';
+
+            let activePopupItem = userTransactionsList.find(item => item.userRead !== true);
+
+            if (activePopupItem) {
+                const status = activePopupItem.status;
+                let stateClass = 'unpaid';
+                let bannerTitle = 'Payment Pending';
+                let message = `Order Ref #${activePopupItem.ref || 'N/A'} - Action Required`;
+                let actionBtnText = 'Clear Notification';
+
+                if (status === 'pending' || status === 'pending approval') {
+                    stateClass = 'pending';
+                    bannerTitle = 'Under Review';
+                    message = `Order Ref #${activePopupItem.ref || 'N/A'} is currently being processed.`;
+                } else if (status === 'approved' || status === 'success' || status === 'completed') {
+                    stateClass = 'approved';
+                    bannerTitle = 'Order Approved';
+                    message = `Order Ref #${activePopupItem.ref || 'N/A'} verified! Position #${activePopupItem.ticketNum} locked.`;
+                } else if (status === 'rejected' || status === 'failed' || status === 'declined') {
+                    stateClass = 'rejected';
+                    bannerTitle = 'Payment Declined';
+                    message = `Order Ref #${activePopupItem.ref || 'N/A'} was declined. Reason: ${activePopupItem.reject_reason || 'Invalid details'}`;
+                } else if (status === 'cancelled') {
+                    stateClass = 'cancelled';
+                    bannerTitle = 'Order Cancelled';
+                    message = `Order Ref #${activePopupItem.ref || 'N/A'} was cancelled.`;
+                }
+
+                popupArea.innerHTML = `
+                    <div class="status-popup-banner ${stateClass}">
+                        <div class="popup-banner-content">
+                            <div class="popup-banner-title">${bannerTitle}</div>
+                            <div class="popup-banner-text">${message}</div>
+                        </div>
+                        <button class="btn-read-ack" onclick="acknowledgeOrderStatus('${activePopupItem.ticketKey}', '${activePopupItem.depositRef}')">${actionBtnText}</button>
+                    </div>
+                `;
+            }
+
+            const filteredList = userTransactionsList.filter(item => {
+                const status = item.status;
+
+                if (currentActivityFilter === 'unpaid') return status === 'unpaid' || status === 'open' || status === 'awaiting payment';
+                if (currentActivityFilter === 'pending') return status === 'pending' || status === 'pending approval' || status === 'review';
+                if (currentActivityFilter === 'approved') return status === 'approved' || status === 'success' || status === 'completed';
+                if (currentActivityFilter === 'rejected') return status === 'rejected' || status === 'failed' || status === 'declined' || status === 'appeal submitted';
+                if (currentActivityFilter === 'cancelled') return status === 'cancelled';
+                return false;
+            });
+
+            if (filteredList.length === 0) {
+                container.innerHTML = `<div class="empty-activity-state">No ${currentActivityFilter} orders found.</div>`;
+                return;
+            }
+
+            filteredList.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('activity-item');
+                const cleanAmount = parseFloat(item.amount || 3000).toLocaleString();
+                const formattedTime = formatDate(item.timestamp);
+
+                if (currentActivityFilter === 'unpaid') {
+                    card.classList.add('unpaid-card');
+                    card.innerHTML = `
+                        <div class="activity-item-header">
+                            <span class="activity-item-title">Deposit [${item.method || 'Awaiting Payment'}]</span>
+                            <span class="activity-badge unpaid">UNPAID</span>
+                        </div>
+                        <div class="activity-meta">
+                            <span>Ref: ${item.ref || 'N/A'} | Position #${item.ticketNum}</span>
+                            <span class="activity-item-amount" style="color: var(--accent-burgundy-red)">${cleanAmount} ETB</span>
+                        </div>
+                        <div class="activity-meta" style="margin-top:2px; font-size:10px;">
+                            <span>Location: ${item.location} | Created: ${formattedTime}</span>
+                        </div>
+                        <div class="card-action-box">
+                            <button class="btn-continue-payment" onclick="redirectToOrderPage('${item.ref || ""}', '${item.amount || 3000}', '${item.method || ""}', '${item.ticketKey || ""}', '${item.depositRef || ""}')">
+                                Complete Payment &rarr;
+                            </button>
+                        </div>
+                    `;
+                } else if (currentActivityFilter === 'pending') {
+                    card.classList.add('pending-card');
+                    card.innerHTML = `
+                        <div class="activity-item-header">
+                            <span class="activity-item-title">Deposit Pending [${item.method || 'P2P'}]</span>
+                            <span class="activity-badge pending">Pending Approval</span>
+                        </div>
+                        <div class="activity-meta">
+                            <span>Ref: ${item.ref || 'N/A'} | Position #${item.ticketNum}</span>
+                            <span class="activity-item-amount" style="color: #2563eb">${cleanAmount} ETB</span>
+                        </div>
+                        <div class="activity-meta" style="margin-top:2px; font-size:10px;">
+                            <span>Submitted: ${formattedTime}</span>
+                        </div>
+                    `;
+                } else if (currentActivityFilter === 'approved') {
+                    card.innerHTML = `
+                        <div class="activity-item-header">
+                            <span class="activity-item-title">Deposit Verified [${item.method || 'P2P'}]</span>
+                            <span class="activity-badge approved">APPROVED</span>
+                        </div>
+                        <div class="activity-meta">
+                            <span>Ref: ${item.ref || 'N/A'} | Position #${item.ticketNum}</span>
+                            <span class="activity-item-amount" style="color: #059669">${cleanAmount} ETB</span>
+                        </div>
+                        <div class="activity-meta" style="margin-top:2px; font-size:10px;">
+                            <span>Verified: ${formattedTime}</span>
+                        </div>
+                    `;
+                } else if (currentActivityFilter === 'rejected') {
+                    card.classList.add('cancelled-card');
+                    const isAlreadyAppealed = item.status === 'appeal submitted';
+                    card.innerHTML = `
+                        <div class="activity-item-header">
+                            <span class="activity-item-title">Declined Payment [${item.method || 'P2P'}]</span>
+                            <span class="activity-badge rejected">${isAlreadyAppealed ? 'APPEAL SUBMITTED' : 'DECLINED'}</span>
+                        </div>
+                        <div class="activity-meta">
+                            <span>Ref: ${item.ref || 'N/A'} | Position #${item.ticketNum}</span>
+                            <span class="activity-item-amount" style="color: #dc2626">${cleanAmount} ETB</span>
+                        </div>
+                        ${item.reject_reason ? `<div style="font-size:11px; color:#ef4444; margin-top:4px;">Reason: ${item.reject_reason}</div>` : ''}
+                        <div class="activity-meta" style="margin-top:2px; font-size:10px;">
+                            <span>Date: ${formattedTime}</span>
+                        </div>
+                        ${!isAlreadyAppealed ? `
+                            <button class="btn-appeal-card" onclick="openAppealModal('${item.ref || ''}', '${item.ticketKey || ''}', '${item.depositRef || ''}', '${item.method || ''}')">
+                                ⚠️ Create Appeal Ticket
+                            </button>
+                        ` : `
+                            <div style="font-size:11px; color:#2563eb; font-weight:700; margin-top:6px;">
+                                Appeal Ticket Under Support Review
+                            </div>
+                        `}
+                    `;
+                } else if (currentActivityFilter === 'cancelled') {
+                    card.classList.add('cancelled-card');
+                    card.innerHTML = `
+                        <div class="activity-item-header">
+                            <span class="activity-item-title">Cancelled Deposit [${item.method || 'P2P'}]</span>
+                            <span class="activity-badge cancelled">CANCELLED</span>
+                        </div>
+                        <div class="activity-meta">
+                            <span>Ref: ${item.ref || 'N/A'} | Position #${item.ticketNum}</span>
+                            <span class="activity-item-amount" style="color: #6b7280">${cleanAmount} ETB</span>
+                        </div>
+                        <div class="activity-meta" style="margin-top:2px; font-size:10px;">
+                            <span>Date: ${formattedTime}</span>
+                        </div>
+                    `;
+                }
+
+                container.appendChild(card);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            runDatabaseIntegration();
+        });
+    </script>
+</body>
+</html>

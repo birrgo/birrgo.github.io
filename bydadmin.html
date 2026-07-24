@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BirrGo Admin - BYD Gateway</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="deposits.css">
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <style>
+        .top-nav {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            padding: 12px 16px;
+            background-color: #ffffff;
+        }
+
+        .brand-logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: #111827;
+            white-space: nowrap;
+        }
+
+        .brand-logo span {
+            color: var(--primary-burgundy, #8b0015);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .btn-back-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            color: #111827;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 900;
+            transition: all 0.2s ease;
+            z-index: 2;
+        }
+        .btn-back-icon:hover {
+            background: #e5e7eb;
+            transform: scale(1.05);
+        }
+        .btn-back-icon:active {
+            transform: scale(0.95);
+        }
+
+        .btn-header-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            color: #111827;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+        .btn-header-icon:hover {
+            background: #e5e7eb;
+            transform: scale(1.05);
+        }
+        .btn-header-icon:active {
+            transform: scale(0.95);
+        }
+
+        .floating-chat-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background-color: var(--primary-burgundy, #8b0015);
+            color: #ffffff;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 9000;
+            transition: transform 0.2s ease;
+        }
+        .floating-chat-btn:active {
+            transform: scale(0.9);
+        }
+        .floating-chat-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background-color: #ef4444;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 10px;
+            border: 2px solid #ffffff;
+        }
+
+        .chat-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .chat-modal-overlay.active {
+            display: flex;
+        }
+
+        .chat-modal-container {
+            width: 100%;
+            max-width: 450px;
+            height: 80vh;
+            max-height: 650px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popupScale 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popupScale {
+            from {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .chat-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .custom-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: #1e1e2d;
+            color: #ffffff;
+            padding: 20px 28px;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-top: 5px solid var(--success-color, #10b981);
+            min-width: 280px;
+            max-width: 90%;
+            text-align: center;
+        }
+        .custom-toast.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .custom-toast .toast-icon {
+            font-size: 22px;
+        }
+        
+        .nav-badge {
+            background-color: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 20px;
+            margin-left: 6px;
+            display: inline-block;
+        }
+        .nav-badge.zero {
+            background-color: #9ca3af;
+            display: none;
+        }
+
+        .nav-badge.unpaid-badge {
+            background-color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-nav">
+        <div class="brand-header">
+            <button class="btn-back-icon" onclick="window.location.href='new2.html'" title="Go to New">
+                &#8592;
+            </button>
+            
+            <div class="brand-logo">Birr<span>Go BYD Hub</span></div>
+
+            <div class="header-actions">
+                <button class="btn-header-icon" onclick="toggleChatOverlay()" title="BYD Chat Services">
+                    💬
+                    <span id="header-chat-badge" class="nav-badge zero" style="position: absolute; top: -4px; right: -4px; margin: 0;">0</span>
+                </button>
+                <button class="btn-header-icon" onclick="window.location.href='bydalert.html'" title="System Alerts">
+                    🔔
+                </button>
+            </div>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('pane-unpaid', this)">
+                Unpaid BYD Orders <span id="tab-badge-unpaid" class="nav-badge zero unpaid-badge">0</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('pane-deposits', this)">
+                Pending Reviews <span id="tab-badge-pending" class="nav-badge zero">0</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('pane-history', this)">BYD History</button>
+        </div>
+    </header>
+
+    <div class="content-body">
+        <!-- Tab Panel 1: Unpaid Orders -->
+        <div id="pane-unpaid" class="tab-panel active">
+            <div class="scrollable-content" id="unpaid-cards-container"></div>
+        </div>
+
+        <!-- Tab Panel 2: Pending Reviews -->
+        <div id="pane-deposits" class="tab-panel">
+            <div class="scrollable-content" id="tx-cards-container"></div>
+        </div>
+
+        <!-- Tab Panel 3: History -->
+        <div id="pane-history" class="tab-panel">
+            <div class="scrollable-content" id="history-cards-container"></div>
+        </div>
+    </div>
+
+    <!-- FLOATING CHAT BUTTON -->
+    <button class="floating-chat-btn" onclick="toggleChatOverlay()" title="Open Chat Center">
+        💬
+        <span id="floating-chat-badge" class="floating-chat-badge" style="display: none;">0</span>
+    </button>
+
+    <!-- CENTERED CHAT MODAL -->
+    <div class="chat-modal-overlay" id="chat-overlay" onclick="closeChatOverlayOnOuterClick(event)">
+        <div class="chat-modal-container">
+            <div class="chat-modal-header">
+                <h3 style="font-size: 16px; font-weight: 800; margin: 0; color: #111827;">BYD Support Messages</h3>
+                <button class="btn-back-icon" onclick="toggleChatOverlay()" style="width: 32px; height: 32px; font-size: 14px;">✕</button>
+            </div>
+            <div class="chat-mobile-wrapper" style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+                <div class="chat-user-selector" id="chat-list-view"></div>
+                <div class="chat-active-window" id="chat-room-view">
+                    <div class="chat-top-header">
+                        <button class="btn-back" onclick="exitChatRoom()">← Back</button>
+                        <div>
+                            <h4 id="active-user-title" style="font-size: 14px; font-weight:800;">Selected Order</h4>
+                            <p style="font-size: 10px; color: var(--text-muted);">BYD Order Message Stream</p>
+                        </div>
+                    </div>
+                    <div class="chat-scroller" id="chat-messages-box"></div>
+                    <div class="chat-footer">
+                        <input type="text" id="chat-msg-input" class="form-control" placeholder="Type administrative response..." style="flex-grow: 1;">
+                        <button class="btn-primary" id="send-chat-btn" style="width: auto; padding: 0 16px; height: 42px;">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="slipModal" onclick="closeSlip()">
+        <div class="modal-body" onclick="event.stopPropagation()">
+            <h4 style="margin-bottom: 8px; font-weight: 800;">P2P Verification Slip</h4>
+            <img id="slipImg" src="" alt="Deposit Proof Receipt">
+            <button class="btn-primary" style="background:#f3f4f6; color:#000;" onclick="closeSlip()">Close Frame</button>
+        </div>
+    </div>
+
+    <div class="custom-toast" id="system-toast">
+        <span class="toast-icon">🚀</span>
+        <span class="toast-text" id="toast-message">System updated successfully!</span>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, onValue, push, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Production Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let activeOrderId = '';
+
+        window.toggleChatOverlay = function() {
+            const overlay = document.getElementById('chat-overlay');
+            overlay.classList.toggle('active');
+        };
+
+        window.closeChatOverlayOnOuterClick = function(e) {
+            if (e.target.id === 'chat-overlay') {
+                window.toggleChatOverlay();
+            }
+        };
+
+        window.showToast = function(message, type = 'success') {
+            const toast = document.getElementById('system-toast');
+            const textEl = document.getElementById('toast-message');
+            
+            textEl.innerText = message;
+            if (type === 'success') {
+                toast.style.borderTop = "5px solid #10b981";
+                toast.querySelector('.toast-icon').innerText = '✅';
+            } else if (type === 'error') {
+                toast.style.borderTop = "5px solid #ef4444";
+                toast.querySelector('.toast-icon').innerText = '❌';
+            } else {
+                toast.style.borderTop = "5px solid #f59e0b";
+                toast.querySelector('.toast-icon').innerText = '🔔';
+            }
+
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        };
+
+        window.switchTab = function(tabId, button) {
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            button.classList.add('active');
+        };
+
+        window.exitChatRoom = function() {
+            activeOrderId = '';
+            document.getElementById('chat-room-view').classList.remove('active');
+            document.getElementById('chat-list-view').classList.remove('hidden');
+        };
+
+        window.closeSlip = function() {
+            document.getElementById('slipModal').style.display = 'none';
+        };
+
+        window.viewSlip = function(receiptUrl, fallbackRef) {
+            const imgEl = document.getElementById('slipImg');
+            imgEl.src = receiptUrl || `https://placehold.co/400x600/f3f4f6/8b0015?text=${fallbackRef}+Receipt`;
+            document.getElementById('slipModal').style.display = 'flex';
+        };
+
+        function sendEmailNotification(subjectText, txDetails = {}) {
+            get(ref(db, 'new_byd_settings/email_config')).then((snapshot) => {
+                const config = snapshot.val();
+                if (!config) return;
+
+                const targetEmail = config.alert_email_target;
+                const publicKey = config.emailjs_public_key;
+                const serviceId = config.emailjs_service_id;
+                const templateId = config.emailjs_template_id;
+
+                const emailjsInstance = window.emailjs;
+
+                if (emailjsInstance && publicKey && serviceId && templateId && targetEmail) {
+                    emailjsInstance.init({ publicKey: publicKey });
+                    const templateParams = {
+                        name: txDetails.name || txDetails.userId || 'Guest Client',
+                        email: txDetails.email || txDetails.userId || 'N/A',
+                        amount: txDetails.amount || '3000',
+                        subject: `⚠️ [BirrGo BYD Alert] ${subjectText}`, 
+                        method: txDetails.method || 'BYD Payment',
+                        ref: txDetails.ref || 'N/A',
+                        status: txDetails.status || 'Pending',
+                        reason: txDetails.reason || 'None given'
+                    };
+                    emailjsInstance.send(serviceId, templateId, templateParams);
+                }
+            });
+        }
+
+        function listenToBYDNodes() {
+            const container = document.getElementById('tx-cards-container'); 
+            const unpaidContainer = document.getElementById('unpaid-cards-container'); 
+            const historyContainer = document.getElementById('history-cards-container'); 
+            
+            const topMenuPendingBadge = document.getElementById('tab-badge-pending');
+            const topMenuUnpaidBadge = document.getElementById('tab-badge-unpaid');
+
+            onValue(ref(db, 'new_byd/tickets'), (ticketsSnap) => {
+                const ticketsData = ticketsSnap.val() || {};
+                
+                get(ref(db, 'new_byd/deposits')).then((depositsSnap) => {
+                    const depositsData = depositsSnap.val() || {};
+
+                    let pendingCount = 0;
+                    let unpaidCount = 0;
+                    
+                    container.innerHTML = '';
+                    unpaidContainer.innerHTML = '';
+                    historyContainer.innerHTML = '';
+
+                    let totalUnpaidRendered = 0;
+                    let totalPendingRendered = 0;
+                    let totalHistoryRendered = 0;
+
+                    const ticketKeys = Object.keys(ticketsData).reverse();
+
+                    ticketKeys.forEach((ticketKey) => {
+                        const ticket = ticketsData[ticketKey];
+                        if (!ticket) return;
+
+                        const depKey = ticket.depositRef;
+                        const dep = depKey ? depositsData[depKey] : null;
+
+                        const rawStatus = (ticket.status || 'unpaid').toLowerCase();
+
+                        if (rawStatus === 'unpaid') unpaidCount++;
+                        if (rawStatus === 'pending' || rawStatus === 'pending approval') pendingCount++;
+
+                        const card = document.createElement('div');
+                        card.className = 'mobile-tx-card';
+                        card.id = `card-${ticketKey}`;
+                        
+                        const isUnpaidCard = rawStatus === 'unpaid';
+                        const isPendingCard = rawStatus === 'pending' || rawStatus === 'pending approval';
+                        
+                        let badgeStyle = '';
+                        if (isPendingCard) {
+                            badgeStyle = 'background:#fef3c7; color:#d97706;';
+                        } else if (isUnpaidCard) {
+                            badgeStyle = 'background:rgba(245, 158, 11, 0.15); color:#f59e0b;';
+                        } else if (rawStatus === 'approved') {
+                            badgeStyle = 'background:#d1fae5; color:#059669;';
+                        } else if (rawStatus === 'rejected') {
+                            badgeStyle = 'background:#fee2e2; color:#dc2626;';
+                        }
+
+                        let reasonDisplay = ticket.reject_reason ? `<div class="tx-row" style="color:#ef4444;"><span style="font-weight:600;">Reason:</span> <span>${ticket.reject_reason}</span></div>` : '';
+
+                        const slipActionHtml = (!dep || !dep.receiptUrl)
+                            ? `<button class="btn-action-mobile" style="background:#f3f4f6; color:#9ca3af; cursor: not-allowed;" disabled>No Receipt</button>`
+                            : `<button class="btn-action-mobile" style="background:#f3f4f6; color:#111;" id="view-slip-${ticketKey}">View Receipt</button>`;
+
+                        let actionPanelHtml = '';
+                        if (isPendingCard) {
+                            actionPanelHtml = `
+                                <div class="tx-actions">
+                                    ${slipActionHtml}
+                                    <button class="btn-action-mobile" style="background:var(--success-color, #10b981); color:white;" id="approve-${ticketKey}">Approve</button>
+                                    <button class="btn-action-mobile" style="background:var(--danger-color, #ef4444); color:white;" id="reject-${ticketKey}">Reject</button>
+                                </div>
+                            `;
+                        } else {
+                            actionPanelHtml = `
+                                <div class="tx-actions">
+                                    ${slipActionHtml}
+                                </div>
+                            `;
+                        }
+
+                        card.innerHTML = `
+                            <div class="tx-header">
+                                <span class="tx-ref">Ref: ${dep ? dep.ref : 'BG-ORDER'} | Position #${ticket.ticketNum || '---'}</span>
+                                <span style="font-size:10px; font-weight:800; padding:3px 8px; border-radius:6px; text-transform:uppercase; ${badgeStyle}">${ticket.status || 'Unpaid'}</span>
+                            </div>
+                            <div class="tx-row">
+                                <span style="color:var(--text-muted);">Gateway / Method:</span>
+                                <span style="font-weight:600;">${dep ? dep.method : 'Awaiting Payment'}</span>
+                            </div>
+                            <div class="tx-row">
+                                <span style="color:var(--text-muted);">Client Phone:</span>
+                                <span style="font-weight:600;">${ticket.userId || 'N/A'}</span>
+                            </div>
+                            <div class="tx-row">
+                                <span style="color:var(--text-muted);">City / Location:</span>
+                                <span style="font-weight:600;">${ticket.location || 'N/A'}</span>
+                            </div>
+                            <div class="tx-row">
+                                <span style="color:var(--text-muted);">Transfer Amount:</span>
+                                <span style="font-weight:800; color:var(--primary-burgundy, #8b0015);">3,000 ETB</span>
+                            </div>
+                            ${dep && dep.txnRef ? `<div class="tx-row"><span style="color:var(--text-muted);">Txn Ref:</span><span style="font-weight:700;">${dep.txnRef}</span></div>` : ''}
+                            ${reasonDisplay}
+                            ${actionPanelHtml}
+                        `;
+
+                        if (isUnpaidCard) {
+                            unpaidContainer.appendChild(card);
+                            totalUnpaidRendered++;
+                        } else if (isPendingCard) {
+                            container.appendChild(card);
+                            totalPendingRendered++;
+                        } else {
+                            historyContainer.appendChild(card);
+                            totalHistoryRendered++;
+                        }
+
+                        if (dep && dep.receiptUrl) {
+                            const viewBtn = document.getElementById(`view-slip-${ticketKey}`);
+                            if (viewBtn) {
+                                viewBtn.onclick = () => window.viewSlip(dep.receiptUrl, dep.ref || ticketKey);
+                            }
+                        }
+                        
+                        if (isPendingCard) {
+                            document.getElementById(`approve-${ticketKey}`).onclick = () => {
+                                updateBYDOrderStatus(ticketKey, depKey, ticket.userId, 'approved', '');
+                                window.showToast("BYD Ticket Approved Successfully!");
+                            };
+                            document.getElementById(`reject-${ticketKey}`).onclick = () => {
+                                const reason = prompt("Why are you rejecting this BYD order?");
+                                if (reason === null) return; 
+                                
+                                updateBYDOrderStatus(ticketKey, depKey, ticket.userId, 'rejected', reason.trim() || 'Invalid transfer details');
+                                window.showToast("BYD Order Rejected!", "error");
+                            };
+                        }
+                    });
+
+                    if (totalUnpaidRendered === 0) {
+                        unpaidContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No unpaid BYD tickets found.</p>`;
+                    }
+                    if (totalPendingRendered === 0) {
+                        container.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No pending deposit reviews.</p>`;
+                    }
+                    if (totalHistoryRendered === 0) {
+                        historyContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No transaction history available.</p>`;
+                    }
+
+                    topMenuPendingBadge.innerText = pendingCount;
+                    if (pendingCount > 0) topMenuPendingBadge.classList.remove('zero');
+                    else topMenuPendingBadge.classList.add('zero');
+
+                    topMenuUnpaidBadge.innerText = unpaidCount;
+                    if (unpaidCount > 0) topMenuUnpaidBadge.classList.remove('zero');
+                    else topMenuUnpaidBadge.classList.add('zero');
+                });
+            });
+        }
+
+        async function updateBYDOrderStatus(ticketKey, depositKey, userId, newStatus, reason = '') {
+            const updates = {};
+
+            // 1. Update Ticket Node
+            updates[`/new_byd/tickets/${ticketKey}/status`] = newStatus;
+            updates[`/new_byd/tickets/${ticketKey}/userRead`] = false;
+            if (reason) updates[`/new_byd/tickets/${ticketKey}/reject_reason`] = reason;
+
+            // 2. Update Deposit Node
+            if (depositKey) {
+                updates[`/new_byd/deposits/${depositKey}/status`] = newStatus;
+                updates[`/new_byd/deposits/${depositKey}/userRead`] = false;
+                if (reason) updates[`/new_byd/deposits/${depositKey}/reject_reason`] = reason;
+            }
+
+            // 3. Update User Transactions Node
+            if (userId) {
+                const userTxSnap = await get(ref(db, `new_byd/users/${userId}/transactions`));
+                if (userTxSnap.exists()) {
+                    const userTxs = userTxSnap.val();
+                    Object.keys(userTxs).forEach(txKey => {
+                        if (userTxs[txKey].ticketKey === ticketKey || userTxs[txKey].depositRef === depositKey) {
+                            updates[`/new_byd/users/${userId}/transactions/${txKey}/status`] = newStatus;
+                            if (reason) updates[`/new_byd/users/${userId}/transactions/${txKey}/reason`] = reason;
+                        }
+                    });
+                }
+            }
+
+            await update(ref(db), updates);
+
+            // Send notification email
+            sendEmailNotification(`BYD Order ${newStatus.toUpperCase()}`, {
+                name: userId,
+                userId: userId,
+                amount: '3000',
+                status: newStatus,
+                reason: reason || 'N/A'
+            });
+        }
+
+        function listenToChatUsers() {
+            const listContainer = document.getElementById('chat-list-view');
+            const headerChatBadge = document.getElementById('header-chat-badge');
+            const floatingChatBadge = document.getElementById('floating-chat-badge');
+            
+            onValue(ref(db, 'new_byd/tickets'), (snapshot) => {
+                listContainer.innerHTML = '';
+                const bydData = snapshot.val() || {};
+                const orderIds = Object.keys(bydData);
+                let totalUnreadCount = 0;
+                let activeChatsCount = 0;
+
+                orderIds.forEach(orderId => {
+                    const orderObj = bydData[orderId];
+                    if (orderObj && orderObj.messages) {
+                        activeChatsCount++;
+                        const messages = orderObj.messages || {};
+                        let orderUnreadCount = 0;
+
+                        Object.keys(messages).forEach(msgKey => {
+                            const msg = messages[msgKey];
+                            if (msg.sender === 'user' && msg.read !== true) {
+                                orderUnreadCount++;
+                            }
+                        });
+                        totalUnreadCount += orderUnreadCount;
+
+                        const item = document.createElement('div');
+                        item.className = 'chat-list-item';
+                        item.onclick = () => openChatRoom(orderId);
+                        
+                        const unreadBadgeHtml = orderUnreadCount > 0 
+                            ? `<span class="nav-badge" style="margin-left: auto; margin-right: 12px; display: inline-block;">${orderUnreadCount}</span>` 
+                            : '';
+
+                        item.innerHTML = `
+                            <div class="user-badge">${orderId.slice(-3).toUpperCase()}</div>
+                            <div style="flex-grow: 1;">
+                                <h4 style="font-size:14px; font-weight:800;">Position #${orderObj.ticketNum || orderId}</h4>
+                                <p style="font-size:11px; color:var(--text-muted);">${orderUnreadCount > 0 ? '💬 New client message' : 'Client: ' + (orderObj.userId || 'Guest')}</p>
+                            </div>
+                            ${unreadBadgeHtml}
+                        `;
+                        listContainer.appendChild(item);
+
+                        if (activeOrderId === orderId && orderUnreadCount > 0) {
+                            clearUnreadMessages(orderId, messages);
+                        }
+                    }
+                });
+
+                if (activeChatsCount === 0) {
+                    listContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No active BYD support chats.</p>`;
+                }
+
+                headerChatBadge.innerText = totalUnreadCount;
+                if (totalUnreadCount > 0) headerChatBadge.classList.remove('zero');
+                else headerChatBadge.classList.add('zero');
+
+                if (totalUnreadCount > 0) {
+                    floatingChatBadge.innerText = totalUnreadCount;
+                    floatingChatBadge.style.display = 'block';
+                } else {
+                    floatingChatBadge.style.display = 'none';
+                }
+            });
+        }
+
+        function clearUnreadMessages(orderId, messages) {
+            Object.keys(messages).forEach(msgKey => {
+                const msg = messages[msgKey];
+                if (msg.sender === 'user' && msg.read !== true) {
+                    set(ref(db, `new_byd/tickets/${orderId}/messages/${msgKey}/read`), true);
+                }
+            });
+        }
+
+        function openChatRoom(orderId) {
+            activeOrderId = orderId;
+            document.getElementById('chat-list-view').classList.add('hidden');
+            document.getElementById('chat-room-view').classList.add('active');
+            document.getElementById('active-user-title').innerText = `Ticket Ref: ${orderId}`;
+
+            const chatBox = document.getElementById('chat-messages-box');
+            onValue(ref(db, `new_byd/tickets/${orderId}/messages`), (snapshot) => {
+                chatBox.innerHTML = '';
+                const msgs = snapshot.val() || {};
+                
+                Object.keys(msgs).forEach(msgKey => {
+                    const msg = msgs[msgKey];
+                    const bubble = document.createElement('div');
+                    bubble.className = `bubble ${msg.sender === 'user' ? 'received' : 'sent'}`;
+                    bubble.innerText = msg.text;
+                    chatBox.appendChild(bubble);
+
+                    if (msg.sender === 'user' && msg.read !== true) {
+                        set(ref(db, `new_byd/tickets/${orderId}/messages/${msgKey}/read`), true);
+                    }
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        function submitAdminMessage() {
+            const input = document.getElementById('chat-msg-input');
+            const val = input.value.trim();
+            if (!val || !activeOrderId) return;
+
+            const newMsgRef = push(ref(db, `new_byd/tickets/${activeOrderId}/messages`));
+            set(newMsgRef, {
+                sender: 'admin',
+                text: val,
+                timestamp: Date.now(),
+                read: true
+            }).then(() => {
+                input.value = '';
+            });
+        }
+
+        document.getElementById('send-chat-btn').onclick = submitAdminMessage;
+        document.getElementById('chat-msg-input').onkeydown = (e) => {
+            if (e.key === 'Enter') submitAdminMessage();
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            listenToBYDNodes();
+            listenToChatUsers();
+        });
+    </script>
+</body>
+</html>
